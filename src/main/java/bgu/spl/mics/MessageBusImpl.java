@@ -110,6 +110,6 @@ public class MessageBusImpl implements MessageBus {
 
         return messageQueues.get(m).take(); 
 		//since blockingQueue is a thread safe class, we don't need "wait()" method.
-		//in addition, it deals with interupts. 
+		//in addition, BlockingQueue throws interupts. 
     }
 }
