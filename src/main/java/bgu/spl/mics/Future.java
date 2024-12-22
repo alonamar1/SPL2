@@ -1,4 +1,5 @@
 package bgu.spl.mics;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,12 +13,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class Future<T> {
 	
+	private AtomicBoolean available;
+	private T result;
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		//TODO: implement this
+		this.result = null;
+		this.available = false;
 	}
+	/*private Future(T result)
+	{
+		this.result = result;
+		this.isDone = true;
+	}
+	*/
 	
 	/**
      * retrieves the result the Future object holds if it has been resolved.
@@ -27,16 +37,29 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public T get() {
-		//TODO: implement this.
-		return null;
+	public synchronized T get() {
+		
+		while (!available)
+		{
+			try{
+				this.wait();
+			}
+			catch(InterruptedException e){
+				Thread.currentThread().interrupt();
+			}
+		}
+		return this.result;
+		
 	}
 	
 	/**
      * Resolves the result of this Future object.
      */
-	public void resolve (T result) {
+	public synchronized void resolve (T result) {
 		//TODO: implement this.
+		this.result = result;
+		available = true;
+		this.notifyAll();
 	}
 	
 	/**
@@ -44,7 +67,7 @@ public class Future<T> {
      */
 	public boolean isDone() {
 		//TODO: implement this.
-		return false;
+		return this.available;
 	}
 	
 	/**
@@ -58,9 +81,27 @@ public class Future<T> {
      * 	       wait for {@code timeout} TimeUnits {@code unit}. If time has
      *         elapsed, return null.
      */
-	public T get(long timeout, TimeUnit unit) {
-		//TODO: implement this.
-		return null;
+	public synchronized T get(long timeout, TimeUnit unit) { //try catch?? לחשוב על הכל שוב
+		
+		long toWait = unit.toMillis(timeout); //convert the time to wait to lont in miliseconds 
+		long startTime = System.currentTimeMillis(); //checks the global time
+		long remainTime = toWait;
+		while (remainTime > 0) //while time hasn't finish
+		{
+			if (available) {
+				return result;
+			}
+			try{
+				this.wait(remainTime);
+			}
+			catch(InterruptedException e){
+				Thread.currentThread().interrupt();
+			}
+			long passedTime = System.currentTimeMillis() - startTime; //checks how huch time 
+			remainTime = toWait - passedTime;
+
+		}
+		retrun null;
 	}
 
-}
+
