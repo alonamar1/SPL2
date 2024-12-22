@@ -1,5 +1,4 @@
 package bgu.spl.mics;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Future<T> {
 	
-	private AtomicBoolean available;
+	private boolean available;
 	private T result;
 	/**
 	 * This should be the the only public constructor in this class.
@@ -101,7 +100,8 @@ public class Future<T> {
 			remainTime = toWait - passedTime;
 
 		}
-		retrun null;
+		return null;
 	}
+}
 
 
