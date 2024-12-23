@@ -1,12 +1,13 @@
 package bgu.spl.mics.example;
 
-import bgu.spl.mics.example.services.ExampleBroadcastListenerService;
-import bgu.spl.mics.example.services.ExampleMessageSenderService;
-import bgu.spl.mics.example.services.ExampleEventHandlerService;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import bgu.spl.mics.example.services.ExampleBroadcastListenerService;
+import bgu.spl.mics.example.services.ExampleEventHandlerService;
+import bgu.spl.mics.example.services.ExampleMessageSenderService;
 
 public class ExampleManager {
 
@@ -19,7 +20,7 @@ public class ExampleManager {
         Scanner sc = new Scanner(System.in);
         boolean quit = false;
         try {
-            System.out.println("Example manager is started - supported commands are: start,quit");
+            System.out.println("Example manager is startsed - supported commands are: start,quit");
             System.out.println("Supporting services: " + serviceCreators.keySet());
             while (!quit) {
 
