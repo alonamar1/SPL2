@@ -23,12 +23,6 @@ public class Future<T> {
         this.available = false;
     }
 
-    /*private Future(T result)
-	{
-		this.result = result;
-		this.isDone = true;
-	}
-     */
     /**
      * retrieves the result the Future object holds if it has been resolved.
      * This is a blocking method! It waits for the computation in case it has
@@ -55,7 +49,6 @@ public class Future<T> {
      * Resolves the result of this Future object.
      */
     public synchronized void resolve(T result) {
-        //TODO: implement this.
         this.result = result;
         available = true;
         this.notifyAll();
@@ -64,8 +57,7 @@ public class Future<T> {
     /**
      * @return true if this object has been resolved, false otherwise
      */
-    public boolean isDone() {
-        //TODO: implement this.
+    public synchronized boolean isDone() {
         return this.available;
     }
 
