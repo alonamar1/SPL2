@@ -1,19 +1,9 @@
 package bgu.spl.mics;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import com.sun.java.swing.plaf.motif.resources.motif_zh_CN;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus
@@ -46,18 +36,18 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public synchronized <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+    public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         // add new event if needed, and than add m to the matched event
-        eventSubscribers.putIfAbsent(type, new LinkedBlockingQueue<MicroService>());// Thread-safe variant of arrayList
+        eventSubscribers.computeIfAbsent(type, k -> new LinkedBlockingQueue<>());
         if (!eventSubscribers.get(type).contains(m)) {
             eventSubscribers.get(type).add(m);
         }
     }
 
     @Override
-    public synchronized void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
+    public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
         // add new Broadcast if needed, and than add m to the matched Broadcast
-        broadcastSubscribers.putIfAbsent(type, new LinkedBlockingQueue<MicroService>());
+        broadcastSubscribers.computeIfAbsent(type, k -> new LinkedBlockingQueue<>());
         if (!broadcastSubscribers.get(type).contains(m)) {
             broadcastSubscribers.get(type).add(m);
         }
@@ -95,44 +85,56 @@ public class MessageBusImpl implements MessageBus {
         if (queueFromEvent == null || queueFromEvent.isEmpty()) {
             return null;
         }
-        MicroService m = queueFromEvent.poll();
-        messageQueues.get(m).add(e);
-        try {
-            queueFromEvent.put(m);
-        } catch (InterruptedException error) {
-            System.out.println("Send Event Interrupt: " + Thread.currentThread().getName());
-            Thread.currentThread().interrupt();
+        synchronized (queueFromEvent) {
+            MicroService m = queueFromEvent.poll();
+            if (m != null) {
+                try {
+                    messageQueues.get(m).put(e); // Add the event to the MicroService queue
+                    queueFromEvent.put(m); // Return the MicroService to the queue
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    System.out.println("Send Event Problem " + Thread.currentThread().getName());
+                    return null;
+                }
+                Future<T> result = new Future<>();
+                eventFutures.put(e, result);
+                return result;
+            }
         }
-        Future<T> result = new Future<>();
-        eventFutures.put(e, result);
-        return result;
+        return null;
     }
 
     @Override
-    public synchronized void register(MicroService m) {
+    public void register(MicroService m) {
         messageQueues.putIfAbsent(m, new LinkedBlockingQueue<>());
     }
 
     @Override
     public void unregister(MicroService m) { // לבדוק האם צריך sync
-        BlockingQueue<Message> bq = messageQueues.get(m);
-        messageQueues.get(m).remove();
-        while (!bq.isEmpty()) { //מעבירים את ההודעות לניתוב מחדש. לבדוק אם יש צורך 
-            Message msg = bq.poll(); //לחשוב האם צריך פול או טייק
-            if (msg instanceof Event) {
-                sendEvent((Event) msg); 
-            }else {
-                sendBroadcast((Broadcast) msg);
+        BlockingQueue<Message> bq;
+        synchronized (messageQueues) {
+            bq = messageQueues.remove(m);
+        }
+        if (bq != null) {
+            while (!bq.isEmpty()) {
+                Message msg = bq.poll(); //לחשוב האם צריך פול או טייק
+                eventFutures.get(msg).resolve(null); // return to every future resolved with null
+                eventFutures.remove(msg); // remove events from the list future event האם צריך את זה???
             }
         }
-        eventSubscribers.values().forEach(queue -> queue.remove(m)); // Remove from event subscriptions
-
-        broadcastSubscribers.values().forEach(queue -> queue.remove(m)); // Remove from broadcast subscriptions
-    }
+        synchronized (eventSubscribers) {
+            eventSubscribers.values().forEach(queue -> queue.remove(m));
+        }
+        synchronized (broadcastSubscribers) {
+            broadcastSubscribers.values().forEach(queue -> queue.remove(m));
+        }
+        }
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
-
+        if (messageQueues.get(m) == null) {
+            return null;
+        }
         return messageQueues.get(m).take();
         // since blockingQueue is a thread safe class, we don't need "wait()" method.
         // in addition, BlockingQueue throws interupts.
