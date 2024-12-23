@@ -38,6 +38,7 @@ public class Future<T> {
             try {
                 this.wait();
             } catch (InterruptedException e) {
+				System.out.println("get Future Interrupt: " + Thread.currentThread().getName());
                 Thread.currentThread().interrupt();
             }
         }
@@ -84,6 +85,7 @@ public class Future<T> {
             try {
                 this.wait(remainTime);
             } catch (InterruptedException e) {
+				System.out.println("Get Future limit time Interrupt: " + Thread.currentThread().getName());
                 Thread.currentThread().interrupt();
             }
             long passedTime = System.currentTimeMillis() - startTime; //checks how huch time 

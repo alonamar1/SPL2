@@ -1,5 +1,8 @@
 package bgu.spl.mics;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * The MicroService is an abstract class that any micro-service in the system
  * must extend. The abstract MicroService class is responsible to get and
@@ -22,6 +25,7 @@ public abstract class MicroService implements Runnable {
 
     private boolean terminated = false;
     private final String name;
+    private Map<Class<? extends Event>, Callback<? extends Event>> eventcallbacks;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -44,7 +48,8 @@ public abstract class MicroService implements Runnable {
      * {@link Callback#call(java.lang.Object)} by calling
      * {@code callback.call(m)}.
      * <p>
-     * @param <E>      The type of event to subscribe to.
+     * @param <E>      The type of
+     *  event to subscribe to.
      * @param <T>      The type of result expected for the subscribed event.
      * @param type     The {@link Class} representing the type of event to
      *                 subscribe to.
@@ -53,7 +58,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        //TODO: implement this.
+        //eventcallbacks.add(type, callback), 
     }
 
     /**
@@ -98,7 +103,7 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * A Micro-Service calls this method in order to send the broadcast message {@code b} using the message-bus
+     * A Micro-Service calls this m\ethod in order to send the broadcast message {@code b} using the message-bus
      * to all the services subscribed to it.
      * <p>
      * @param b The broadcast message to send
@@ -150,7 +155,7 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         initialize();
         while (!terminated) {
-            System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
+            MessageBusImpl.getInstance().awaitMessage(this).ca
         }
     }
 
