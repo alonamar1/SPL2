@@ -135,8 +135,25 @@ public class MessageBusImpl implements MessageBus {
         if (messageQueues.get(m) == null) {
             return null;
         }
+
         return messageQueues.get(m).take();
+
         // since blockingQueue is a thread safe class, we don't need "wait()" method.
         // in addition, BlockingQueue throws interupts.
+    }
+
+    public Map<MicroService, BlockingQueue<Message>> getMessageQueues()
+    {
+        return this.messageQueues;
+    }
+
+    public Map<Class<? extends Broadcast>, LinkedBlockingQueue<MicroService>> getBroadcastSubscribers()
+    {
+        return this.broadcastSubscribers;
+    }
+
+    public Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> getEventSubscribers()
+    {
+        return this.eventSubscribers;
     }
 }
