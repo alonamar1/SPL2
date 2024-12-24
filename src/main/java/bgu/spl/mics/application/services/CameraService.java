@@ -3,6 +3,13 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.DetectedObject;
+import bgu.spl.mics.application.objects.TrackedObject;
+import bgu.spl.mics.application.messages.CrashedBroadcast;
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.TerminatedBroadcast;
+import bgu.spl.mics.application.messages.TickBroadcast;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * CameraService is responsible for processing data from the camera and
@@ -33,9 +40,30 @@ public class CameraService extends MicroService {
      */
     @Override
     protected void initialize() {
-        subscribeBroadcast(TickBroadcasts.class, (TickBroadcast tick) -> {
-            List<DetectedObjectEvent> detectedList
+        subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
+            List<DetectedObjectsEvent> detectedList = camera.handleTick(tick.getTick());
+            if(detectedList != null){
+                Future<Boolean> future;
+                for (DetectedObjectsEvent detectedObjectsEvent : detectedList) {
+                    future = (Future<Boolean>) sendEvent(detectedObjectsEvent);
+                    try {
+                        if (future.get() == false)  {
+                            //TODO: Handle the case where the event was not completed successfully.
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
+                        sendBroadcast(new CrashedBroadcast("Camera"));
+                    }
+                }
+            }
         } );
+        subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
+            // TODO: Handle the case where the service was terminated.
+          //terminate();
+        });
+        subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
+            terminate();
+        });
 
     }
 }

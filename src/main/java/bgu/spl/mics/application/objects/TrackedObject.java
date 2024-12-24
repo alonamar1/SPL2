@@ -19,4 +19,20 @@ public class TrackedObject {
         this.description = description;
         this.coordinates = coordinates;
     }
+
+    public int getId() {
+        return id;
+    }
+    
+    public int getTime() {
+        return time;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public CloudPoint[] getCoordinates() {
+        return coordinates;
+    }
 }

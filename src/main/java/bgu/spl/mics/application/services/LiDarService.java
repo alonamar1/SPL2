@@ -1,6 +1,13 @@
 package bgu.spl.mics.application.services;
 
+import java.util.List;
+import java.util.concurrent.Future;
+
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.CrashedBroadcast;
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.TerminatedBroadcast;
+import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
 
 /**
@@ -13,14 +20,16 @@ import bgu.spl.mics.application.objects.*;
  */
 public class LiDarService extends MicroService {
 
+    private final LiDarWorkerTracker liDarTracker;
     /**
      * Constructor for LiDarService.
      *
-     * @param liDarTracker The LiDAR tracker object that this service will use to process data.
+     * @param liDarTracker The LiDAR tracker object that this service will use to
+     *                     process data.
      */
     public LiDarService(LiDarWorkerTracker liDarTracker) {
-        super("Change_This_Name");
-        // TODO Implement this
+        super("LiDar");
+        this.liDarTracker = liDarTracker;
     }
 
     /**
@@ -30,6 +39,20 @@ public class LiDarService extends MicroService {
      */
     @Override
     protected void initialize() {
-        // TODO Implement this
+        subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
+            // TODO Implement this
+        });
+
+        subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
+            // TODO Implement this
+        });
+        subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
+            // TODO: Handle the case where the service was terminated.
+            // terminate();
+        });
+        subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
+            //
+            terminate();
+        });
     }
 }

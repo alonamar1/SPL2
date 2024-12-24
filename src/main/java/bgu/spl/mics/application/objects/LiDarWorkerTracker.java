@@ -16,10 +16,31 @@ public class LiDarWorkerTracker {
     private status status;
     private List<TrackedObject> trackedObjects;
 
-    // TODO: Add private methods and fields as needed.
-    public LiDarWorkerTracker(int id, int frequency, status status) {
+    public LiDarWorkerTracker(int id, int frequency, status status, List<TrackedObject> trackedObjects){
         this.id = id;
         this.frequency = frequency;
         this.status = status;
+        this.trackedObjects = trackedObjects;
     }
+
+
+    public TrackedObject getTrackedObject(String ID){
+        LiDarDataBase dataBase = LiDarDataBase.getInstance("path");
+        for (List<StampedCloudPoints> cp : dataBase.getCloudPoints()) {
+            if (cp.getID().equals(ID)) {
+                return new TrackedObject(cp.getID(), cp.getTime(), cp.getDescription(), cp.getCloudPoints());
+            }
+        }
+        return null;
+    }
+/* 
+    public List<TrackedObject> handleTick(int tick){
+        // check if the LiDarWorker is up
+        // if not, return null
+        //TrackedObject trackedObject = getTrackedObject(tick+frequency); // get the tracked object at the next tick
+        if(trackedObjects != null){
+            return trackedObjects;
+        }
+        return null;
+    } */
 }
