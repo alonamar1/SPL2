@@ -12,6 +12,9 @@ import bgu.spl.mics.application.objects.DetectedObject;
  * the system's StatisticalFolder upon sending its observations.
  */
 public class CameraService extends MicroService {
+
+    
+
     private final Camera camera;
     /**
      * Constructor for CameraService.
