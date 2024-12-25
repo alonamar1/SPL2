@@ -30,6 +30,7 @@ public class LiDarService extends MicroService {
      * @param liDarTracker The LiDAR tracker object that this service will use
      * to process data.
      */
+    
     public LiDarService(LiDarWorkerTracker liDarTracker) {
         super("LiDarService");
         this.liDarTracker = liDarTracker;
