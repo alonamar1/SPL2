@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.objects;
 
-import bgu.spl.mics.application.objects.Camera.status;
 import bgu.spl.mics.application.objects.Pose;
 
 import java.util.ArrayList;
