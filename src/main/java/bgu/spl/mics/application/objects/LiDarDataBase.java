@@ -26,7 +26,7 @@ public class LiDarDataBase {
     }
     //".\\example_input_2\\lidar_data.json"
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         for (int i = 0; i <   3 ; i++) {
             System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getID());
             System.out.print("     ");
@@ -37,7 +37,7 @@ public class LiDarDataBase {
 
         }
     }
-        */
+    
 
     /**
      * Returns the singleton instance of LiDarDataBase.

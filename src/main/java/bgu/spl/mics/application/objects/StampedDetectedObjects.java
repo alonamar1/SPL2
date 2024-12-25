@@ -8,7 +8,7 @@ import java.util.List;
 public class StampedDetectedObjects {
     
     private int time;
-    List<DetectedObject> DetectedObject;
+    private List<DetectedObject> DetectedObject;
 
     public StampedDetectedObjects(int time, List<DetectedObject> DetectedObject){
         this.time = time;

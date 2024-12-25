@@ -1,15 +1,13 @@
 package bgu.spl.mics.application.services;
 
+import java.util.concurrent.Future;
+
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.objects.Camera;
-import bgu.spl.mics.application.objects.DetectedObject;
-import bgu.spl.mics.application.objects.TrackedObject;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
-import java.util.List;
-import java.util.concurrent.Future;
+import bgu.spl.mics.application.objects.Camera;
 
 /**
  * CameraService is responsible for processing data from the camera and
@@ -29,7 +27,7 @@ public class CameraService extends MicroService {
      * @param camera The Camera object that this service will use to detect objects.
      */
     public CameraService(Camera camera) {
-        super("Camera");
+        super("CameraService");
         this.camera = camera;
     }
 
@@ -41,11 +39,10 @@ public class CameraService extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            List<DetectedObjectsEvent> detectedList = camera.handleTick(tick.getTick());
+            DetectedObjectsEvent detectedList = camera.handleTick(tick.getTick());
             if(detectedList != null){
                 Future<Boolean> future;
-                for (DetectedObjectsEvent detectedObjectsEvent : detectedList) {
-                    future = (Future<Boolean>) sendEvent(detectedObjectsEvent);
+                    future = (Future<Boolean>) sendEvent(detectedList);
                     try {
                         if (future.get() == false)  {
                             //TODO: Handle the case where the event was not completed successfully.
@@ -54,7 +51,7 @@ public class CameraService extends MicroService {
                         e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
                         sendBroadcast(new CrashedBroadcast("Camera"));
                     }
-                }
+                
             }
         } );
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
