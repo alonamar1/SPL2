@@ -8,6 +8,7 @@ import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.messages.TrackedObjectEvent;
 import bgu.spl.mics.application.objects.*;
 
 /**
@@ -40,7 +41,17 @@ public class LiDarService extends MicroService {
     @Override
     protected void initialize() {
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
-            // TODO Implement this
+            TrackedObject trackedObject = liDarTracker.getTrackedObject(detectedObjectsEvent.getDetectedObject());
+            TrackedObjectEvent event =  new TrackedObjectEvent(liDarTracker.getTrackedObjects());
+            Future<Boolean> future = (Future<Boolean>)sendEvent(event);
+            try {
+                if (future.get() == false)  {
+                    //TODO: Handle the case where the event was not completed successfully.
+                }
+            } catch (Exception e) {
+                e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
+                sendBroadcast(new CrashedBroadcast("LiDar"));
+            }  
         });
 
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {

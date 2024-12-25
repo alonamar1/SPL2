@@ -8,24 +8,20 @@ package bgu.spl.mics.application.objects;
 public class TrackedObject {
     // TODO: Define fields and methods.
 
-    private int id;
+    private String id;
     private int time;
     private String description;
     private CloudPoint[] coordinates;
 
-    public TrackedObject(int id, int time, String description, CloudPoint[] coordinates) {
+    public TrackedObject(String id, int time, String description, CloudPoint[] coordinates) {
         this.id = id;
         this.time = time;
         this.description = description;
         this.coordinates = coordinates;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
-    }
-    
-    public int getTime() {
-        return time;
     }
 
     public String getDescription() {

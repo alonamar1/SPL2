@@ -2,7 +2,6 @@ package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.Event;
 import bgu.spl.mics.application.objects.DetectedObject;
-import bgu.spl.mics.application.objects.TrackedObject;
 
 public class DetectedObjectsEvent implements Event<Boolean> {
 

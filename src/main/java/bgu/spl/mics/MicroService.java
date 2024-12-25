@@ -125,7 +125,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T> void complete(Event<T> e, T result) {
         MessageBusImpl.getInstance().complete(e, result); // Mark event as completed
-
+        // need to delete the event from the queue???
     }
 
     /**

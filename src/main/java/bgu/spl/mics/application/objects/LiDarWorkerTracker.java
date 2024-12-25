@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -24,11 +25,15 @@ public class LiDarWorkerTracker {
     }
 
 
-    public TrackedObject getTrackedObject(String ID){
+    public TrackedObject getTrackedObject(DetectedObject detectedObject){
         LiDarDataBase dataBase = LiDarDataBase.getInstance("path");
-        for (List<StampedCloudPoints> cp : dataBase.getCloudPoints()) {
-            if (cp.getID().equals(ID)) {
-                return new TrackedObject(cp.getID(), cp.getTime(), cp.getDescription(), cp.getCloudPoints());
+        for (StampedCloudPoints cp : dataBase.getCloudPoints()) {
+            if (cp.getID().equals(detectedObject.getID())) {
+                // CloudPoint[] cloudPoints = new CloudPoint[cp.getCloudPoints().size()];
+                // for (int i = 0; i < cp.getCloudPoints().size(); i++) {
+                //     cloudPoints[i] = cp.getCloudPoints().get(i);
+                // }
+                // return (new TrackedObject(cp.getID(), cp.getTime(), detectedObject.getDescreption(), cloudPoints));
             }
         }
         return null;
@@ -43,4 +48,20 @@ public class LiDarWorkerTracker {
         }
         return null;
     } */
+
+    public int getID(){
+        return id;
+    }
+
+    public int getFrequency(){
+        return frequency;
+    }
+
+    public status getStatus(){
+        return status;
+    }
+
+    public List<TrackedObject> getTrackedObjects(){
+        return trackedObjects;
+    }
 }
