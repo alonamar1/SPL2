@@ -33,7 +33,8 @@ public class TimeService extends MicroService {
      */
     @Override
     protected void initialize() {
-        while (Duration > 0) {
+        // לבדוק האם צריך להפסיק אותו במידה וfusion סיים את עבודתו
+        while (Duration > 0) { // Continue broadcasting ticks until the duration is reached.
             try {
                 sendBroadcast(new TickBroadcast(this.currentTick)); // Broadcast the current tick.
                 Duration--;
