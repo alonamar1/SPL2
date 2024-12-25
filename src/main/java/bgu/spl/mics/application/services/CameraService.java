@@ -58,10 +58,15 @@ public class CameraService extends MicroService {
             }
         } );
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            // TODO: Handle the case where the service was terminated.
-          //terminate();
+            // TODO: Handle the case where other service was terminated.
+            // if the terminated service is TimeService, terminate the CameraService.
+            if (terminated.getSenderId().equals("TimeService")) {
+                sendBroadcast(new TerminatedBroadcast("Camera"));
+                terminate();
+            }
         });
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
+            // TODO: Handle the case where other service was Crashed.
             terminate();
         });
 
