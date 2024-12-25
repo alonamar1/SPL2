@@ -1,7 +1,10 @@
 package bgu.spl.mics.application.services;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Future;
 
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
@@ -22,7 +25,7 @@ import bgu.spl.mics.application.objects.TrackedObject;
 public class LiDarService extends MicroService {
 
     private final LiDarWorkerTracker liDarTracker;
-    private 
+    private List<DetectedObjectsEvent> globalDetectedObjectsEvents;
 
     /**
      * Constructor for LiDarService.
@@ -30,10 +33,10 @@ public class LiDarService extends MicroService {
      * @param liDarTracker The LiDAR tracker object that this service will use
      * to process data.
      */
-    
     public LiDarService(LiDarWorkerTracker liDarTracker) {
         super("LiDarService");
         this.liDarTracker = liDarTracker;
+        this.globalDetectedObjectsEvents = new LinkedList<DetectedObjectsEvent>();
     }
 
     /**
@@ -44,30 +47,43 @@ public class LiDarService extends MicroService {
     @Override
     protected void initialize() {
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
-            TrackedObjectEvent event = new TrackedObjectEvent();
-            for (int i = 0; i < detectedObjectsEvent.getDetectedObject().size(); i++) {
-                TrackedObject trackedObject = liDarTracker.getTrackedObject(detectedObjectsEvent.getDetectedObject().get(i));
-                if (trackedObject != null) {
-                    event.addTrackedObject(trackedObject);
-                }
-            }
-            Future<Boolean> future = (Future<Boolean>) sendEvent(event);
-            try {
-                if (future.get() == false) {
-                    //TODO: Handle the case where the event was not completed successfully.
-                }
-            } catch (Exception e) {
-                e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                sendBroadcast(new CrashedBroadcast("LiDar"));
-            }
+            globalDetectedObjectsEvents.add(detectedObjectsEvent);
+
         });
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            // TODO Implement this
+            TrackedObjectEvent event = new TrackedObjectEvent();
+            for (int i = 0; i < globalDetectedObjectsEvents.size(); i++) {
+                if (tick.getTick() == globalDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
+                    for (int j = 0; j < globalDetectedObjectsEvents.get(i).getDetectedObject().size(); j++) {
+                        TrackedObject trackedObject = liDarTracker.getTrackedObject(globalDetectedObjectsEvents.get(i).getDetectedObject().get(j));
+                        if (trackedObject != null) {
+                            event.addTrackedObject(trackedObject);
+                        }
+                    }
+                    Future<Boolean> future = (Future<Boolean>) sendEvent(event); //להבין מה הפיוצר רוצה ממני
+                    MessageBusImpl.getInstance().complete(globalDetectedObjectsEvents.get(i), true); // complete the camera event
+                    try {
+                        if (future.get() == false) {
+                            //TODO: Handle the case where the event was not completed successfully.
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
+                        sendBroadcast(new CrashedBroadcast("LiDar"));
+                    }
+                }
+
+            }
         });
+
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            // TODO: Handle the case where the service was terminated.
-            // terminate();
+                // TODO: Handle the case where other service was terminated.
+            // if the terminated service is TimeService, terminate the CameraService.
+            if (terminated.getSenderId().equals("TimeService")) {
+                sendBroadcast(new TerminatedBroadcast("Camera"));
+                terminate();
+            }
         });
+ 
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
             //
             terminate();

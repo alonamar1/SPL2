@@ -8,10 +8,12 @@ public class DetectedObjectsEvent implements Event<Boolean> {
 
     private int cameraId;
     private List<DetectedObject> detectedObject;
+    private int arrivalTime; //arrival to LiDar
 
-    public DetectedObjectsEvent(int cameraId, List<DetectedObject> detectedObject) {
+    public DetectedObjectsEvent(int cameraId, List<DetectedObject> detectedObject, int time) {
         this.cameraId = cameraId;
         this.detectedObject = detectedObject;
+        this.arrivalTime = time;
     }
 
     public int getCameraId() {
@@ -20,6 +22,10 @@ public class DetectedObjectsEvent implements Event<Boolean> {
 
     public List<DetectedObject> getDetectedObject() {
         return this.detectedObject;
+    }   
+
+    public int getTime() {
+        return this.arrivalTime;
     }
 
 

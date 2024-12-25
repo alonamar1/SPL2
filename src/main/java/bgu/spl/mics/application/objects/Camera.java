@@ -10,16 +10,12 @@ import bgu.spl.mics.application.messages.DetectedObjectsEvent;
  */
 public class Camera {
 
-    public enum status {
-        Up, Down, Error;
-    }
-
     private int id;
     private int frequency;
     private List<StampedDetectedObjects> detectedObjectsList;
-    private status status;
+    private STATUS status;
 
-    public Camera(int id, int freq, status status, List<StampedDetectedObjects> list) {
+    public Camera(int id, int freq, STATUS status, List<StampedDetectedObjects> list) {
         id = id;
         frequency = freq;
         this.status = status;
@@ -40,7 +36,7 @@ public class Camera {
         // if not, return null
         StampedDetectedObjects stampedDetectedObjects = this.getDetectedObjects(tick + frequency); // get the detected objects at the next tick
         if (stampedDetectedObjects != null) {
-            DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject());
+            DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick+frequency);
             return detectedObjectEvent;
         }
         return null;
