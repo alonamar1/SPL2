@@ -1,9 +1,10 @@
 package bgu.spl.mics.application.objects;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 import com.google.gson.Gson;
-import java.io.FileReader;
-import java.io.IOException;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * LiDarDataBase is a singleton class responsible for managing LiDAR data.
@@ -11,8 +12,33 @@ import java.io.IOException;
  */
 public class LiDarDataBase {
 
-
+    private static LiDarDataBase instance;
     private List<StampedCloudPoints> cloudPoints;
+
+    private LiDarDataBase(String filepath) {
+        Gson gson = new Gson(); 
+        try (FileReader reader = new FileReader(filepath)) {
+            // Convert JSON File to Java Object
+            this.cloudPoints = gson.fromJson(reader, new TypeToken<List<StampedCloudPoints>>(){}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //".\\example_input_2\\lidar_data.json"
+
+    /*public static void main(String[] args) {
+        for (int i = 0; i <   3 ; i++) {
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getID());
+            System.out.print("     ");
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getTime());
+            System.out.print("     ");
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
+            System.out.println("     ");
+
+        }
+    }
+        */
+
     /**
      * Returns the singleton instance of LiDarDataBase.
      *
@@ -22,8 +48,10 @@ public class LiDarDataBase {
 
 
     public static LiDarDataBase getInstance(String filePath) {
-        // TODO: Implement this
-        return null;
+        if (instance == null) {
+            instance = new LiDarDataBase(filePath);
+        }
+        return instance;
     }
 
     public List<StampedCloudPoints> getCloudPoints() {
