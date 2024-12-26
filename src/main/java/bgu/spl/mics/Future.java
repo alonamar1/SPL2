@@ -40,6 +40,7 @@ public class Future<T> {
             } catch (InterruptedException e) {
 				System.out.println("get Future Interrupt: " + Thread.currentThread().getName());
                 Thread.currentThread().interrupt();
+                return null; // if the thread was interrupted return null
             }
         }
         return this.result;
@@ -72,12 +73,12 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not, wait for
      * {@code timeout} TimeUnits {@code unit}. If time has elapsed, return null.
      */
-    public synchronized T get(long timeout, TimeUnit unit) { //try catch?? לחשוב על הכל שוב
+    public synchronized T get(long timeout, TimeUnit unit) { // Consider adding try-catch block
 
         long toWait = unit.toMillis(timeout); //convert the time to wait to lont in miliseconds 
-        long startTime = System.currentTimeMillis(); //checks the global time
+        long startTime = System.currentTimeMillis(); //record the start time
         long remainTime = toWait;
-        while (remainTime > 0) //while time hasn't finish
+        while (remainTime > 0) //while time hasn't finished
         {
             if (available) {
                 return result;
@@ -87,6 +88,7 @@ public class Future<T> {
             } catch (InterruptedException e) {
 				System.out.println("Get Future limit time Interrupt: " + Thread.currentThread().getName());
                 Thread.currentThread().interrupt();
+                return null; // if the thread was interrupted return null
             }
             long passedTime = System.currentTimeMillis() - startTime; //checks how huch time 
             remainTime = toWait - passedTime;
