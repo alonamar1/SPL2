@@ -107,7 +107,6 @@ public class MessageBusImpl implements MessageBus {
         return null;
     }
 
-
     @Override
     public void register(MicroService m) {
         messageQueues.putIfAbsent(m, new LinkedBlockingQueue<>());
