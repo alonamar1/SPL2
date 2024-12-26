@@ -14,7 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MessageBusImpl implements MessageBus {
 
     // instance is created when the class is loaded into memory
-    private static final MessageBusImpl INSTANCE = new MessageBusImpl();
+    private static class SingletonHolder {
+        private static final MessageBusImpl INSTANCE = new MessageBusImpl();
+    }
     // Mapping of MicroServices to their message queues
     private final Map<MicroService, BlockingQueue<Message>> messageQueues;
     // Event subscriptions
@@ -32,7 +34,7 @@ public class MessageBusImpl implements MessageBus {
     }
 
     public static MessageBusImpl getInstance() { // No need for sync because Guaranteed by the JVM during class loading
-        return INSTANCE;
+        return SingletonHolder.INSTANCE;
     }
 
     @Override
