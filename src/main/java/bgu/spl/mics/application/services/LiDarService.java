@@ -50,6 +50,7 @@ public class LiDarService extends MicroService {
             globalDetectedObjectsEvents.add(detectedObjectsEvent);
 
         });
+
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
             TrackedObjectEvent event = new TrackedObjectEvent();
             for (int i = 0; i < globalDetectedObjectsEvents.size(); i++) {
@@ -71,21 +72,19 @@ public class LiDarService extends MicroService {
                         sendBroadcast(new CrashedBroadcast("LiDar"));
                     }
                 }
-
             }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
                 // TODO: Handle the case where other service was terminated.
-            // if the terminated service is TimeService, terminate the CameraService.
+            // if the terminated service is TimeService, terminate the LiDarService.
             if (terminated.getSenderId().equals("TimeService")) {
-                sendBroadcast(new TerminatedBroadcast("Camera"));
+                sendBroadcast(new TerminatedBroadcast("LiDar"));
                 terminate();
             }
         });
- 
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
-            //
+            // TODO: Handle the case where other service was Crashed.
             terminate();
         });
     }

@@ -155,10 +155,11 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
+        
         MessageBusImpl.getInstance().register(this);
         System.out.println("microservice run");
         initialize();
-        while (!terminated) {
+        while (!terminated && !Thread.currentThread().isInterrupted()) { // Run until termination
             try {
                 Message msg = MessageBusImpl.getInstance().awaitMessage(this); // Retrieve the next message
                 Callback<Message> callback = (Callback<Message>) messagecallbacks.get(msg.getClass()); // Find the corresponding callback
