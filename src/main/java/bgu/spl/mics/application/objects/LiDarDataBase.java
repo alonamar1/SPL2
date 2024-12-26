@@ -11,9 +11,11 @@ import com.google.gson.reflect.TypeToken;
  * It provides access to cloud point data and other relevant information for tracked objects.
  */
 public class LiDarDataBase {
+    private static class LiDarDataBaseHolder {
+        private static LiDarDataBase instance = new LiDarDataBase(".\\example_input_2\\lidar_data.json");
+    }
 
-    private static LiDarDataBase instance;
-    private List<StampedCloudPoints> cloudPoints;
+    private List<StampedCloudPoints> cloudPoints; // List of cloud points, each represented by a list of 3 doubles (x, y, z)
 
     private LiDarDataBase(String filepath) {
         Gson gson = new Gson(); 
@@ -26,19 +28,6 @@ public class LiDarDataBase {
     }
     //".\\example_input_2\\lidar_data.json"
 
-    public static void main(String[] args) {
-        for (int i = 0; i <   3 ; i++) {
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getID());
-            System.out.print("     ");
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getTime());
-            System.out.print("     ");
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
-            System.out.println("     ");
-
-        }
-    }
-    
-
     /**
      * Returns the singleton instance of LiDarDataBase.
      *
@@ -46,15 +35,27 @@ public class LiDarDataBase {
      * @return The singleton instance of LiDarDataBase.
      */
 
-
     public static LiDarDataBase getInstance(String filePath) {
-        if (instance == null) {
-            instance = new LiDarDataBase(filePath);
+        if (LiDarDataBaseHolder.instance == null) {
+            LiDarDataBaseHolder.instance = new LiDarDataBase(filePath);
         }
-        return instance;
+        return LiDarDataBaseHolder.instance;
     }
-
+    
     public List<StampedCloudPoints> getCloudPoints() {
         return cloudPoints;
     }
 }
+
+/*    public static void main(String[] args) {
+        for (int i = 0; i <   3 ; i++) {
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getID());
+            System.out.print("     ");
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getTime());
+            System.out.print("     ");
+            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
+            System.out.println("     ");
+        }
+    }
+*/
+

@@ -10,9 +10,9 @@ import bgu.spl.mics.application.messages.TickBroadcast;
  */
 public class TimeService extends MicroService {
 
-    private int TickTime;
-    private int Duration;
-    private int currentTick;
+    private int TickTime; // The duration of each tick in seconds.
+    private int Duration; // The total number of ticks before the service terminates.
+    private int currentTick; // The current tick number.
 
     /**
      * Constructor for TimeService.
