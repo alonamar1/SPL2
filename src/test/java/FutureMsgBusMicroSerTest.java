@@ -1,5 +1,7 @@
 
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +23,20 @@ public class FutureMsgBusMicroSerTest {
         public String getMessage() {
             return message;
         }
+        
+    }
+    public static class terminate implements Event<String> {
+
+        private String message;
+
+        public terminate(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+        
     }
 
     public static class TestBroadcast1 implements Broadcast {
@@ -71,10 +87,11 @@ public class FutureMsgBusMicroSerTest {
             this.lanch = lanch;
         }
 
+
         @Override
         protected void initialize() {
             subscribeEvent(TestEvent1.class, (event) -> {
-                terminate();
+                complete(event, getName() + " handled Event 1: " + event.getMessage());
             });
 
             subscribeEvent(TestEvent2.class, (event) -> {
@@ -87,6 +104,10 @@ public class FutureMsgBusMicroSerTest {
 
             subscribeBroadcast(TestBroadcast2.class, (broadcast) -> {
                 System.out.println(getName() + " handled Broadcast 2: " + broadcast.getMessage());
+            });
+            subscribeEvent(terminate.class, (event) -> {
+                System.out.println(getName() + " handled terminate: " + event.getMessage());
+                terminate();
             });
             lanch.countDown();
         }
@@ -108,7 +129,7 @@ public class FutureMsgBusMicroSerTest {
             });
 
             subscribeEvent(TestEvent2.class, (event) -> {
-                terminate();
+                complete(event, getName() + " handled Event 2: " + event.getMessage());
             });
 
             subscribeBroadcast(TestBroadcast1.class, (broadcast) -> {
@@ -118,13 +139,17 @@ public class FutureMsgBusMicroSerTest {
             subscribeBroadcast(TestBroadcast2.class, (broadcast) -> {
                 System.out.println(getName() + " handled Broadcast 2: " + broadcast.getMessage());
             });
+            subscribeEvent(terminate.class, (event) -> {
+                System.out.println(getName() + " handled terminate: " + event.getMessage());
+                terminate();
+            });
             lanch.countDown();
         }
     }
 
     @Test
     public void setUp() {
-        System.out.println(("???????????????????????????????????????????????????????????????"));
+        System.out.println(("test has started"));
         CountDownLatch lanch = new CountDownLatch(4);
         TestMicroService1 testMicroService1_1 = new TestMicroService1("TestMicroService1_1", lanch);
         TestMicroService1 testMicroService1_2 = new TestMicroService1("TestMicroService1_2", lanch);
@@ -140,20 +165,33 @@ public class FutureMsgBusMicroSerTest {
         thread2.start();
         thread3.start();
         thread4.start();
-
+        
         try {
             lanch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+        Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
+
+        for (int i=0; i<eventSubscribers.size(); i++) {
+            if ()
+        }
+            
+        
+
         MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1("Broadcast 1"));
         MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast2("Broadcast 2"));
 
-        MessageBusImpl.getInstance().sendEvent(new TestEvent1("Event 1"));
-        MessageBusImpl.getInstance().sendEvent(new TestEvent2("Event 2"));
-        MessageBusImpl.getInstance().sendEvent(new TestEvent1("Event 1"));
-        MessageBusImpl.getInstance().sendEvent(new TestEvent2("Event 2"));
+        MessageBusImpl.getInstance().sendEvent(new terminate("Event 1"));
+         eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
+        MessageBusImpl.getInstance().sendEvent(new terminate("Event 2"));
+         eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
+        MessageBusImpl.getInstance().sendEvent(new terminate("Event 1"));
+         eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
+        MessageBusImpl.getInstance().sendEvent(new terminate("Event 2"));
+     eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
+
         
         try {
             thread1.join();
