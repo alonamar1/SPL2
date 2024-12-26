@@ -20,11 +20,23 @@ public class Camera {
     private List<StampedDetectedObjects> detectedObjectsList;
     private STATUS status;
 
-    public Camera(int id, int freq, STATUS status, List<StampedDetectedObjects> list) {
+    public Camera(int id, int freq, STATUS status, String filepath) {
         id = id;
         frequency = freq;
         this.status = status;
-        detectedObjectsList = list;
+        this.detectedObjectsList = cameraData(filepath);
+        
+    }
+
+    private List<StampedDetectedObjects> cameraData(String filepath) {
+        Gson gson = new Gson(); 
+        try (FileReader reader = new FileReader(filepath)) {
+            // Convert JSON File to Java Object
+            return gson.fromJson(reader, new TypeToken<List<StampedCloudPoints>>(){}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public StampedDetectedObjects getDetectedObjects(int time) {
@@ -41,7 +53,7 @@ public class Camera {
         // if not, return null
         StampedDetectedObjects stampedDetectedObjects = this.getDetectedObjects(tick + frequency); // get the detected objects at the next tick
         if (stampedDetectedObjects != null) {
-            DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick+frequency);
+            DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick + frequency);
             return detectedObjectEvent;
         }
         return null;
