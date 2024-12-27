@@ -21,16 +21,10 @@ public class GPSIMU {
      * @param status
      * @param poses
      */
-    public GPSIMU(int tick, STATUS status, List<Pose> poses){
-        this.currentTick = 0;
-        this.currentStatus = status;
-        this.prevPoses = poses;
-    }
-    
-    public GPSIMU(int tick){
+    public GPSIMU(int tick, List<Pose> poses){
         this.currentTick = 0;
         this.currentStatus = STATUS.UP;
-        this.prevPoses = new ArrayList<>();
+        this.prevPoses = poses;
     }
     
     public GPSIMU(){
@@ -46,6 +40,10 @@ public class GPSIMU {
      */
     public Pose getCurrentPose(int currentTick){
         setCurrentTick(currentTick);
+        // if the current tick is greater than the size of the prevPoses list, the robot is down.
+        if (prevPoses.size() == currentTick){
+            this.currentStatus = STATUS.DOWN;
+        }
         return prevPoses.get(prevPoses.size()-1);
     }
 

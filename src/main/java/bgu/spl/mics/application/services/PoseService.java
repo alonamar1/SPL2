@@ -40,7 +40,11 @@ public class PoseService extends MicroService {
             Future<Boolean> f = sendEvent(poseEvent); // Send the PoseEvent
             Boolean result = null;
             if (f != null) {
-                result = f.get(100, java.util.concurrent.TimeUnit.MILLISECONDS); // Wait for the result of the PoseEvent
+                try {
+                    result = f.get(100, java.util.concurrent.TimeUnit.MILLISECONDS); // Wait for the result of the PoseEvent
+                } catch (Exception e) {
+                    e.printStackTrace(); // Handle the case where the future was interrupted
+                }
             }
             // Do We need to check if the result is null????????
             if (result == null || !result) { // If the PoseEvent was not completed successfully

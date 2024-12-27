@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -12,11 +13,11 @@ import java.util.List;
  */
 public class FusionSlam {
 
-    private LandMark[] landmarks; // צריך לבדוק האם זה מערך או רשימה
+    private List<LandMark> landmarks;
     private List<Pose> poses;
 
     private FusionSlam() {
-        landmarks = new LandMark[0]; // 
+        landmarks = new LinkedList<>();
         poses = null;
     }
 
@@ -28,25 +29,25 @@ public class FusionSlam {
 
     public static FusionSlam getInstance() {
         return FusionSlamHolder.getInstance();
-    }   
-    
+    }
 
-    public LandMark[] getLandmarks() {
+    public List<LandMark> getLandmarks() {
         return landmarks;
-    }   
+    }
 
     public List<Pose> getPoses() {
         return poses;
-    }   
+    }
 
-    
-    // Singleton instance holder
+    /*
+     * Singleton pattern to ensure a single instance of FusionSlam exists.
+     */
     private static class FusionSlamHolder {
         private static FusionSlam instance;
 
         private FusionSlamHolder() {
-            instance = new FusionSlam();    
-        }   
+            instance = new FusionSlam();
+        }
 
         public static FusionSlam getInstance() {
             return instance;

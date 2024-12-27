@@ -51,11 +51,13 @@ public class FusionSlamService extends MicroService {
             // TODO Implement this
         });
 
+        // TerminatedBroadCast
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
             // TODO: Handle the case where the service was terminated.
             // terminate();
         });
 
+        // CrashedBroadCast
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
             //
             terminate();

@@ -22,4 +22,17 @@ public class StampedDetectedObjects {
     public List<DetectedObject> getDetectedObject() {
         return DetectedObject;
     }
+
+    /**
+     * Checks if an error was detected in the detected objects.
+     * @return True if an error was detected, false otherwise.
+     */
+    public boolean checkError() {
+        for (DetectedObject detectedObject : DetectedObject) {
+            if (detectedObject.getID() == "ERROR") {
+                return true;
+            }
+        }
+        return false;
+    }
 }

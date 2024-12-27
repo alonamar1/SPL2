@@ -31,4 +31,8 @@ public class TrackedObject {
     public CloudPoint[] getCoordinates() {
         return coordinates;
     }
+
+    public int getTime() {
+        return time;
+    }
 }

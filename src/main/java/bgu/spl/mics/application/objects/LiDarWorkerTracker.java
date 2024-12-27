@@ -22,16 +22,26 @@ public class LiDarWorkerTracker {
         this.trackedObjects = trackedObjects;
     }
 
-
+    /**
+     * Returns a TrackedObject object for a given DetectedObject.
+     * @param detectedObject
+     * @return TrackedObject object for the detected object.
+     */
     public TrackedObject getTrackedObject(DetectedObject detectedObject){
         LiDarDataBase dataBase = LiDarDataBase.getInstance("path"); //לשנות את הפאט
+        // get the cloud points of the detected object
         for (StampedCloudPoints cp : dataBase.getCloudPoints()) {
+            // if the ID of the cloud points is the same as the ID of the detected object
             if (cp.getID().equals(detectedObject.getID())) {
-                CloudPoint[] cloudPoints = new CloudPoint[cp.getCloudPoints().size()];
+                CloudPoint[] cloudPoints = new CloudPoint[cp.getCloudPoints().size()]; // create an array of cloud points
                 for (int i = 0; i < cp.getCloudPoints().size(); i++) {
+                    // create a cloud point object for each cloud point, without the z coordinate
                      cloudPoints[i] = new CloudPoint(cp.getCloudPoints().get(i).get(0), cp.getCloudPoints().get(i).get(1));
                 }
-                return (new TrackedObject(cp.getID(), cp.getTime(), detectedObject.getDescreption(), cloudPoints));
+                TrackedObject trackedObject = new TrackedObject(cp.getID(), cp.getTime(), detectedObject.getDescreption(), cloudPoints);
+                this.trackedObjects.add(trackedObject); // add the tracked object to the list of tracked objects
+                StatisticalFolder.getInstance().incrementNumTrackedObjects(); // add the tracked object to the statistical folder
+                return trackedObject;
             }
         }
         return null;

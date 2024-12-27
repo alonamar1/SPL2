@@ -60,7 +60,7 @@ public class StatisticalFolder {
 
     /**
      * Returns the number of detected objects.
-     * @return
+     * @return 
      */
     public int getNumDetectedObjects() {
         return numDetectedObjects.get();

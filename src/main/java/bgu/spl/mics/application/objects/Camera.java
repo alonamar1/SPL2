@@ -20,16 +20,21 @@ public class Camera {
     private List<StampedDetectedObjects> detectedObjectsList;
     private STATUS status;
 
-    public Camera(int id, int freq, STATUS status, String filepath) {
-        id = id;
-        frequency = freq;
-        this.status = status;
+    public Camera(int id, int freq, String filepath) {
+        this.id = id;
+        this.frequency = freq;
+        this.status = STATUS.UP;
         this.detectedObjectsList = cameraData(filepath);
         
     }
 
+    public STATUS getStatus() {
+        return status;
+    }
+
+    // TODO: Move this function to a Main class
     private List<StampedDetectedObjects> cameraData(String filepath) {
-        Gson gson = new Gson(); 
+        Gson gson = new Gson();
         try (FileReader reader = new FileReader(filepath)) {
             // Convert JSON File to Java Object
             return gson.fromJson(reader, new TypeToken<List<StampedCloudPoints>>(){}.getType());
@@ -39,6 +44,11 @@ public class Camera {
         return null;
     }
 
+    /**
+     * Returns the detected objects at a specific time.
+     * @param time
+     * @return StampedDetectedObjects object, detected objects at a specific time.
+     */
     public StampedDetectedObjects getDetectedObjects(int time) {
         for (StampedDetectedObjects stampedDetectedObjects : detectedObjectsList) {
             if (stampedDetectedObjects.getTime() == time) {
@@ -48,12 +58,21 @@ public class Camera {
         return null;
     }
 
+    /**
+     * Handles a tick event.
+     * @param tick
+     * @return DetectedObjectsEvent object, detected objects event.
+     */
     public DetectedObjectsEvent handleTick(int tick) {
-        // check if the camera is up
-        // if not, return null
         StampedDetectedObjects stampedDetectedObjects = this.getDetectedObjects(tick + frequency); // get the detected objects at the next tick
         if (stampedDetectedObjects != null) {
+            // check if an error was detected in the detected objects
+            if (stampedDetectedObjects.checkError()) {
+                this.status = STATUS.ERROR; // TODO: Handle the case where an error was detected.
+                return null;
+            }
             DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick + frequency);
+            StatisticalFolder.getInstance().incrementNumDetectedObjects(); // increment the number of detected objects in the statistical folder
             return detectedObjectEvent;
         }
         return null;

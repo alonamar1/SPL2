@@ -4,11 +4,15 @@ import java.util.List;
 import bgu.spl.mics.Event;
 import bgu.spl.mics.application.objects.DetectedObject;
 
+/**
+ * An event that is sent by the CameraService to the LiDarWorkerTracker.
+ * The event contains a list of detected objects and the time of arrival to the LiDar.
+ */
 public class DetectedObjectsEvent implements Event<Boolean> {
 
     private int cameraId;
     private List<DetectedObject> detectedObject;
-    private int arrivalTime; //arrival to LiDar
+    private int arrivalTime; // arrival to LiDar
 
     public DetectedObjectsEvent(int cameraId, List<DetectedObject> detectedObject, int time) {
         this.cameraId = cameraId;
