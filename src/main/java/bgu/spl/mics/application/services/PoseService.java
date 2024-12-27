@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.PoseEvent;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.*;
 
@@ -30,7 +32,11 @@ public class PoseService extends MicroService {
     protected void initialize() {
         // TickBroadcast
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            // TODO Implement this
+            PoseEvent poseEvent = new PoseEvent(this.gpsimu.getCurrentPose(tick.getTick()));
+            Future<Boolean> f = sendEvent(poseEvent);
+            if (f != null) {
+                Boolean result = f.get();
+            }
         });
     }
 }

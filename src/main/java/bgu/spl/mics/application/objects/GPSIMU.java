@@ -15,6 +15,12 @@ public class GPSIMU {
     private STATUS currentStatus;
     private List<Pose> prevPoses;
 
+    /**
+     * Constructor for GPSIMU.
+     * @param tick
+     * @param status
+     * @param poses
+     */
     public GPSIMU(int tick, STATUS status, List<Pose> poses){
         this.currentTick = 0;
         this.currentStatus = status;
@@ -25,6 +31,22 @@ public class GPSIMU {
         this.currentTick = 0;
         this.currentStatus = STATUS.UP;
         this.prevPoses = new ArrayList<>();
+    }
+    
+    public GPSIMU(){
+        this.currentTick = 0;
+        this.currentStatus = STATUS.UP;
+        this.prevPoses = new ArrayList<>();
+    }
+
+    /**
+     * Return the current pose of the robot in time tick.
+     * @param currentTick
+     * @return Pose object, current pose of the robot.
+     */
+    public Pose getCurrentPose(int currentTick){
+        setCurrentTick(currentTick);
+        return prevPoses.get(prevPoses.size()-1);
     }
 
     public void setCurrentTick(int tick){
