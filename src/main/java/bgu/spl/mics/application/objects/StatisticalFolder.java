@@ -1,39 +1,104 @@
 package bgu.spl.mics.application.objects;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Holds statistical information about the system's operation.
  * This class aggregates metrics such as the systemRuntime of the system,
- * the number of objects detected and tracked, and the number of landmarks identified.
+ * the number of objects detected and tracked, and the number of landmarks
+ * identified.
  */
 public class StatisticalFolder {
-    // TODO: Define fields and methods for statistics tracking.
 
-    // need to be Thread safe
-    private int systemRuntime;
-    private int numDetectedObjects;
-    private int numTrackedObjects;
-    private int numLandmarks;
-
-    public StatisticalFolder(){
-        this.systemRuntime = 0;
-        this.numDetectedObjects = 0;
-        this.numLandmarks = 0;
-        this.numTrackedObjects = 0;
+    /**
+     * Singleton holder class.
+     */
+    private static class StatisticalFolderHolder {
+        private static StatisticalFolder instance = new StatisticalFolder();
     }
 
-    public int getRuntime(){
-        return systemRuntime;
+    /**
+     * Returns the singleton instance of StatisticalFolder.
+     * 
+     * @return
+     */
+    public static StatisticalFolder getInstance() {
+        return StatisticalFolderHolder.instance;
     }
 
-    public int getNumLandmarks(){
-        return numLandmarks;
+    // Need to be Thread safe
+    private AtomicInteger systemRuntime;
+    private AtomicInteger numDetectedObjects;
+    private AtomicInteger numTrackedObjects;
+    private AtomicInteger numLandmarks;
+
+    /**
+     * Constructs a new StatisticalFolder object.
+     */
+    public StatisticalFolder() {
+        this.systemRuntime = new AtomicInteger(0);
+        this.numDetectedObjects = new AtomicInteger(0);
+        this.numLandmarks = new AtomicInteger(0);
+        this.numTrackedObjects = new AtomicInteger(0);
     }
 
-    public int getNumDetectedObjects(){
-        return numDetectedObjects;
+    /**
+     * Returns the runtime of the system.
+     * @return
+     */
+    public int getRuntime() {
+        return systemRuntime.get();
     }
 
-    public int getNumTrackedObjects(){
-        return numTrackedObjects;
+    /**
+     * Returns the number of landmarks identified.
+     * @return
+     */
+    public int getNumLandmarks() {
+        return numLandmarks.get();
+    }
+
+    /**
+     * Returns the number of detected objects.
+     * @return
+     */
+    public int getNumDetectedObjects() {
+        return numDetectedObjects.get();
+    }
+
+    /**
+     * Returns the number of tracked objects.
+     * @return
+     */
+    public int getNumTrackedObjects() {
+        return numTrackedObjects.get();
+    }
+
+    /**
+     * Increments the runtime by 1.
+     */
+    public void incrementRuntime() {
+        systemRuntime.incrementAndGet();
+    }
+
+    /**
+     * Increments the number of landmarks by 1.
+     */
+    public void incrementNumLandmarks() {
+        numLandmarks.incrementAndGet();
+    }
+
+    /**
+     * Increments the number of detected objects by 1.
+     */
+    public void incrementNumDetectedObjects() {
+        numDetectedObjects.incrementAndGet();
+    }
+
+    /**
+     * Increments the number of tracked objects by 1.
+     */
+    public void incrementNumTrackedObjects() {
+        numTrackedObjects.incrementAndGet();
     }
 }
