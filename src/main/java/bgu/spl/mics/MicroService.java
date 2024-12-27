@@ -159,7 +159,6 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         
         MessageBusImpl.getInstance().register(this);
-        System.out.println("microservice run");
         initialize();
         while (!terminated && !Thread.currentThread().isInterrupted()) { // Run until termination
             try {
@@ -183,7 +182,6 @@ public abstract class MicroService implements Runnable {
         }
         MessageBusImpl.getInstance().unregister(this);
         if (MessageBusImpl.getInstance().getMessageQueues().get(this) == null) {
-            System.out.println("microservice unregisterd");
         }
     }
 }

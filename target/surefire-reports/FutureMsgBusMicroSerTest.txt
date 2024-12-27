@@ -1,4 +1,11 @@
 -------------------------------------------------------------------------------
 Test set: FutureMsgBusMicroSerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.091 s -- in FutureMsgBusMicroSerTest
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.061 s <<< FAILURE! -- in FutureMsgBusMicroSerTest
+FutureMsgBusMicroSerTest.setUp -- Time elapsed: 0.035 s <<< ERROR!
+java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2
+	at FutureMsgBusMicroSerTest.setUp(FutureMsgBusMicroSerTest.java:211)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
