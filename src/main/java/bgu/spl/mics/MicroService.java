@@ -25,6 +25,8 @@ public abstract class MicroService implements Runnable {
 
     private boolean terminated = false;
     private final String name;
+    
+    //TODO: check if the map should be concurrent
     private Map<Class<? extends Message>, Callback<? extends Message>> messagecallbacks; // Map of callbacks
 
     /**
@@ -166,9 +168,15 @@ public abstract class MicroService implements Runnable {
                     callback.call(msg); // Execute the callback
                 }
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Handle interruption
-                System.out.println("microservice run");
+                System.out.println("microservice " + Thread.currentThread().getName()  + "InterruptedException");
+                MessageBusImpl.getInstance().unregister(this);
                 terminate(); // Safely terminate the loop
+                Thread.currentThread().interrupt(); // Handle interruption
+            }
+            catch (IllegalStateException e) {
+                System.out.println("microservice " + Thread.currentThread().getName()  + "IllegalStateException");
+                terminate(); // Safely terminate the loop
+                Thread.currentThread().interrupt(); // Handle interruption
             }
         
         }
