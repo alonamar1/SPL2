@@ -45,17 +45,17 @@ public class LiDarDataBase {
     public List<StampedCloudPoints> getCloudPoints() {
         return cloudPoints;
     }
-}
 
-/*    public static void main(String[] args) {
-        for (int i = 0; i <   3 ; i++) {
+   /*public static void main(String[] args) {
+        for (int i = 0; i < 30 ; i++) {
+            System.out.print("ID: ");
             System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getID());
-            System.out.print("     ");
+            System.out.print("    Time: ");
             System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getTime());
-            System.out.print("     ");
-            System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
+            //System.out.print(getInstance(".\\example_input_2\\lidar_data.json").getCloudPoints().get(i).getCloudPoints().toString());
             System.out.println("     ");
         }
-    }
-*/
+    }*/
+}
+
 
