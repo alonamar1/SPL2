@@ -137,7 +137,7 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
         if (messageQueues.get(m) == null) {
-            return null;
+            throw new IllegalStateException("MicroService was never registered");
         }
         return messageQueues.get(m).take(); // since blockingQueue is a thread safe class, we don't need "wait()" method.
     }
