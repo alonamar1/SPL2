@@ -25,6 +25,8 @@ public abstract class MicroService implements Runnable {
 
     private boolean terminated = false;
     private final String name;
+    
+    //TODO: check if the map should be concurrent
     private Map<Class<? extends Message>, Callback<? extends Message>> messagecallbacks; // Map of callbacks
 
     /**
