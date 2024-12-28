@@ -35,8 +35,19 @@ public class LandMark {
      * @param newLandmarkCloudPoints
      */
     public static void updateCoordiLandmark(LandMark prevlandmark, List<CloudPoint> newLandmarkCloudPoints) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCoordiLandmark'");
+        int countPoints = 1; // 1 because the first point is already updated
+        // update the coordinates of the landmark
+        for (CloudPoint cloudPoint : prevlandmark.getCoordinates()) {
+            cloudPoint.setX((newLandmarkCloudPoints.get(countPoints - 1).getX() + cloudPoint.getX()) / 2);
+            cloudPoint.setY((newLandmarkCloudPoints.get(countPoints - 1).getY() + cloudPoint.getY()) / 2);
+            countPoints++;
+        }
+        // add the new points to the landmark, if there are any
+        if (countPoints != newLandmarkCloudPoints.size()) {
+            for (int j = countPoints; j < newLandmarkCloudPoints.size(); j++) {
+                prevlandmark.getCoordinates().add(newLandmarkCloudPoints.get(j));
+            }
+        }
     }   
     
 }

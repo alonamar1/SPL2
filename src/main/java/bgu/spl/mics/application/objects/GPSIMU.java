@@ -39,7 +39,7 @@ public class GPSIMU {
      */
     public Pose getCurrentPose(int currentTick){
         setCurrentTick(currentTick);
-        // if the current tick is greater than the size of the prevPoses list, the robot is down.
+        // if the current tick is equle than the size of the prevPoses list, the robot is down.
         if (prevPoses.size() == currentTick){
             this.currentStatus = STATUS.DOWN;
         }
