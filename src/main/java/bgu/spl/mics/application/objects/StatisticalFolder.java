@@ -44,6 +44,7 @@ public class StatisticalFolder {
 
     /**
      * Returns the runtime of the system.
+     * 
      * @return
      */
     public int getRuntime() {
@@ -52,6 +53,7 @@ public class StatisticalFolder {
 
     /**
      * Returns the number of landmarks identified.
+     * 
      * @return
      */
     public int getNumLandmarks() {
@@ -60,7 +62,8 @@ public class StatisticalFolder {
 
     /**
      * Returns the number of detected objects.
-     * @return 
+     * 
+     * @return
      */
     public int getNumDetectedObjects() {
         return numDetectedObjects.get();
@@ -68,6 +71,7 @@ public class StatisticalFolder {
 
     /**
      * Returns the number of tracked objects.
+     * 
      * @return
      */
     public int getNumTrackedObjects() {
@@ -91,14 +95,16 @@ public class StatisticalFolder {
     /**
      * Increments the number of detected objects by 1.
      */
-    public void incrementNumDetectedObjects() {
-        numDetectedObjects.incrementAndGet();
+    public void incrementNumDetectedObjects(int amount) {
+        for (int i = 0; i < amount; i++)
+            numDetectedObjects.incrementAndGet();
     }
 
     /**
      * Increments the number of tracked objects by 1.
      */
-    public void incrementNumTrackedObjects() {
-        numTrackedObjects.incrementAndGet();
+    public void incrementNumTrackedObjects(int amount) {
+        for (int i = 0; i < amount; i++)
+            numTrackedObjects.incrementAndGet();
     }
 }

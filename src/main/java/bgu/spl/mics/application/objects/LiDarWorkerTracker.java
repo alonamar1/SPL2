@@ -52,7 +52,6 @@ public class LiDarWorkerTracker {
                     TrackedObject trackedObject = new TrackedObject(cp.getID(), cp.getTime(),
                             detectedObject.getDescreption(), cloudPoints);
                     this.trackedObjects.add(trackedObject); // add the tracked object to the list of tracked objects
-                    StatisticalFolder.getInstance().incrementNumTrackedObjects(); // add the tracked object to the statistical folder
                     return trackedObject;
                 }
             }

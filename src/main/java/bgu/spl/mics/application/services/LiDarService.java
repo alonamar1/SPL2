@@ -13,6 +13,7 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectEvent;
 import bgu.spl.mics.application.objects.LiDarWorkerTracker;
 import bgu.spl.mics.application.objects.STATUS;
+import bgu.spl.mics.application.objects.StatisticalFolder;
 import bgu.spl.mics.application.objects.TrackedObject;
 
 /**
@@ -73,7 +74,10 @@ public class LiDarService extends MicroService {
                         }
                     }
                     Future<Boolean> future = (Future<Boolean>) sendEvent(event); //להבין מה הפיוצר רוצה ממני
-                    MessageBusImpl.getInstance().complete(globalDetectedObjectsEvents.get(i), true); // complete the camera event
+                    // increment the number of tracked objects in the statistical folder
+                    StatisticalFolder.getInstance().incrementNumTrackedObjects(event.getTrackedObject().size()); 
+                    // complete the DetectedObjectsEvent
+                    MessageBusImpl.getInstance().complete(globalDetectedObjectsEvents.get(i), true); 
                     try {
                         if (future.get() == false) {
                             //TODO: Handle the case where the event was not completed successfully.
