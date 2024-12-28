@@ -122,7 +122,7 @@ public class CameraTest {
         thread1.start();
         thread2.start();
 
-        //להוסיך מה זה עושה
+        //waits for the microservices to initialize
         try {
             lanch.await();
         } catch (InterruptedException e) {
@@ -131,8 +131,6 @@ public class CameraTest {
 
         MessageBusImpl.getInstance().sendBroadcast(new TickBroadcast(1));        
         
-        
-
         try {
             thread1.join();
             thread2.join();

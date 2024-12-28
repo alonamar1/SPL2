@@ -13,6 +13,8 @@ import bgu.spl.mics.application.messages.DetectedObjectsEvent;
  * Represents a camera sensor on the robot. Responsible for detecting objects in
  * the environment.
  */
+
+
 public class Camera {
 
     private int id;
@@ -30,6 +32,14 @@ public class Camera {
 
     public STATUS getStatus() {
         return status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getFrequency() {
+        return frequency;
     }
 
     // TODO: Move this function to a Main class
@@ -64,14 +74,14 @@ public class Camera {
      * @return DetectedObjectsEvent object, detected objects event.
      */
     public DetectedObjectsEvent handleTick(int tick) {
-        StampedDetectedObjects stampedDetectedObjects = this.getDetectedObjects(tick + frequency); // get the detected objects at the next tick
+        StampedDetectedObjects stampedDetectedObjects = this.getDetectedObjects(tick); // get the detected objects at the next tick
         if (stampedDetectedObjects != null) {
             // check if an error was detected in the detected objects
             if (stampedDetectedObjects.checkError()) {
                 this.status = STATUS.ERROR; // TODO: Handle the case where an error was detected.
                 return null;
             }
-            DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick + frequency);
+            DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick);
             StatisticalFolder.getInstance().incrementNumDetectedObjects(); // increment the number of detected objects in the statistical folder
             return detectedObjectEvent;
         }

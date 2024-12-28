@@ -40,7 +40,8 @@ public class CameraService extends MicroService {
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            DetectedObjectsEvent detectedList = camera.handleTick(tick.getTick());
+            if (tick.getTick() - camera.getFrequency() >= 1) {
+            DetectedObjectsEvent detectedList = camera.handleTick(tick.getTick()-camera.getFrequency());
             // If the camera is down, broadcast a Crashed message and terminate the service.
             if (camera.getStatus() == STATUS.DOWN) {
                 sendBroadcast(new CrashedBroadcast("Camera"));
@@ -60,6 +61,7 @@ public class CameraService extends MicroService {
                     sendBroadcast(new CrashedBroadcast("Camera"));
                 }
             }
+        }
         });
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
             // TODO: Handle the case where other service was terminated.
