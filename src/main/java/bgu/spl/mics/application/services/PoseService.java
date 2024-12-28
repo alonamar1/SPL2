@@ -15,7 +15,7 @@ import bgu.spl.mics.application.objects.*;
  */
 public class PoseService extends MicroService {
 
-    GPSIMU gpsimu;
+    private GPSIMU gpsimu;
 
     /**
      * Constructor for PoseService.
@@ -48,7 +48,7 @@ public class PoseService extends MicroService {
             }
             // Do We need to check if the result is null????????
             if (result == null || !result) { // If the PoseEvent was not completed successfully
-                sendBroadcast(new CrashedBroadcast("PoseService")); // Broadcast a Crashed message
+                //sendBroadcast(new CrashedBroadcast("PoseService")); // Broadcast a Crashed message
                 terminate(); // Terminate the service
             }
         });

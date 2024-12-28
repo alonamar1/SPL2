@@ -8,9 +8,11 @@ import bgu.spl.mics.application.objects.TrackedObject;
 public class TrackedObjectEvent implements Event<Boolean> {
     
     private List<TrackedObject> trackedObject;
+    private int time;
 
-    public TrackedObjectEvent(){
+    public TrackedObjectEvent(int time){
         this.trackedObject = new LinkedList<TrackedObject>();
+        this.time = time;
     }
     
     public TrackedObjectEvent(List<TrackedObject> trackedObject){
@@ -23,5 +25,9 @@ public class TrackedObjectEvent implements Event<Boolean> {
 
     public void addTrackedObject(TrackedObject trackedObject) {
         this.trackedObject.add(trackedObject);
+    }
+
+    public int getTime() {
+        return time;
     }
 }

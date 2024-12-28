@@ -178,7 +178,6 @@ public abstract class MicroService implements Runnable {
                 terminate(); // Safely terminate the loop
                 Thread.currentThread().interrupt(); // Handle interruption
             }
-        
         }
         MessageBusImpl.getInstance().unregister(this);
         if (MessageBusImpl.getInstance().getMessageQueues().get(this) == null) {

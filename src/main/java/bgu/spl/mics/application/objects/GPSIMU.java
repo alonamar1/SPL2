@@ -21,18 +21,17 @@ public class GPSIMU {
      * @param status
      * @param poses
      */
-    public GPSIMU(int tick, List<Pose> poses){
+    public GPSIMU(List<Pose> poses){
         this.currentTick = 0;
         this.currentStatus = STATUS.UP;
         this.prevPoses = poses;
     }
-    
+    //TODO: Add a ERROR status to the STATUS enum
     public GPSIMU(){
         this.currentTick = 0;
         this.currentStatus = STATUS.UP;
         this.prevPoses = new ArrayList<>();
     }
-
     /**
      * Return the current pose of the robot in time tick.
      * @param currentTick

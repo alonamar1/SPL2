@@ -22,5 +22,4 @@ public class CloudPoint {
     public double getY(){
         return y;
     }
-
 }

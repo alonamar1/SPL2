@@ -27,6 +27,16 @@ public class LandMark {
 
     public List<CloudPoint> getCoordinates() {
         return coordinates;
+    }
+
+    /**
+     * Updates the coordinates of a landmark. from a given list of cloud points.
+     * @param prevlandmark
+     * @param newLandmarkCloudPoints
+     */
+    public static void updateCoordiLandmark(LandMark prevlandmark, List<CloudPoint> newLandmarkCloudPoints) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCoordiLandmark'");
     }   
     
 }
