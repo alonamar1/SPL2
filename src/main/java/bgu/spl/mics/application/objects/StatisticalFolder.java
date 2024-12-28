@@ -96,15 +96,12 @@ public class StatisticalFolder {
      * Increments the number of detected objects by 1.
      */
     public void incrementNumDetectedObjects(int amount) {
-        for (int i = 0; i < amount; i++)
-            numDetectedObjects.incrementAndGet();
+            numDetectedObjects.addAndGet(amount);
     }
 
     /**
      * Increments the number of tracked objects by 1.
      */
     public void incrementNumTrackedObjects(int amount) {
-        for (int i = 0; i < amount; i++)
-            numTrackedObjects.incrementAndGet();
-    }
+            numTrackedObjects.addAndGet(amount);
 }
