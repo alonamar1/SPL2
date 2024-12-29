@@ -59,27 +59,8 @@ public class FusionSlamService extends MicroService {
             // Process all the ready to process pairs. TODO: האם צריך לעשות את זה כל זמן שיש מה לעשות ?
             while (!this.fusionSlam.isReadyToProcessPairsEmpty()) {
                 ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.getReadyToProcessPairs().remove(0);
-                // Remove the pose from the list.
-                this.fusionSlam.getPoses().remove(toProcess.getKey()); 
-                // Remove the tracked object from the list.
-                this.fusionSlam.getTrackedObjectsReciv().remove(toProcess.getValue()); 
                 // Process the pair of pose and every tracked object.
-                for (TrackedObject trackedObject : toProcess.getValue().getTrackedObject()) {
-                    // Check if the tracked object is already a landmark.
-                    LandMark Prevlandmark = this.fusionSlam.isDetectedLandmark(trackedObject.getId());
-                    // Convert the cloud pointes of the tracked object to global coordinates.
-                    List<CloudPoint> newLandmarkCloudPoints = fusionSlam.convertToGlobalCoordinateSys(trackedObject.getCoordinates(), toProcess.getKey());
-                    // If the tracked object is a new landmark.
-                    if (Prevlandmark == null) {
-                        LandMark newLandmark = new LandMark(trackedObject.getId(), trackedObject.getDescription(), newLandmarkCloudPoints);
-                        this.fusionSlam.getLandmarks().add(newLandmark);
-                        // Increment the number of landmarks detected.
-                        StatisticalFolder.getInstance().incrementNumLandmarks(); 
-                    } else {
-                        // Update the coordinates of the existing landmark.
-                        LandMark.updateCoordiLandmark(Prevlandmark, newLandmarkCloudPoints);
-                    }
-                }
+                this.fusionSlam.ProcessReadyToProcessPair(toProcess);
             }
         });
 
