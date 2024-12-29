@@ -13,6 +13,7 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectEvent;
 import bgu.spl.mics.application.objects.LiDarWorkerTracker;
 import bgu.spl.mics.application.objects.STATUS;
+import bgu.spl.mics.application.objects.StatisticalFolder;
 import bgu.spl.mics.application.objects.TrackedObject;
 
 /**
@@ -33,7 +34,7 @@ public class LiDarService extends MicroService {
      * Constructor for LiDarService.
      *
      * @param liDarTracker The LiDAR tracker object that this service will use
-     * to process data.
+     *                     to process data.
      */
     public LiDarService(LiDarWorkerTracker liDarTracker) {
         super("LiDarService");
@@ -59,35 +60,40 @@ public class LiDarService extends MicroService {
             TrackedObjectEvent event;
             for (int i = 0; i < globalDetectedObjectsEvents.size(); i++) {
                 if (tick.getTick() >= globalDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
-                    event = new TrackedObjectEvent(globalDetectedObjectsEvents.get(i).getTime()); // create a new TrackedObjectEvent
+                    event = new TrackedObjectEvent(globalDetectedObjectsEvents.get(i).getTime()); // create a new
+                                                                                                  // TrackedObjectEvent
                     for (int j = 0; j < globalDetectedObjectsEvents.get(i).getDetectedObject().size(); j++) {
-                        TrackedObject trackedObject = liDarTracker.getTrackedObject(globalDetectedObjectsEvents.get(i).getDetectedObject().get(j), globalDetectedObjectsEvents.get(i).getTime());
+                        TrackedObject trackedObject = liDarTracker.getTrackedObject(
+                                globalDetectedObjectsEvents.get(i).getDetectedObject().get(j),
+                                globalDetectedObjectsEvents.get(i).getTime());
                         // if the tracked object is not null, add it to the event
                         if (trackedObject != null) {
                             event.addTrackedObject(trackedObject);
-                        }
-                        else if (liDarTracker.getStatus() == STATUS.ERROR) {
+                        } else if (liDarTracker.getStatus() == STATUS.ERROR) {
                             // if the status of the LiDarTracker is ERROR, terminate the LiDarService
                             sendBroadcast(new CrashedBroadcast("LiDar"));
                             terminate();
                         }
                     }
-                    Future<Boolean> future = (Future<Boolean>) sendEvent(event); //להבין מה הפיוצר רוצה ממני
-                    MessageBusImpl.getInstance().complete(globalDetectedObjectsEvents.get(i), true); // complete the camera event
+                    Future<Boolean> future = (Future<Boolean>) sendEvent(event); // להבין מה הפיוצר רוצה ממני
+                    // increment the number of tracked objects in the statistical folder
+                    StatisticalFolder.getInstance().incrementNumTrackedObjects(event.getTrackedObject().size());
+                    // complete the DetectedObjectsEvent
+                    MessageBusImpl.getInstance().complete(globalDetectedObjectsEvents.get(i), true);
                     try {
                         if (future.get() == false) {
-                            //TODO: Handle the case where the event was not completed successfully.
+                            // TODO: Handle the case where the event was not completed successfully.
                         }
                     } catch (Exception e) {
                         e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                        //sendBroadcast(new CrashedBroadcast("LiDar"));
+                        // sendBroadcast(new CrashedBroadcast("LiDar"));
                     }
                 }
             }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-                // TODO: Handle the case where other service was terminated.
+            // TODO: Handle the case where other service was terminated.
             // if the terminated service is TimeService, terminate the LiDarService.
             if (terminated.getSenderId().equals("TimeService")) {
                 sendBroadcast(new TerminatedBroadcast("LiDar"));

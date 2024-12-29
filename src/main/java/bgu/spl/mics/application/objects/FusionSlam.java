@@ -52,6 +52,35 @@ public class FusionSlam {
         return readyToProcessPairs;
     }
 
+        /**
+     * Processes a ReadyToProcessPair of Pose and TrackedObjectEvent.
+     * @param toProcess
+     */
+    public void ProcessReadyToProcessPair(ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess) {
+        // Remove the pose from the list.
+        // this.fusionSlam.getPoses().remove(toProcess.getKey());
+        // Remove the tracked object from the list.
+        this.getTrackedObjectsReciv().remove(toProcess.getValue());
+        // Process the pair of pose and every tracked object.
+        for (TrackedObject trackedObject : toProcess.getValue().getTrackedObject()) {
+            // Check if the tracked object is already a landmark.
+            LandMark Prevlandmark = this.isDetectedLandmark(trackedObject.getId());
+            // Convert the cloud pointes of the tracked object to global coordinates.
+            List<CloudPoint> newLandmarkCloudPoints = this.convertToGlobalCoordinateSys(trackedObject.getCoordinates(), toProcess.getKey());
+            // If the tracked object is a new landmark.
+            if (Prevlandmark == null) {
+                LandMark newLandmark = new LandMark(trackedObject.getId(), trackedObject.getDescription(),
+                        newLandmarkCloudPoints);
+                this.getLandmarks().add(newLandmark);
+                // Increment the number of landmarks detected.
+                StatisticalFolder.getInstance().incrementNumLandmarks();
+            } else {
+                // Update the coordinates of the existing landmark.
+                LandMark.updateCoordiLandmark(Prevlandmark, newLandmarkCloudPoints);
+            }
+        }
+    }
+
     /**
      * checks if a LandMark is detected.
      * @param id
@@ -84,8 +113,10 @@ public class FusionSlam {
         List<CloudPoint> globalCloudPoints = new LinkedList<>();
         for (CloudPoint cloudPoint : cloudPoints) {
             double radiansYaw = pose.getYaw() * (Math.PI / 180);
-            float x = (float) (cloudPoint.getX() * Math.cos(radiansYaw) - cloudPoint.getY() * Math.sin(radiansYaw) + pose.getX());
-            float y = (float) (cloudPoint.getX() * Math.sin(radiansYaw) + cloudPoint.getY() * Math.cos(radiansYaw) + pose.getY());
+            float x = (float) (cloudPoint.getX() * Math.cos(radiansYaw) - cloudPoint.getY() * Math.sin(radiansYaw)
+                    + pose.getX());
+            float y = (float) (cloudPoint.getX() * Math.sin(radiansYaw) + cloudPoint.getY() * Math.cos(radiansYaw)
+                    + pose.getY());
             globalCloudPoints.add(new CloudPoint(x, y));
         }
         return globalCloudPoints;

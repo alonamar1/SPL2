@@ -97,7 +97,7 @@ public class Camera {
                 return null;
             }
             DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick);
-            StatisticalFolder.getInstance().incrementNumDetectedObjects(); // increment the number of detected objects in the statistical folder
+            StatisticalFolder.getInstance().incrementNumDetectedObjects(stampedDetectedObjects.getDetectedObject().size()); // increment the number of detected objects in the statistical folder
             return detectedObjectEvent;
         }
         return null;
