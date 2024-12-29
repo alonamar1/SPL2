@@ -91,6 +91,7 @@ public class LiDarService extends MicroService {
             // if the terminated service is TimeService, terminate the LiDarService.
             if (terminated.getSenderId().equals("TimeService")) {
                 sendBroadcast(new TerminatedBroadcast("LiDar"));
+                this.liDarTracker.setStatus(STATUS.DOWN);
                 terminate();
             }
         });
