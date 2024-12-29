@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 import bgu.spl.mics.Broadcast;
@@ -177,9 +178,7 @@ public class FutureMsgBusMicroSerTest {
             subscribeEvent(terminate.class, (event) -> {
                 System.out.println(getName() + " handled terminate: " + event.getMessage());
                 terminate();
-                if (MessageBusImpl.getInstance().getMessageQueues().containsKey(this)) {
-                    System.out.println(getName() + " unregisterd");
-                }
+                
             });
             lanch.countDown();
         }
@@ -203,6 +202,10 @@ public class FutureMsgBusMicroSerTest {
 
             public boolean getTestEvent1() {
                 return testEvent1;
+            }
+            public boolean setTest() {
+                test = false;
+                return test;
             }
     
             @Override
@@ -275,10 +278,6 @@ public class FutureMsgBusMicroSerTest {
                         test = true;
                     });
                     
-                    subscribeEvent(terminate.class, (event) -> {
-                        System.out.println(getName() + " handled terminate: " + event.getMessage());
-                        terminate();
-                    });
                     lanch.countDown();
                 }
     }
@@ -369,8 +368,6 @@ public class FutureMsgBusMicroSerTest {
         for (int i = 0; i < microServices.size(); i++) {
             assertTrue(unregisterTest(microServices.get(i)));
         }
-
-        //להוסיף מה עושים עם await
     }
 
     @Test
@@ -403,39 +400,82 @@ public class FutureMsgBusMicroSerTest {
 
         //unregister a microservice that is not registered
         MessageBusImpl.getInstance().unregister(tempTempMicroService);
-        assertFalse(unregisterTest(tempTempMicroService));
+        assertTrue(unregisterTest(tempTempMicroService));
         if (!unregisterTest(tempTempMicroService)) {
-            System.out.println(tempTempMicroService.getName() + " not found");
+            System.out.println(tempTempMicroService.getName() + " found");
         }
+
         //check that the only relevant microservices are subscribed to the broadcast
         if (!testMicroService3.getTest()) {
             MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
         }
         assertTrue(testMicroService3.getTest());
+        if (testMicroService3.getTest())
+        {
+            System.out.println(("testMicroService3 got the broadcast"));
+
+        }
         assertFalse(testMicroService4.getTest());
         if (!testMicroService4.getTest()) {
+            System.out.println(("testMicroService4 didnt get the broadcast as expacted"));
             MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast2(""));
         }
         MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
         assertTrue(testMicroService4.getTest());
+        if (testMicroService4.getTest())
+        {
+            System.out.println(("testMicroService4 got the broadcast"));
+
+        }
 
         //check that the only relevant microservices are subscribed to the events
         MessageBusImpl.getInstance().sendEvent(new TestEvent1(""));
         assertTrue(testMicroService3.getTestEvent1());
-        assertFalse(unregisterTest(testMicroService4));
-        testMicroService4.setTest();
-
-        //checks that microservice4 doesn't get the broadcast
-        if (!testMicroService4.getTest()) {
-            MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast2(""));
+        if (testMicroService3.getTestEvent1())
+        {
+            System.out.println(("testMicroService3 got the event"));
         }
-        assertFalse(testMicroService4.getTest());
+        assertFalse(unregisterTest(testMicroService4));
+        testMicroService3.setTest();
+        if (! testMicroService3.setTest())
+        {
+            System.out.println(("test reterned to be false"));
+        }
 
-        //check that the only relevant microservices are subscribed to the events
-        MessageBusImpl.getInstance().sendEvent(new TestEvent2(""));
-        assertTrue(testMicroService4.getTestEvent2());
-        assertFalse(unregisterTest(testMicroService3));
+        MessageBusImpl.getInstance().sendEvent(new terminate(""));
 
+         //check that the only relevant microservices are subscribed to the events
+         MessageBusImpl.getInstance().sendEvent(new TestEvent2(""));
+         assertTrue(testMicroService4.getTestEvent2());
+         if (testMicroService4.getTestEvent2())
+         {
+             System.out.println(("testMicroService4 got the event"));
+         }
+
+        //checks that microservice3 doesn't get the broadcast
+        if (!testMicroService3.getTest()) {
+            MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
+        }
+        assertFalse(testMicroService3.getTest());
+        if (testMicroService3.getTest())
+        {
+            System.out.println(("microservice3 doesn't get messages anymore"));
+        }
+        MessageBusImpl.getInstance().sendEvent(new TestEvent1(""));
+
+
+        //checks that awaitMessage throws exaptions for unregistered microservice
+        try { MessageBusImpl.getInstance().awaitMessage(tempTempMicroService);
+            fail("Expected IllegalStateException for unregistered MicroService.");
+        } catch (IllegalStateException e) {
+            assertTrue(true); // Exception is expected
+            System.out.println(("awaitmessage throws exaptions"));
+
+        } catch (InterruptedException e) {
+            fail("Unexpected interruption.");
+        }
+    
+        
         //waits for all the microservices to terminate
         try {
             thread1.join();
@@ -443,6 +483,9 @@ public class FutureMsgBusMicroSerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();    
         }
+
+        System.out.println(("test has finished"));
+
     }
 
     @Test
@@ -499,6 +542,7 @@ public class FutureMsgBusMicroSerTest {
             }
 
         }
+
         return false;
     }
 
