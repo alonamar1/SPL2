@@ -56,7 +56,7 @@ public class FusionSlam {
      * Processes a ReadyToProcessPair of Pose and TrackedObjectEvent.
      * @param toProcess
      */
-    public void ProcessReadyToProcessPair(ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess) {
+    public LandMark ProcessReadyToProcessPair(ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess) {
         // Remove the pose from the list.
         // this.fusionSlam.getPoses().remove(toProcess.getKey());
         // Remove the tracked object from the list.
@@ -79,6 +79,7 @@ public class FusionSlam {
                 LandMark.updateCoordiLandmark(Prevlandmark, newLandmarkCloudPoints);
             }
         }
+        return landmarks.get(landmarks.size()-1);
     }
 
     /**
