@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
@@ -13,8 +14,6 @@ import bgu.spl.mics.application.messages.DetectedObjectsEvent;
  * Represents a camera sensor on the robot. Responsible for detecting objects in
  * the environment.
  */
-
-
 public class Camera {
 
     private int id;
@@ -26,8 +25,15 @@ public class Camera {
         this.id = id;
         this.frequency = freq;
         this.status = STATUS.UP;
-        this.detectedObjectsList = cameraData(filepath);
-        
+        cameraData(filepath);
+    }
+
+    public void setStatus(STATUS stat) {
+        this.status = stat;
+    }
+
+    public List<StampedDetectedObjects> getDetectedObjectsList() {
+        return detectedObjectsList;
     }
 
     public STATUS getStatus() {
@@ -47,17 +53,25 @@ public class Camera {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(filepath)) {
             // Convert JSON File to Java Object
-            return gson.fromJson(reader, new TypeToken<List<StampedCloudPoints>>(){}.getType());
+            this.detectedObjectsList = gson.fromJson(reader, new TypeToken<List<StampedDetectedObjects>>() {
+            }.getType());
+            if (detectedObjectsList == null || detectedObjectsList.isEmpty()) {
+                System.err.println("No detected objects found in JSON file.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JsonSyntaxException e) {
+            System.err.println("Invalid JSON format: " + e.getMessage());
         }
         return null;
     }
 
     /**
      * Returns the detected objects at a specific time.
+     *
      * @param time
-     * @return StampedDetectedObjects object, detected objects at a specific time.
+     * @return StampedDetectedObjects object, detected objects at a specific
+     * time.
      */
     public StampedDetectedObjects getDetectedObjects(int time) {
         for (StampedDetectedObjects stampedDetectedObjects : detectedObjectsList) {
@@ -70,6 +84,7 @@ public class Camera {
 
     /**
      * Handles a tick event.
+     *
      * @param tick
      * @return DetectedObjectsEvent object, detected objects event.
      */
