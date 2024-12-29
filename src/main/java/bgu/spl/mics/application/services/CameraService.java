@@ -37,6 +37,11 @@ public class CameraService extends MicroService {
      * sending
      * DetectObjectsEvents.
      */
+    public Camera getcamera()
+    {
+        return camera;
+    }
+
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {

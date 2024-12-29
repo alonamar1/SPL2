@@ -1,8 +1,9 @@
 package bgu.spl.mics.application.objects;
-
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -25,7 +26,12 @@ public class Camera {
         this.id = id;
         this.frequency = freq;
         this.status = STATUS.UP;
-        cameraData(filepath);
+        try {
+            detectedObjectsList = cameraData(filepath,"camera"+id);
+        } catch (IOException e) {
+            e.printStackTrace();
+            detectedObjectsList = null;
+        }
     }
 
     public void setStatus(STATUS stat) {
@@ -49,18 +55,17 @@ public class Camera {
     }
 
     // TODO: Move this function to a Main class
-    private List<StampedDetectedObjects> cameraData(String filepath) {
+    private List<StampedDetectedObjects> cameraData(String filepath, String cameraID) throws IOException {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(filepath)) {
             // Convert JSON File to Java Object
-            this.detectedObjectsList = gson.fromJson(reader, new TypeToken<List<StampedDetectedObjects>>() {
-            }.getType());
-            if (detectedObjectsList == null || detectedObjectsList.isEmpty()) {
-                System.err.println("No detected objects found in JSON file.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JsonSyntaxException e) {
+            Type type = new TypeToken<Map<String, List<List<StampedDetectedObjects>>>>() {}.getType();
+            Map<String, List<List<StampedDetectedObjects>>> cameras = gson.fromJson(reader, type);
+            List<List<StampedDetectedObjects>> cameraList = cameras.get(cameraID);
+            List<StampedDetectedObjects> cameraSDO = cameraList.stream().flatMap(List::stream).toList();  
+            return cameraSDO;          
+        }
+        catch (JsonSyntaxException e) {
             System.err.println("Invalid JSON format: " + e.getMessage());
         }
         return null;

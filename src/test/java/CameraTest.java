@@ -8,6 +8,7 @@ import bgu.spl.mics.application.objects.DetectedObject;
 import bgu.spl.mics.application.services.CameraService;
 
 
+
 public class CameraTest {
 
     private static class TestMicroService extends CameraService {
@@ -35,6 +36,7 @@ public class CameraTest {
     public void setUp()
     {
         System.out.print("test has started");
+        /* 
         CountDownLatch lanch = new CountDownLatch(2); // 2 microservices
         Camera camera = new Camera(1, 2, "C:\\Users\\alona\\SPL2\\example_input_2\\camera_data.json");
         TestMicroService camSer1 = new TestMicroService(camera, lanch);
@@ -54,19 +56,24 @@ public class CameraTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+            */
 
-        DetectedObjectsEvent event = camSer1.getCamera().handleTick(1);
+        Camera camera = new Camera(1, 2, "C:\\Users\\alona\\SPL2\\example_input_2\\camera_data.json");
+        CameraService cam1= new CameraService(camera);
+        DetectedObjectsEvent event = cam1.getcamera().handleTick(1);
         for (DetectedObject d : event.getDetectedObject())
         {
             System.out.println("id: " + d.getID() +", description: " + d.getDescreption());
         }   
         
+        /* 
         try {
             thread1.join();
             thread2.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+            */
 
 
     }
