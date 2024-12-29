@@ -7,10 +7,12 @@ import bgu.spl.mics.application.objects.TrackedObject;
 
 public class TrackedObjectEvent implements Event<Boolean> {
     
+    private String id;
     private List<TrackedObject> trackedObject;
     private int time;
 
-    public TrackedObjectEvent(int time){
+    public TrackedObjectEvent(String id, int time){
+        this.id = id;
         this.trackedObject = new LinkedList<TrackedObject>();
         this.time = time;
     }
@@ -29,5 +31,9 @@ public class TrackedObjectEvent implements Event<Boolean> {
 
     public int getTime() {
         return time;
+    }
+    
+    public String getId() {
+        return id;
     }
 }

@@ -60,7 +60,7 @@ public class LiDarService extends MicroService {
             TrackedObjectEvent event;
             for (int i = 0; i < globalDetectedObjectsEvents.size(); i++) {
                 if (tick.getTick() >= globalDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
-                    event = new TrackedObjectEvent(globalDetectedObjectsEvents.get(i).getTime()); // create a new
+                    event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), globalDetectedObjectsEvents.get(i).getTime()); // create a new
                                                                                                   // TrackedObjectEvent
                     for (int j = 0; j < globalDetectedObjectsEvents.get(i).getDetectedObject().size(); j++) {
                         TrackedObject trackedObject = liDarTracker.getTrackedObject(

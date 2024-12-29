@@ -62,8 +62,8 @@ public class Camera {
             Type type = new TypeToken<Map<String, List<List<StampedDetectedObjects>>>>() {}.getType();
             Map<String, List<List<StampedDetectedObjects>>> cameras = gson.fromJson(reader, type);
             List<List<StampedDetectedObjects>> cameraList = cameras.get(cameraID);
-            List<StampedDetectedObjects> cameraSDO = cameraList.stream().flatMap(List::stream).toList();  
-            return cameraSDO;          
+            List<StampedDetectedObjects> cameraSDO = cameraList.stream().flatMap(List::stream).toList();
+            return cameraSDO;
         }
         catch (JsonSyntaxException e) {
             System.err.println("Invalid JSON format: " + e.getMessage());
