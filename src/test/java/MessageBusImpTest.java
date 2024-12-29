@@ -1,5 +1,5 @@
 
-/*import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -49,7 +49,7 @@ public class MessageBusImpTest {
         thread3.start();
         thread4.start();
     }
-*/
+
     /* 
     @After
     public void tearDown() {
@@ -66,19 +66,19 @@ public class MessageBusImpTest {
             fail("Thread interruption during cleanup.");
         }
     }
-     */ 
-    // @Test
-    // public void testRegisterAndUnregister() {
-    //     System.out.println("test 1");
-    //     //messageBus.register(microService1);
-    //     //messageBus.register(microService2);
+     */
+    @Test
+    public void testRegisterAndUnregister() {
+        System.out.println("test 1");
+        //messageBus.register(microService1);
+        //messageBus.register(microService2);
 
-    //     if (messageBus.getMessageQueues().get(microService1) != null) {
-    //         System.out.println("microservice 1 registerd");
-    //     }
-    //     if (messageBus.getMessageQueues().get(microService2) != null) {
-    //         System.out.println("microservice 2 registerd");
-    //     }
+        if (messageBus.getMessageQueues().get(microService1) != null) {
+            System.out.println("microservice 1 registerd");
+        }
+        if (messageBus.getMessageQueues().get(microService2) != null) {
+            System.out.println("microservice 2 registerd");
+        }
 
         //Broadcast broadcast1 = new ExampleBroadcast("1");
         //messageBus.sendBroadcast(broadcast1);
@@ -93,7 +93,7 @@ public class MessageBusImpTest {
             System.out.println("sendevent successed");
         }
             */
-/*
+
         try {
             // Ensure MicroServices can receive messages
           //  assertNotNull(messageBus.awaitMessage(microService1));
@@ -123,7 +123,7 @@ public class MessageBusImpTest {
         } catch (InterruptedException e) {
             fail("Unexpected interruption.");
         }
-    }*/
+    }
 /* 
     @Test(timeout = 5000)
     public void testSubscribeEvent() {
@@ -208,5 +208,5 @@ public class MessageBusImpTest {
         // Ensure the future is null (no subscribers)
         assertNull(future);
     }
-}*/
-
+        */
+}

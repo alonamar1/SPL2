@@ -1,10 +1,10 @@
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.LinkedList;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -34,7 +34,6 @@ public class FutureMsgBusMicroSerTest {
         public String getName() {
             return "TestEvent1";
         }
-
     }
 
     public static class terminate implements Event<String> {
@@ -184,9 +183,9 @@ public class FutureMsgBusMicroSerTest {
             });
             lanch.countDown();
         }
+    }
 
         private static class TestMicroService3 extends MicroService {
-
             private final CountDownLatch lanch;
             private boolean test;
             private boolean testEvent1;
@@ -231,6 +230,7 @@ public class FutureMsgBusMicroSerTest {
                 });
                 lanch.countDown();
             }
+        }
 
             private static class TestMicroService4 extends MicroService {
 
@@ -272,7 +272,9 @@ public class FutureMsgBusMicroSerTest {
         
                     subscribeBroadcast(TestBroadcast2.class, (broadcast) -> {
                         System.out.println(getName() + " handled Broadcast 2: " + broadcast.getMessage());
+                        test = true;
                     });
+                    
                     subscribeEvent(terminate.class, (event) -> {
                         System.out.println(getName() + " handled terminate: " + event.getMessage());
                         terminate();
@@ -284,7 +286,6 @@ public class FutureMsgBusMicroSerTest {
     @Test
     public void generalTest1() {
 
-        // להוסיף טסט התקלות
         System.out.println(("generalTest1 has started"));
         CountDownLatch lanch = new CountDownLatch(4); // 4 microservices
 
@@ -406,7 +407,6 @@ public class FutureMsgBusMicroSerTest {
         if (!unregisterTest(tempTempMicroService)) {
             System.out.println(tempTempMicroService.getName() + " not found");
         }
-
         //check that the only relevant microservices are subscribed to the broadcast
         if (!testMicroService3.getTest()) {
             MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
@@ -444,7 +444,6 @@ public class FutureMsgBusMicroSerTest {
             e.printStackTrace();    
         }
     }
-
 
     @Test
     //checks if a microservice is registered and prints the results
@@ -500,7 +499,6 @@ public class FutureMsgBusMicroSerTest {
             }
 
         }
-
         return false;
     }
 
@@ -541,7 +539,7 @@ public class FutureMsgBusMicroSerTest {
 
     //checks if a microservice is unregistered and prints the results
     public boolean unregisterTest(MicroService m) {
-        if (MessageBusImpl.getInstance().getMessageQueues().containsKey(m)) {
+        if (MessageBusImpl.getInstance().getMessageQueues().get(m) != null) {
             System.out.println("contains key " + m.getName());
             if (!MessageBusImpl.getInstance().getMessageQueues().get(m).isEmpty()) {
                 System.out.println(m.getName() + " is not empty");
@@ -551,13 +549,6 @@ public class FutureMsgBusMicroSerTest {
         return true;
     }
 
-    public MicroService handledBy(Event e)
-    {
-        MessageBusImpl.getInstance().sendEvent(e);
-        
-
-        return null;
-    }
 
     @Test
     public void testNoSubscribers() {
@@ -567,9 +558,11 @@ public class FutureMsgBusMicroSerTest {
             System.out.println("no subscribers");
         }
     }
+}
+
+    
 
 
     
 
 
-}
