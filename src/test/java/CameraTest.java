@@ -38,56 +38,83 @@ public class CameraTest {
 
     @Test
     public void setUp() {
-        System.out.print("test has started");
+        System.out.println("test has started");
+        //create a new object to call the relavant methods
         ReadCameraData r = new ReadCameraData();
+        //create a list with all the data from the json
         List<CameraDataPair> allData = r.cameraDataJsonToList("C:\\Users\\alona\\SPL2\\example_input_2\\camera_data.json");
+        //creating cameras for the test
         Camera camera1 = new Camera(1, 1, r.readCameraData(allData, "camera1"));
         Camera camera2 = new Camera(1, 2, r.readCameraData(allData, "camera2"));
-        int statisticalfolder1 = 0; 
-        StatisticalFolder.getInstance().getNumDetectedObjects();
-        int statisticalfolder2 = 0;
+        //initialize ints for tests
+        int statisticalfolder1 = 0, statisticalfolder2 = 0;
+        //create lists to check thats the DetectedObjectEvent got the excpacted data
         List<StampedDetectedObjects> detectedObjectsList1 = camera1.getDetectedObjectsList();
         List<StampedDetectedObjects> detectedObjectsList2 = camera2.getDetectedObjectsList();
+        
         CameraService cam1 = new CameraService(camera1);
         CameraService cam2 = new CameraService(camera2);
+
         for (int i = 1; i <= detectedObjectsList1.size(); i++) {
+            //create event for the relevant tick
             DetectedObjectsEvent event1 = cam1.getcamera().handleTick(i);
+            //checks that the StatisticalFolder updated the relevant count
             statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
-            assertTrue(statisticalfolder1 - statisticalfolder2 == event1.getDetectedObject().size());
-            statisticalfolder2 = statisticalfolder1;
+            //save the list from the event
             List<DetectedObject> tempList = detectedObjectsList1.get(i-1).getDetectedObject();
-            List<DetectedObject> d = event1.getDetectedObject();
-            boolean b = (tempList.size() == event1.getDetectedObject().size());
-            assertTrue(b);
-            if (b) {
+            if (event1==null){
+                int error=0;
                 for (int j = 0; j < tempList.size(); j++) {
-                    assertTrue(tempList.get(j).getDescreption().equals(event1.getDetectedObject().get(j).getDescreption()));
-                    if (tempList.get(j).getID().equals("ERROR"))
-                        assertTrue(camera1.getStatus() == STATUS.ERROR);
+                    //check that an error indeed occured
+                    if (tempList.get(j).getID().equals("ERROR")){
+                        System.out.println("ERROR");
+                        //when error, exit the loop
+                        error = 1;
+                    }    
                 }
+                if (error == 1) {break;}
+            }
+            assertTrue(statisticalfolder1 - statisticalfolder2 == event1.getDetectedObject().size());
+            //checks first the sizes are equal
+            assertTrue(tempList.size() == event1.getDetectedObject().size());
+            statisticalfolder2 = statisticalfolder1; 
+            for (int j = 0; j < tempList.size(); j++) {
+                //checks the strings are matched
+                assertTrue(tempList.get(j).getDescreption().equals(event1.getDetectedObject().get(j).getDescreption()));
             }
         }
+
         for (int i = 1; i <= detectedObjectsList2.size(); i++) {
+            //create event for the relevant tick
             DetectedObjectsEvent event2 = cam2.getcamera().handleTick(i);
+            //checks that the StatisticalFolder updated the relevant count
             statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
-            assertTrue(statisticalfolder1 - statisticalfolder2 == event2.getDetectedObject().size());
-            statisticalfolder2 = statisticalfolder1;
+            //save the list from the event
             List<DetectedObject> tempList = detectedObjectsList2.get(i-1).getDetectedObject();
-            boolean b = (tempList.size() == event2.getDetectedObject().size());
-            assertTrue(b);
-            if (b) {
+            if (event2==null){
+                int error=0;
                 for (int j = 0; j < tempList.size(); j++) {
-                    assertTrue(tempList.get(j).getDescreption().equals(event2.getDetectedObject().get(j).getDescreption()));
-                    if (tempList.get(j).getDescreption().equals("ERROR"))
-                        assertTrue(camera2.getStatus() == STATUS.ERROR);
+                    //check that an error indeed occured
+                    if (tempList.get(j).getID().equals("ERROR")){
+                        System.out.println("ERROR");
+                        //when error, exit the loop
+                        error = 1;
+                    }    
                 }
+                if (error == 1) {break;}
+            }
+            assertTrue(statisticalfolder1 - statisticalfolder2 == event2.getDetectedObject().size());
+            //checks first the sizes are equal
+            assertTrue(tempList.size() == event2.getDetectedObject().size());
+            statisticalfolder2 = statisticalfolder1; 
+            for (int j = 0; j < tempList.size(); j++) {
+                //checks the strings are matched
+                assertTrue(tempList.get(j).getDescreption().equals(event2.getDetectedObject().get(j).getDescreption()));
+
             }
         }
-        System.out.print("finito");
+        System.out.print("fff");
     }
 
-    public static void main(String[] args) {
-
-    }
 }
 

@@ -1,3 +1,4 @@
+C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\CameraDataPair.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\GurionRockRunner.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\messages\CrashedBroadcast.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\messages\DetectedObjectsEvent.java
@@ -21,6 +22,7 @@ C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\objects\StampedDetect
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\objects\StatisticalFolder.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\objects\STATUS.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\objects\TrackedObject.java
+C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\ReadCameraData.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\services\CameraService.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\services\FusionSlamService.java
 C:\Users\alona\SPL2\src\main\java\bgu\spl\mics\application\services\LiDarService.java
