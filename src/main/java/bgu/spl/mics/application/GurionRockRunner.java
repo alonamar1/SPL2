@@ -15,11 +15,13 @@ import org.json.JSONTokener;
 import com.google.gson.Gson;
 
 import bgu.spl.mics.application.Configurations.MainConfiguration;
+import bgu.spl.mics.application.Configurations.PoseData;
 import bgu.spl.mics.application.Configurations.ReadConfiguration;
 import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.DetectedObject;
 import bgu.spl.mics.application.objects.FusionSlam;
 import bgu.spl.mics.application.objects.GPSIMU;
+import bgu.spl.mics.application.objects.LiDarDataBase;
 import bgu.spl.mics.application.objects.LiDarWorkerTracker;
 import bgu.spl.mics.application.objects.ReadyToProcessPair;
 import bgu.spl.mics.application.objects.StampedDetectedObjects;
@@ -62,12 +64,16 @@ public class GurionRockRunner {
         // General SETUP:
         int cameraAmount = configFile.getCamera().getCamerasConfigurations().size();
         int LiDarWorkerAmount = configFile.getLidar().getlidarConfigurations().size();
+        LiDarDataBase liDarDataBase = LiDarDataBase.getInstance("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input_2\\lidar_data.json");
         // make sure wait for initializing
         CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 3); 
 
         // initializing to Pose Service
         // TODO: create a list of poses and give it to him
-        GPSIMU gpsimu = new GPSIMU();
+        PoseData dateposinition = new PoseData();
+        dateposinition.loadData(configFile.getPosepath());
+
+        GPSIMU gpsimu = new GPSIMU(dateposinition.getPoses());
         PoseService poseService = new PoseService(gpsimu, lanch);
         Thread poseThread = new Thread(poseService, "PoseService");
         poseThread.start();
@@ -121,5 +127,12 @@ public class GurionRockRunner {
         TimeService timeService = new TimeService(configFile.getTicktime(), configFile.getDuration());
         Thread timeServiceThread = new Thread(timeService, "TimeService");
         timeServiceThread.start();
+
+        try {
+            timeServiceThread.join();
+        } catch (Exception e) {
+            System.out.println("Time not finish");
+        }
+
     }
 }

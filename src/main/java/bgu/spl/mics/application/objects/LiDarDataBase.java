@@ -36,7 +36,8 @@ public class LiDarDataBase {
         synchronized (instance) {
             // If the cloudPoints list is empty, load Data from file
             if (instance.cloudPoints.isEmpty()) {
-                instance.loadData(filePath);
+                //instance.loadData(filePath);
+                instance.loadData("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input_2\\lidar_data.json");
             }
         }
         return instance;

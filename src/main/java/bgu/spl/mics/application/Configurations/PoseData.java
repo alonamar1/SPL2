@@ -20,7 +20,7 @@ public class PoseData {
         this.poses = new LinkedList<>();
     }
 
-    private void loadData(String filepath) {
+    public void loadData(String filepath) {
         Gson gson = new Gson(); 
         try (FileReader reader = new FileReader(filepath)) {
             // Convert JSON File to Java Object
