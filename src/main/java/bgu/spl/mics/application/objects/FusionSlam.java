@@ -151,11 +151,7 @@ public class FusionSlam {
      * Singleton pattern to ensure a single instance of FusionSlam exists.
      */
     private static class FusionSlamHolder {
-        private static FusionSlam instance;
-
-        private FusionSlamHolder() {
-            instance = new FusionSlam();
-        }
+        private static FusionSlam instance = new FusionSlam();
 
         public static FusionSlam getInstance() {
             return instance;

@@ -131,7 +131,7 @@ public class ReadCameraData {
    
     public static void main(String[] args) {
         
-        List<CameraDataPair> allData = cameraDataJsonToList("C:\\Users\\alona\\SPL2\\example_input_2\\camera_data.json");
+        //List<CameraDataPair> allData = cameraDataJsonToList("C:\\Users\\alona\\SPL2\\example_input_2\\camera_data.json");
         /*for (int i=0; i < allData.size(); i++) {
             CameraDataPair p = allData.get(i);
             System.out.println("Camera:" + p.getCameraKey());
@@ -147,7 +147,6 @@ public class ReadCameraData {
             }
             System.out.println();
         }
-            */
         List<StampedDetectedObjects> l = readCameraData(allData, "camera1");
         for (int j=0; j<l.size(); j++) {
             System.out.println("time: " + l.get(j).getTime());
@@ -157,7 +156,7 @@ public class ReadCameraData {
             }
             System.out.println();
 
-        }
+        }*/
 
     }
 }

@@ -35,9 +35,9 @@ public class SaveStateFolder {
      * Empty Constructor to enforce Singleton pattern
      */
     public SaveStateFolder() {
-        this.prevPoses = new AtomicReference<List<Pose>>();
-        this.lastCamerasDetectEvent = new AtomicReference<>();
-        this.lastLiDarWorkerTracksEvent = new AtomicReference<>();
+        this.prevPoses = new AtomicReference<List<Pose>>(new LinkedList<>());
+        this.lastCamerasDetectEvent = new AtomicReference<>(new LinkedList<>());
+        this.lastLiDarWorkerTracksEvent = new AtomicReference<>(new LinkedList<>());
     }
 
     public List<Pose> getPrevPoses(){

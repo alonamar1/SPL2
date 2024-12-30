@@ -34,7 +34,7 @@ public class FusionSlamTest {
         private FusionSlam fusion;
 
         public TestFusionSlam(FusionSlam fusionSlam) {
-            super(fusionSlam);
+            super(fusionSlam, 3, 4);
         }
 
         protected void initialize() {
