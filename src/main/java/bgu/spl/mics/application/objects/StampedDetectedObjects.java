@@ -23,6 +23,11 @@ public class StampedDetectedObjects {
         return DetectedObject;
     }
 
+    public void addDetectedObject(DetectedObject d)
+    {
+        DetectedObject.add(d);
+    }
+
     /**
      * Checks if an error was detected in the detected objects.
      * @return True if an error was detected, false otherwise.
