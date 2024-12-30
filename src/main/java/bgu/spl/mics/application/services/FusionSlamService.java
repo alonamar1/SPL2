@@ -22,9 +22,8 @@ import bgu.spl.mics.application.messages.PoseEvent;
 public class FusionSlamService extends MicroService {
 
     private FusionSlam fusionSlam; // The FusionSLAM object responsible for managing the global map.
-    private boolean running;
-    private int cameraAmount;
-    private int LidarWorkerAmount;
+    private int cameraAmount; // represent the number of active cameras
+    private int LidarWorkerAmount; // represent the number of active lidar worker
     private boolean poseServiceOn;
     private boolean timeServiceOn;
 
@@ -37,7 +36,6 @@ public class FusionSlamService extends MicroService {
     public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount) {
         super("FusionSlamService");
         this.fusionSlam = fusionSlam;
-        this.running = true;
         this.LidarWorkerAmount = LidarWorkerAmount;
         this.cameraAmount = cameraAmount;
         this.poseServiceOn = true;
@@ -83,7 +81,7 @@ public class FusionSlamService extends MicroService {
             // TODO: בודק מתי צריך לסיים את כל התוכנית
             // if need to finish
             this.checkIfRunning(); // צריך לבדוק גם פה ??
-            if (!this.running) {
+            if (!this.fusionSlam.getRunning()) {
                 // sendBroadcast(new TerminatedBroadcast("FusionSlam"));
             }
         });
@@ -101,7 +99,7 @@ public class FusionSlamService extends MicroService {
             }
             // TODO: לסיים את התוכנית ואת כל ה fusion אחרי שכל התנאים מתקיימים
             this.checkIfRunning();
-            if (!this.running) {
+            if (!this.fusionSlam.getRunning()) {
                 // TODO: make a output File
                 terminate();
             }
@@ -120,9 +118,9 @@ public class FusionSlamService extends MicroService {
     private void checkIfRunning() {
         // All the sensor finishs, finish simulation
         if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn)
-            this.running = false;
+            this.fusionSlam.setRunning(false);
         // TimeService stops, the program need to terminated
         else if (!this.timeServiceOn)
-            this.running = false;
+            this.fusionSlam.setRunning(false);
     }
 }

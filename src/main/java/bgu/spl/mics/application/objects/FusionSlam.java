@@ -18,11 +18,13 @@ public class FusionSlam {
     private List<LandMark> landmarks;
     private List<Pose> poses;
     private List<TrackedObjectEvent> trackedObjectsReciv; // List of TrackedObjects received from the LiDAR workers.
+    private boolean running;
 
     private FusionSlam() {
         this.landmarks = new LinkedList<>();
         this.poses = new LinkedList<>();
         this.trackedObjectsReciv = new LinkedList<>();
+        this.running = true;
     }
 
     /**
@@ -33,6 +35,14 @@ public class FusionSlam {
 
     public static FusionSlam getInstance() {
         return FusionSlamHolder.getInstance();
+    }
+
+    public void setRunning(boolean state) {
+        this.running = state;
+    }
+
+    public boolean getRunning() {
+        return this.running;
     }
 
     public List<LandMark> getLandmarks() {

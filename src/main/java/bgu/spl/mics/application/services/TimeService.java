@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
+import bgu.spl.mics.application.objects.FusionSlam;
 import bgu.spl.mics.application.objects.StatisticalFolder;
 
 /**
@@ -34,7 +35,6 @@ public class TimeService extends MicroService {
      */
     @Override
     protected void initialize() {
-        // לבדוק האם צריך להפסיק אותו במידה וfusion סיים את עבודתו
         while (Duration > 0) { // Continue broadcasting ticks until the duration is reached.
             try {
                 sendBroadcast(new TickBroadcast(this.currentTick)); // Broadcast the current tick.
@@ -42,6 +42,11 @@ public class TimeService extends MicroService {
                 this.currentTick++;
                 StatisticalFolder.getInstance().incrementRuntime(); // Increment the runtime in the statistical folder.
                 Thread.sleep(TickTime*1000); // Wait for the specified tick time, in milliseconds.
+                // check if the fusion slam still working
+                if (!FusionSlam.getInstance().getRunning()) {
+                    sendBroadcast(new TerminatedBroadcast("TimeService")); // Broadcast a terminated message.
+                    terminate(); // Terminate the service after the specified duration.
+                }
             } catch (InterruptedException e) { // TODO: Handle the case where the thread was interrupted.
                 System.out.println("TimeService was interrupted.");
                 e.printStackTrace();
