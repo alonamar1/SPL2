@@ -18,7 +18,7 @@ public class FusionSlam {
     private List<LandMark> landmarks;
     private List<Pose> poses;
     private List<TrackedObjectEvent> trackedObjectsReciv; // List of TrackedObjects received from the LiDAR workers.
-    private List<ReadyToProcessPair<Pose, TrackedObjectEvent>> readyToProcessPairs;
+    //private List<ReadyToProcessPair<Pose, TrackedObjectEvent>> readyToProcessPairs;
 
     private FusionSlam() {
         this.landmarks = new LinkedList<>();
@@ -46,10 +46,6 @@ public class FusionSlam {
 
     public List<TrackedObjectEvent> getTrackedObjectsReciv() {
         return trackedObjectsReciv;
-    }
-
-    public List<ReadyToProcessPair<Pose, TrackedObjectEvent>> getReadyToProcessPairs() {
-        return readyToProcessPairs;
     }
 
         /**
@@ -97,14 +93,6 @@ public class FusionSlam {
     }
 
     /**
-     * Checks if the list of ReadyToProcessPairs is empty.
-     * @return
-     */
-    public boolean isReadyToProcessPairsEmpty() {
-        return readyToProcessPairs.isEmpty();
-    }
-
-    /**
      * Converts a list of CloudPoints to the global coordinate system.
      * @param cloudPoints
      * @param pose
@@ -127,24 +115,27 @@ public class FusionSlam {
      * Checks if a TrackedObjectEvent is ready to be processed.
      * @param trackedObjectEvent
      */
-    public void checkReadyToProcess(TrackedObjectEvent trackedObjectEvent) {
+    public ReadyToProcessPair<Pose, TrackedObjectEvent> checkReadyToProcess(TrackedObjectEvent trackedObjectEvent) {
         for (Pose pose : this.poses) {
             if (pose.getTime() == trackedObjectEvent.getTime()) {
-                this.readyToProcessPairs.add(new ReadyToProcessPair<>(pose, trackedObjectEvent));
+                return new ReadyToProcessPair<>(pose, trackedObjectEvent);
             }
         }
+        return null;
     }
 
     /**
      * Checks if a Pose is ready to be processed.
      * @param pose
      */
-    public void checkReadyToProcess(Pose pose) {
+    public List<ReadyToProcessPair<Pose, TrackedObjectEvent>> checkReadyToProcess(Pose pose) {
+        List<ReadyToProcessPair<Pose, TrackedObjectEvent>> listPairs = new LinkedList<>();
         for (TrackedObjectEvent trackedObjectEvent : this.trackedObjectsReciv) {
             if (pose.getTime() == trackedObjectEvent.getTime()) {
-                this.readyToProcessPairs.add(new ReadyToProcessPair<>(pose, trackedObjectEvent));
+                listPairs.add(new ReadyToProcessPair<>(pose, trackedObjectEvent));
             }
         }
+        return listPairs;
     }
 
     /*

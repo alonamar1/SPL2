@@ -22,7 +22,7 @@ import bgu.spl.mics.application.messages.PoseEvent;
 public class FusionSlamService extends MicroService {
 
     private FusionSlam fusionSlam; // The FusionSLAM object responsible for managing the global map.
-    
+
     /**
      * Constructor for FusionSlamService.
      *
@@ -44,24 +44,37 @@ public class FusionSlamService extends MicroService {
     protected void initialize() {
         // TickEvent - TrackedObjectEvent
         subscribeEvent(TrackedObjectEvent.class, (TrackedObjectEvent TrackedObjectEvent) -> {
-            this.fusionSlam.checkReadyToProcess(TrackedObjectEvent); // Check if the tracked object is ready to be processed.
-            this.fusionSlam.getTrackedObjectsReciv().add(TrackedObjectEvent); // Add the new tracked object event to the list.
+            ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.checkReadyToProcess(TrackedObjectEvent); // Check if the tracked object is ready to be processed.
+            if (toProcess != null) {
+                // Process the pair of pose and every tracked object.
+                this.fusionSlam.ProcessReadyToProcessPair(toProcess);
+            } else {
+                this.fusionSlam.getTrackedObjectsReciv().add(TrackedObjectEvent); // Add the new tracked object event to the list.
+            }
         });
 
         // TickEvent - PoseEvent
         subscribeEvent(PoseEvent.class, (PoseEvent PoseEvent) -> {
-            this.fusionSlam.checkReadyToProcess(PoseEvent.getPose()); // Check if the pose is ready to be processed.
-            this.fusionSlam.getPoses().add(PoseEvent.getPose()); // Add the new pose to the list.
+            List<ReadyToProcessPair<Pose, TrackedObjectEvent>> toProcess = this.fusionSlam.checkReadyToProcess(PoseEvent.getPose()); // Check if the pose is ready to be processed.
+            if (!toProcess.isEmpty()) {
+                for (ReadyToProcessPair<Pose, TrackedObjectEvent> pair : toProcess){
+                    this.fusionSlam.ProcessReadyToProcessPair(pair);
+                }
+            }
+            else {
+                this.fusionSlam.getPoses().add(PoseEvent.getPose()); // Add the new pose to the list.
+            }
         });
 
         // TickBroadcast
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            // Process all the ready to process pairs. TODO: האם צריך לעשות את זה כל זמן שיש מה לעשות ?
-            while (!this.fusionSlam.isReadyToProcessPairsEmpty()) {
-                ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.getReadyToProcessPairs().remove(0);
+            // TODO: האם צריך לעשות את זה כל זמן שיש
+            // מה לעשות ?
+            /*while (!this.fusionSlam.isReadyToProcessPairsEmpty()) {
+                // ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.getReadyToProcessPairs().remove(0);
                 // Process the pair of pose and every tracked object.
-                this.fusionSlam.ProcessReadyToProcessPair(toProcess);
-            }
+                // this.fusionSlam.ProcessReadyToProcessPair(toProcess);
+            }*/
         });
 
         // TerminatedBroadCast
