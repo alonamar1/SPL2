@@ -43,7 +43,7 @@ public class ReadCameraData {
                     // Get the detected objects array from the entry
                     JSONArray detectedObjects = entry.getJSONArray("detectedObjects");
                     //StampedDetectedObject to add to cameras list
-                    StampedDetectedObjects toAdd = new StampedDetectedObjects(time, new LinkedList<DetectedObject>());
+                    List<DetectedObject> toAdd = new LinkedList<>();
 
                     // Iterate over each detected object in the detected objects array
                     for (int j = 0; j < detectedObjects.length(); j++) {
@@ -52,10 +52,14 @@ public class ReadCameraData {
                         // Get the id and description of the detected object
                         String currID = detectedObject.getString("id");
                         String description = detectedObject.getString("description");
-                        toAdd.addDetectedObject(new DetectedObject(currID, description));
+                        toAdd.add(new DetectedObject(currID, description));
                     }
-                    newCamera.addToData(toAdd);
+                    if (!toAdd.isEmpty())
+                    {
+                        newCamera.addToData(new StampedDetectedObjects(time, toAdd));
+                    }
                 }
+                cameras.add(newCamera);
                 
             }
         } catch (Exception e) {
@@ -121,21 +125,36 @@ public class ReadCameraData {
     //}
 
    
-
     public static void main(String[] args) {
+        
         List<CameraDataPair> allData = cameraDataJsonToList("C:\\Users\\alona\\SPL2\\example_input_2\\camera_data.json");
-        for (int i=0; i < allData.size(); i++) {
+        /*for (int i=0; i < allData.size(); i++) {
             CameraDataPair p = allData.get(i);
             System.out.println("Camera:" + p.getCameraKey());
-
             for (int j=0; j<p.getData().size(); j++) {
                 StampedDetectedObjects d = p.getData().get(j);
                 System.out.println("time: " + d.getTime());
-                for (DetectedObject do : d.getDetectedObject()) {
-                    System.out.print("id: " + do.getId() + ", description: " + do.getDescription());
+                for (int k=0; k<d.getDetectedObject().size(); k++) {
+                    DetectedObject det = d.getDetectedObject().get(k);
+                    System.out.print("id: " + det.getID() + ", description: " + det.getDescreption());
                 }
+                System.out.println();
+
             }
+            System.out.println();
         }
+            */
+        List<StampedDetectedObjects> l = readCameraData(allData, "camera1");
+        for (int j=0; j<l.size(); j++) {
+            System.out.println("time: " + l.get(j).getTime());
+            for (int k=0; k<l.get(j).getDetectedObject().size(); k++) {
+                DetectedObject det = l.get(j).getDetectedObject().get(k);
+                System.out.print("id: " + det.getID() + ", description: " + det.getDescreption());
+            }
+            System.out.println();
+
+        }
+
     }
 }
 
