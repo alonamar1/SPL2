@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 import bgu.spl.mics.MessageBusImpl;
@@ -31,6 +32,7 @@ public class LiDarService extends MicroService {
     private List<DetectedObjectsEvent> waitingDetectedObjectsEvents;
     private int currentTick;
     private int cameraAmount;
+    private final CountDownLatch lanch;
 
     /**
      * Constructor for LiDarService.
@@ -38,12 +40,13 @@ public class LiDarService extends MicroService {
      * @param liDarTracker The LiDAR tracker object that this service will use
      *                     to process data.
      */
-    public LiDarService(LiDarWorkerTracker liDarTracker, int cameraAmount) {
+    public LiDarService(LiDarWorkerTracker liDarTracker, int cameraAmount, CountDownLatch lanch) {
         super("LiDarService");
         this.liDarTracker = liDarTracker;
         this.waitingDetectedObjectsEvents = new LinkedList<DetectedObjectsEvent>();
         this.currentTick = 0;
         this.cameraAmount = cameraAmount;
+        this.lanch = lanch;
     }
 
     /**
@@ -53,7 +56,7 @@ public class LiDarService extends MicroService {
      */
     public void prepareAndToSend(DetectedObjectsEvent detObj) {
         // create a new TrackedObjectEvent
-        TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime()); 
+        TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime());
         for (int j = 0; j < detObj.getDetectedObject().size(); j++) {
             TrackedObject trackedObject = liDarTracker.getTrackedObject(
                     detObj.getDetectedObject().get(j),
@@ -150,5 +153,7 @@ public class LiDarService extends MicroService {
             // TODO: Handle the case where other service was Crashed.
             terminate();
         });
+
+        lanch.countDown();
     }
 }

@@ -54,11 +54,14 @@ public class ReadConfiguration {
         lidarConfig.setLidarConfigurations(lidarConfigurations);
         mainConfig.setLidars(lidarConfig);
 
-        mainConfig.setPoses(new PoseConfiguration(jsonObject.getString("poseJsonFile"), jsonObject.getInt("TickTime"), jsonObject.getInt("Duration")));
+        mainConfig.setPosepath(jsonObject.getString("poseJsonFile"));
+        mainConfig.setTime(jsonObject.getInt("TickTime"));
+        mainConfig.setDuration(jsonObject.getInt("Duration"));
 
         return mainConfig;
     }
 
+    // -------------------Tests--------------------
     public static void main(String[] args) {
         try {
             MainConfiguration config = readConfiguration("C:\\Users\\alona\\SPL2\\example_input_2\\configuration_file.json");
@@ -76,12 +79,6 @@ public class ReadConfiguration {
                 System.out.println(l.getFrequency());
             }
             System.out.println();
-            PoseConfiguration p = config.getPose();
-            System.out.println(p.getTime());
-            System.out.println(p.getDuration());
-
-
-
 
         } catch (IOException e) {
             e.printStackTrace();

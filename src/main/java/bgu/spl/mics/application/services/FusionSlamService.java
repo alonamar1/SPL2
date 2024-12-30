@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
@@ -33,19 +34,22 @@ public class FusionSlamService extends MicroService {
     private boolean poseServiceOn;
     private boolean timeServiceOn;
 
+    private final CountDownLatch lanch;
+
     /**
      * Constructor for FusionSlamService.
      *
      * @param fusionSlam The FusionSLAM object responsible for managing the global
      *                   map.
      */
-    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount) {
+    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount, CountDownLatch lanch) {
         super("FusionSlamService");
         this.fusionSlam = fusionSlam;
         this.LidarWorkerAmount = LidarWorkerAmount;
         this.cameraAmount = cameraAmount;
         this.poseServiceOn = true;
         this.timeServiceOn = true;
+        this.lanch = lanch;
     }
 
     /**
@@ -116,6 +120,8 @@ public class FusionSlamService extends MicroService {
             this.MakeOutputFileERRORState(crashed.getSenderId(), crashed.getreasonForCrash());
             terminate();
         });
+
+        lanch.countDown();
     }
 
     /**
@@ -335,8 +341,8 @@ public class FusionSlamService extends MicroService {
 
     public static void main(String[] args) {
         FusionSlam fusionSlam = FusionSlam.getInstance();
-        FusionSlamService service = new FusionSlamService(fusionSlam, 2, 2);
+        //FusionSlamService service = new FusionSlamService(fusionSlam, 2, 2);
         // service.testMakeOutputFile();
-        service.testMakeOutputFileERRORState();
+        //service.testMakeOutputFileERRORState();
     }
 }

@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.services;
 
+import java.util.concurrent.CountDownLatch;
+
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
@@ -16,15 +18,17 @@ import bgu.spl.mics.application.objects.*;
 public class PoseService extends MicroService {
 
     private GPSIMU gpsimu;
+    private final CountDownLatch lanch;
 
     /**
      * Constructor for PoseService.
      *
      * @param gpsimu The GPSIMU object that provides the robot's pose data.
      */
-    public PoseService(GPSIMU gpsimu) {
+    public PoseService(GPSIMU gpsimu, CountDownLatch lanch) {
         super("PoseService");
         this.gpsimu = gpsimu;
+        this.lanch = lanch;
     }
 
     /**
@@ -58,5 +62,6 @@ public class PoseService extends MicroService {
             // TODO: Handle the case where other service was Crashed.
             terminate();
         });
+        lanch.countDown();
     }
 }

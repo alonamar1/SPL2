@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 import bgu.spl.mics.MicroService;
@@ -21,15 +22,17 @@ import bgu.spl.mics.application.objects.SaveStateFolder;
 public class CameraService extends MicroService {
 
     private final Camera camera;
+    private final CountDownLatch lanch;
 
     /**
      * Constructor for CameraService.
      *
      * @param camera The Camera object that this service will use to detect objects.
      */
-    public CameraService(Camera camera) {
+    public CameraService(Camera camera, CountDownLatch lanch) {
         super("CameraService");
         this.camera = camera;
+        this.lanch = lanch;
     }
 
     /**
@@ -92,6 +95,8 @@ public class CameraService extends MicroService {
             // TODO: Handle the case where other service was Crashed.
             terminate();
         });
+
+        lanch.countDown();
 
     }
 }

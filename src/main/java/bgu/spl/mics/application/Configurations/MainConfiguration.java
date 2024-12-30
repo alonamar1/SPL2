@@ -3,11 +3,17 @@ package bgu.spl.mics.application.Configurations;
 public class MainConfiguration {
     private CameraConfiguration cameras;
     private LidarConfigurations lidarWorkers;
-    private PoseConfiguration poses;
+    private String posePath;
+    private int tickTime;
+    private int duration;
     
     public MainConfiguration()
     {
         cameras = null;
+        lidarWorkers = null;
+        posePath = null;
+        tickTime = 0;
+        duration = 0;
     }
 
     public CameraConfiguration getCamera()
@@ -16,8 +22,17 @@ public class MainConfiguration {
     public LidarConfigurations getLidar()
     {return lidarWorkers;}
 
-    public PoseConfiguration getPose()
-    {return poses;}
+    public String getPosepath()
+    {return posePath;}
+
+    public int getTicktime()
+    {
+        return tickTime;
+    }
+    public int getDuration()
+    {
+        return duration;
+    }
 
     public void setCameras(CameraConfiguration camerasConfig)
     {
@@ -27,9 +42,18 @@ public class MainConfiguration {
     {
         this.lidarWorkers = lidarConfig;
     }
-    public void setPoses(PoseConfiguration poses)
+    public void setPosepath(String path )
     {
-        this.poses = poses;
+        this.posePath = path;
+    }
+    public void setTime(int time)
+    {
+        this.tickTime = time;
+    }
+
+    public void setDuration(int dur)
+    {
+        this.duration = dur;
     }
 
 

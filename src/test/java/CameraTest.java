@@ -18,12 +18,10 @@ public class CameraTest {
 
     private static class TestMicroService extends CameraService {
 
-        private final CountDownLatch latch;
         private Camera cam;
 
         public TestMicroService(Camera cam, CountDownLatch latch) {
-            super(cam);
-            this.latch = latch;
+            super(cam, latch);
         }
 
         public Camera getCamera() {
@@ -33,7 +31,6 @@ public class CameraTest {
         @Override
         protected void initialize() {
             super.initialize();
-            latch.countDown();
         }
     }
 

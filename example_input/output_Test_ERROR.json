@@ -1,0 +1,33 @@
+{
+  "error": "Camera1",
+  "faultySensor": "GLaDOS has repurposed the robot to conduct endless cake-fetching tests. Success is a lie.",
+  "lastCamerasFrame": [
+    {
+      "cameraId": 1,
+      "detectedObject": [
+        {
+          "ID": "furniture_1",
+          "descreption": "A White Wooden Closet"
+        },
+        {
+          "ID": "furniture_2",
+          "descreption": "A Drawer unit"
+        },
+        {
+          "ID": "furniture_3",
+          "descreption": "Bed"
+        }
+      ],
+      "time": 7
+    }
+  ],
+  "lastLiDarWorkerTrackersFrame": [],
+  "poses": [],
+  "statistics": {
+    "systemRuntime": 9,
+    "numDetectedObjects": 3,
+    "numTrackedObjects": 0,
+    "numLandmarks": 0,
+    "landMarks": []
+  }
+}
