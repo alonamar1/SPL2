@@ -2,6 +2,12 @@ package bgu.spl.mics.application.objects;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Future;
+
+import bgu.spl.mics.MessageBusImpl;
+import bgu.spl.mics.application.messages.CrashedBroadcast;
+import bgu.spl.mics.application.messages.DetectedObjectsEvent;
+import bgu.spl.mics.application.messages.TrackedObjectEvent;
 
 /**
  * LiDarWorkerTracker is responsible for managing a LiDAR worker.
@@ -32,6 +38,7 @@ public class LiDarWorkerTracker {
      * @param detectedObject
      * @return TrackedObject object for the detected object.
      */
+    
     public TrackedObject getTrackedObject(DetectedObject detectedObject, int timeSeeingObject) {
         // get the cloud points of the detected object
         for (StampedCloudPoints cp : dataBase.getCloudPoints()) {

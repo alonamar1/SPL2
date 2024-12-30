@@ -27,19 +27,19 @@ import bgu.spl.mics.application.objects.TrackedObject;
 public class LiDarService extends MicroService {
 
     private final LiDarWorkerTracker liDarTracker;
-    private List<DetectedObjectsEvent> globalDetectedObjectsEvents;
+    private List<DetectedObjectsEvent> waitingDetectedObjectsEvents;
     private int currentTick;
 
     /**
      * Constructor for LiDarService.
      *
      * @param liDarTracker The LiDAR tracker object that this service will use
-     *                     to process data.
+     * to process data.
      */
     public LiDarService(LiDarWorkerTracker liDarTracker) {
         super("LiDarService");
         this.liDarTracker = liDarTracker;
-        this.globalDetectedObjectsEvents = new LinkedList<DetectedObjectsEvent>();
+        this.waitingDetectedObjectsEvents = new LinkedList<DetectedObjectsEvent>();
         this.currentTick = 0;
     }
 
@@ -48,48 +48,58 @@ public class LiDarService extends MicroService {
      * DetectObjectsEvents and TickBroadcasts, and sets up the necessary
      * callbacks for processing data.
      */
+    public void prepareToSend(DetectedObjectsEvent detObj) {
+        TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime()); // create a new
+        // TrackedObjectEvent
+        for (int j = 0; j < detObj.getDetectedObject().size(); j++) {
+            TrackedObject trackedObject = liDarTracker.getTrackedObject(
+                    detObj.getDetectedObject().get(j),
+                    detObj.getTime());
+            // if the tracked object is not null, add it to the event
+            if (trackedObject != null) {
+                event.addTrackedObject(trackedObject);
+            } else if (liDarTracker.getStatus() == STATUS.ERROR) {
+                // if the status of the LiDarTracker is ERROR, terminate the LiDarService
+                sendBroadcast(new CrashedBroadcast("LiDar"));
+                terminate();
+            }
+        }
+        Future<Boolean> future = (Future<Boolean>) sendEvent(event); // להבין מה הפיוצר רוצה ממני
+                // increment the number of tracked objects in the statistical folder
+                StatisticalFolder.getInstance().incrementNumTrackedObjects(event.getTrackedObject().size());
+                // complete the DetectedObjectsEvent
+                MessageBusImpl.getInstance().complete(detObj, true);
+                try {
+                    if (future.get() == false) {
+                        // TODO: Handle the case where the event was not completed successfully.
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
+                    // sendBroadcast(new CrashedBroadcast("LiDar"));
+                }
+    }
+
     @Override
     protected void initialize() {
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
-            globalDetectedObjectsEvents.add(detectedObjectsEvent);
-
+            if (currentTick >= detectedObjectsEvent.getTime() + liDarTracker.getFrequency()) {
+                prepareToSend(detectedObjectsEvent);
+            } 
+            else {
+                waitingDetectedObjectsEvents.add(detectedObjectsEvent);
+            }
         });
 
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
             this.currentTick = tick.getTick();
-            TrackedObjectEvent event;
-            for (int i = 0; i < globalDetectedObjectsEvents.size(); i++) {
-                if (tick.getTick() >= globalDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
-                    event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), globalDetectedObjectsEvents.get(i).getTime()); // create a new
-                                                                                                  // TrackedObjectEvent
-                    for (int j = 0; j < globalDetectedObjectsEvents.get(i).getDetectedObject().size(); j++) {
-                        TrackedObject trackedObject = liDarTracker.getTrackedObject(
-                                globalDetectedObjectsEvents.get(i).getDetectedObject().get(j),
-                                globalDetectedObjectsEvents.get(i).getTime());
-                        // if the tracked object is not null, add it to the event
-                        if (trackedObject != null) {
-                            event.addTrackedObject(trackedObject);
-                        } else if (liDarTracker.getStatus() == STATUS.ERROR) {
-                            // if the status of the LiDarTracker is ERROR, terminate the LiDarService
-                            sendBroadcast(new CrashedBroadcast("LiDar"));
-                            terminate();
-                        }
-                    }
-                    Future<Boolean> future = (Future<Boolean>) sendEvent(event); // להבין מה הפיוצר רוצה ממני
-                    // increment the number of tracked objects in the statistical folder
-                    StatisticalFolder.getInstance().incrementNumTrackedObjects(event.getTrackedObject().size());
-                    // complete the DetectedObjectsEvent
-                    MessageBusImpl.getInstance().complete(globalDetectedObjectsEvents.get(i), true);
-                    try {
-                        if (future.get() == false) {
-                            // TODO: Handle the case where the event was not completed successfully.
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                        // sendBroadcast(new CrashedBroadcast("LiDar"));
-                    }
-                }
+            //by going from the last link to the first, we make sure that removing funcion doesn't change the order of the next indexes.
+            for (int i = waitingDetectedObjectsEvents.size(); i > 0; i--) {
+                if (tick.getTick() >= waitingDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
+                    prepareToSend(waitingDetectedObjectsEvents.get(i));  
+                    waitingDetectedObjectsEvents.remove(i); 
+                    
             }
+        }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
