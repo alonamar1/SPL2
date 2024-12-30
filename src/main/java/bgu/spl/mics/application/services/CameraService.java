@@ -68,9 +68,12 @@ public class CameraService extends MicroService {
                         }
                     }
                 }
-            }
-            else {
-                
+                // if in the next tick there is not objects to detect end
+                if (this.camera.checkIfFinish(tick.getTick() + 1)) {
+                    this.camera.setStatus(STATUS.DOWN);
+                    sendBroadcast(new TerminatedBroadcast("Camera"));
+                    terminate();
+                }
             }
         });
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {

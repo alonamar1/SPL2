@@ -84,7 +84,6 @@ public class FusionSlamService extends MicroService {
             // if need to finish
             this.checkIfRunning(); // צריך לבדוק גם פה ??
             if (!this.running) {
-                // TODO: make a output File
                 // sendBroadcast(new TerminatedBroadcast("FusionSlam"));
             }
         });
@@ -100,7 +99,12 @@ public class FusionSlamService extends MicroService {
             } else if (terminated.getSenderId() == "TimeService") {
                 this.timeServiceOn = false;
             }
+            // TODO: לסיים את התוכנית ואת כל ה fusion אחרי שכל התנאים מתקיימים
             this.checkIfRunning();
+            if (!this.running) {
+                // TODO: make a output File
+                terminate();
+            }
         });
 
         // CrashedBroadCast
