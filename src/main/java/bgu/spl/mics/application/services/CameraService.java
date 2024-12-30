@@ -64,7 +64,7 @@ public class CameraService extends MicroService {
                             }
                         } catch (Exception e) {
                             e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                            sendBroadcast(new CrashedBroadcast("Camera"));
+                            //sendBroadcast(new CrashedBroadcast("Camera"));
                         }
                     }
                 }

@@ -16,10 +16,10 @@ public class CrashedBroadcast implements Broadcast {
     }
 
     // Constructor for the case where the reason for the crash is unknown.
-    public CrashedBroadcast(String senderId) {
+    /*public CrashedBroadcast(String senderId) {
         this.senderId = senderId;
         this.reasonForCrash = "Unknown";
-    }
+    }*/
 
     public String getSenderId() {
         return senderId;

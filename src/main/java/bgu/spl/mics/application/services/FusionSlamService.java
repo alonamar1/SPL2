@@ -88,13 +88,13 @@ public class FusionSlamService extends MicroService {
 
         // TerminatedBroadCast
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            if (terminated.getSenderId() == "Camera") {
+            if (terminated.getSenderId().equals("Camera")) {
                 this.cameraAmount--;
-            } else if (terminated.getSenderId() == "LiDarWorker") {
+            } else if (terminated.getSenderId().equals("LiDarWorker")) {
                 this.LidarWorkerAmount--;
-            } else if (terminated.getSenderId() == "PoseService") {
+            } else if (terminated.getSenderId().equals( "PoseService")) {
                 this.poseServiceOn = false;
-            } else if (terminated.getSenderId() == "TimeService") {
+            } else if (terminated.getSenderId().equals("TimeService")) {
                 this.timeServiceOn = false;
             }
             // TODO: לסיים את התוכנית ואת כל ה fusion אחרי שכל התנאים מתקיימים

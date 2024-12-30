@@ -44,7 +44,7 @@ public class LiDarWorkerTracker {
         for (StampedCloudPoints cp : dataBase.getCloudPoints()) {
             if (cp.getTime() <= timeSeeingObject) {
                 // if the ID of the cloud points is "ERROR"
-                if (cp.getID() == "ERROR") {
+                if (cp.getID().equals("ERROR")) {
                     this.status = STATUS.ERROR;
                     return null;
                 }
