@@ -29,6 +29,7 @@ public class LiDarService extends MicroService {
     private final LiDarWorkerTracker liDarTracker;
     private List<DetectedObjectsEvent> waitingDetectedObjectsEvents;
     private int currentTick;
+    private int cameraAmount;
 
     /**
      * Constructor for LiDarService.
@@ -36,11 +37,12 @@ public class LiDarService extends MicroService {
      * @param liDarTracker The LiDAR tracker object that this service will use
      * to process data.
      */
-    public LiDarService(LiDarWorkerTracker liDarTracker) {
+    public LiDarService(LiDarWorkerTracker liDarTracker, int cameraAmount) {
         super("LiDarService");
         this.liDarTracker = liDarTracker;
         this.waitingDetectedObjectsEvents = new LinkedList<DetectedObjectsEvent>();
         this.currentTick = 0;
+        this.cameraAmount = cameraAmount;
     }
 
     /**
@@ -79,6 +81,24 @@ public class LiDarService extends MicroService {
     }
 
     /**
+     * Check if need to termenate the LiDar Worker
+     */
+    public void checkIfFinish() {
+        // Assuming the list is sorted by time
+        if (cameraAmount == 0 && this.waitingDetectedObjectsEvents.isEmpty()) {
+            this.liDarTracker.setStatus(STATUS.DOWN);
+        }
+    }
+
+    /**
+     * End the Thread
+     */
+    public void endLiDarWorker(){
+        sendBroadcast(new TerminatedBroadcast("LiDarWorker"));
+        terminate();
+    }
+
+    /**
      * Initializes the LiDarService. Registers the service to handle
      * DetectObjectsEvents and TickBroadcasts, and sets up the necessary
      * callbacks for processing data.
@@ -96,27 +116,34 @@ public class LiDarService extends MicroService {
 
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
             this.currentTick = tick.getTick();
-            //by going from the last link to the first, we make sure that removing funcion doesn't change the order of the next indexes.
+            // by going from the last link to the first, we make sure that removing funcion doesn't change the order of the next indexes.
             for (int i = waitingDetectedObjectsEvents.size(); i > 0; i--) {
                 if (tick.getTick() >= waitingDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
                     prepareToSend(waitingDetectedObjectsEvents.get(i));  
                     waitingDetectedObjectsEvents.remove(i); 
-                    
+            }
+            this.checkIfFinish();
+            // If finish end service
+            if (this.liDarTracker.getStatus() == STATUS.DOWN){
+                this.endLiDarWorker();
             }
         }
         });
 
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            // TODO: Handle the case where other service was terminated.
             // if the terminated service is TimeService, terminate the LiDarService.
             if (terminated.getSenderId().equals("TimeService")) {
-                sendBroadcast(new TerminatedBroadcast("LiDarWorker"));
                 this.liDarTracker.setStatus(STATUS.DOWN);
-                terminate();
+                this.endLiDarWorker();
             }
             // if camera is finished
             if (terminated.getSenderId().equals("Camera")) {
-
+                this.cameraAmount--;
+            }
+            this.checkIfFinish();
+            // If finish end service
+            if (this.liDarTracker.getStatus() == STATUS.DOWN){
+                this.endLiDarWorker();
             }
         });
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
