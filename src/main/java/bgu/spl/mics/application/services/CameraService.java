@@ -49,10 +49,12 @@ public class CameraService extends MicroService {
                     DetectedObjectsEvent detectedList = camera.handleTick(tick.getTick() - camera.getFrequency());
                     // If the camera is down, broadcast a Crashed message and terminate the service.
                     if (camera.getStatus() == STATUS.ERROR) {
-                        sendBroadcast(new CrashedBroadcast("Camera"));
+                        String reason = detectedList.getDetectedObject().remove(0).getDescreption();
+                        sendBroadcast(new CrashedBroadcast("Camera" + this.camera.getId(), reason));
                         terminate();
                     }
-                    // If the camera is not in ERROR state, send the detected objects to the LiDAR workers.
+                    // If the camera is not in ERROR state, send the detected objects to the LiDAR
+                    // workers.
                     else if (detectedList != null) {
                         Future<Boolean> future;
                         future = (Future<Boolean>) sendEvent(detectedList);
@@ -64,12 +66,12 @@ public class CameraService extends MicroService {
                             }
                         } catch (Exception e) {
                             e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                            //sendBroadcast(new CrashedBroadcast("Camera"));
+                            // sendBroadcast(new CrashedBroadcast("Camera"));
                         }
                     }
                 }
                 // if in the next tick there is not objects to detect end
-                if (this.camera.checkIfFinish(tick.getTick() + 1)) {
+                if (camera.getStatus() != STATUS.ERROR && this.camera.checkIfFinish(tick.getTick() + 1)) {
                     this.camera.setStatus(STATUS.DOWN);
                     sendBroadcast(new TerminatedBroadcast("Camera"));
                     terminate();

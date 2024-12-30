@@ -32,12 +32,12 @@ public class StampedDetectedObjects {
      * Checks if an error was detected in the detected objects.
      * @return True if an error was detected, false otherwise.
      */
-    public boolean checkError() {
+    public DetectedObject checkError() {
         for (DetectedObject detectedObject : DetectedObject) {
             if (detectedObject.getID().equals("ERROR")) {
-                return true;
+                return detectedObject;
             }
         }
-        return false;
+        return null;
     }
 }

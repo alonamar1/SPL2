@@ -2,6 +2,7 @@ package bgu.spl.mics.application.objects;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -100,9 +101,12 @@ public class Camera {
         StampedDetectedObjects stampedDetectedObjects = this.getDetectedObjects(tick); // get the detected objects at the next tick
         if (stampedDetectedObjects != null) {
             // check if an error was detected in the detected objects
-            if (stampedDetectedObjects.checkError()) {
+            DetectedObject errorObject = stampedDetectedObjects.checkError();
+            if (errorObject != null) {
                 this.status = STATUS.ERROR; // TODO: Handle the case where an error was detected.
-                return null;
+                List<DetectedObject> errorlist = new LinkedList<DetectedObject>();
+                errorlist.add(errorObject);
+                return new DetectedObjectsEvent(id, errorlist, tick);
             }
             DetectedObjectsEvent detectedObjectEvent = new DetectedObjectsEvent(id, stampedDetectedObjects.getDetectedObject(), tick);
             StatisticalFolder.getInstance().incrementNumDetectedObjects(stampedDetectedObjects.getDetectedObject().size()); // increment the number of detected objects in the statistical folder
