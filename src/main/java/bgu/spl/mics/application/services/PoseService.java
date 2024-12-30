@@ -39,17 +39,8 @@ public class PoseService extends MicroService {
             if (this.gpsimu.getCurrentStatus() != STATUS.DOWN) {
                 // Create a new PoseEvent with the current pose
                 PoseEvent poseEvent = new PoseEvent(this.gpsimu.getCurrentPose(tick.getTick()));
-                Future<Boolean> f = sendEvent(poseEvent); // Send the PoseEvent
-                Boolean result = null;
-                if (f != null) {
-                    try {
-                        // Wait for the result of the PoseEvent
-                        result = f.get(100, java.util.concurrent.TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
-                        // Handle the case where the future was interrupted
-                        e.printStackTrace();
-                    }
-                }
+                sendEvent(poseEvent); // Send the PoseEvent
+                SaveStateFolder.getInstance().updatePose(poseEvent.getPose()); // save status
             }
             if (this.gpsimu.getCurrentStatus() == STATUS.DOWN){
                 sendBroadcast(new TerminatedBroadcast("PoseService"));

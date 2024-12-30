@@ -13,6 +13,7 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.messages.TrackedObjectEvent;
 import bgu.spl.mics.application.objects.LiDarWorkerTracker;
 import bgu.spl.mics.application.objects.STATUS;
+import bgu.spl.mics.application.objects.SaveStateFolder;
 import bgu.spl.mics.application.objects.StatisticalFolder;
 import bgu.spl.mics.application.objects.TrackedObject;
 
@@ -50,7 +51,7 @@ public class LiDarService extends MicroService {
      * 
      * @param detObj
      */
-    public void prepareToSend(DetectedObjectsEvent detObj) {
+    public void prepareAndToSend(DetectedObjectsEvent detObj) {
         // create a new TrackedObjectEvent
         TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime()); 
         for (int j = 0; j < detObj.getDetectedObject().size(); j++) {
@@ -67,7 +68,8 @@ public class LiDarService extends MicroService {
                 terminate();
             }
         }
-        Future<Boolean> future = (Future<Boolean>) sendEvent(event); // להבין מה הפיוצר רוצה ממני
+        // Save State
+        SaveStateFolder.getInstance().updateLidarWorker(event);
         // increment the number of tracked objects in the statistical folder
         StatisticalFolder.getInstance().incrementNumTrackedObjects(event.getTrackedObject().size());
         // complete the DetectedObjectsEvent
@@ -102,7 +104,7 @@ public class LiDarService extends MicroService {
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
             if (this.liDarTracker.getStatus() == STATUS.UP) {
                 if (currentTick >= detectedObjectsEvent.getTime() + liDarTracker.getFrequency()) {
-                    prepareToSend(detectedObjectsEvent);
+                    prepareAndToSend(detectedObjectsEvent);
                 } else {
                     waitingDetectedObjectsEvents.add(detectedObjectsEvent);
                 }
@@ -116,7 +118,7 @@ public class LiDarService extends MicroService {
                 // doesn't change the order of the next indexes.
                 for (int i = waitingDetectedObjectsEvents.size(); i > 0; i--) {
                     if (tick.getTick() >= waitingDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
-                        prepareToSend(waitingDetectedObjectsEvents.get(i));
+                        prepareAndToSend(waitingDetectedObjectsEvents.get(i));
                         waitingDetectedObjectsEvents.remove(i);
                     }
                     this.checkIfFinish();

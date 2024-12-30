@@ -30,12 +30,6 @@ public class Camera {
         this.status = STATUS.UP;
         this.stringID = "camera"+id;
         this.detectedObjectsList = detectedObjectsList;
-        // try {
-        //     detectedObjectsList = cameraData(filepath,"camera"+id);
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        //     detectedObjectsList = null;
-        // }
     }
 
     public void setStatus(STATUS stat) {
@@ -57,23 +51,6 @@ public class Camera {
     public int getFrequency() {
         return frequency;
     }
-
-    // // TODO: Move this function to a Main class
-    // private List<StampedDetectedObjects> cameraData(String filepath, String cameraID) throws IOException {
-    //     Gson gson = new Gson();
-    //     try (FileReader reader = new FileReader(filepath)) {
-    //         // Convert JSON File to Java Object
-    //         Type type = new TypeToken<Map<String, List<List<StampedDetectedObjects>>>>() {}.getType();
-    //         Map<String, List<List<StampedDetectedObjects>>> cameras = gson.fromJson(reader, type);
-    //         List<List<StampedDetectedObjects>> cameraList = cameras.get(cameraID);
-    //         List<StampedDetectedObjects> cameraSDO = cameraList.stream().flatMap(List::stream).toList();
-    //         return cameraSDO;
-    //     }
-    //     catch (JsonSyntaxException e) {
-    //         System.err.println("Invalid JSON format: " + e.getMessage());
-    //     }
-    //     return null;
-    // }
 
     /**
      * Returns the detected objects at a specific time.

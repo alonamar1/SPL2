@@ -107,7 +107,9 @@ public class FusionSlamService extends MicroService {
 
         // CrashedBroadCast
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
+            this.fusionSlam.setRunning(false);
             // TODO: Handle the case where other service crashed.
+            // TODO: make a ERROR output File
             terminate();
         });
     }

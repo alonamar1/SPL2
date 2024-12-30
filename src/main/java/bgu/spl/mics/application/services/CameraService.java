@@ -9,6 +9,7 @@ import bgu.spl.mics.application.messages.TerminatedBroadcast;
 import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.STATUS;
+import bgu.spl.mics.application.objects.SaveStateFolder;
 
 /**
  * CameraService is responsible for processing data from the camera and
@@ -58,6 +59,7 @@ public class CameraService extends MicroService {
                     else if (detectedList != null) {
                         Future<Boolean> future;
                         future = (Future<Boolean>) sendEvent(detectedList);
+                        SaveStateFolder.getInstance().updateCameraObjects(detectedList); // save state
                         try {
                             // TODO: Change the time to a constant.
                             Boolean result = future.get(100, java.util.concurrent.TimeUnit.MILLISECONDS);
