@@ -24,10 +24,10 @@ public class LiDarWorkerTracker {
     private List<TrackedObject> trackedObjects;
     LiDarDataBase dataBase; // the LiDarDataBase object
 
-    public LiDarWorkerTracker(int id, int frequency, STATUS status, List<TrackedObject> trackedObjects) {
+    public LiDarWorkerTracker(int id, int frequency, List<TrackedObject> trackedObjects) {
         this.id = id;
         this.frequency = frequency;
-        this.status = status;
+        this.status = STATUS.UP;
         this.trackedObjects = trackedObjects;
         this.dataBase = LiDarDataBase.getInstance("path"); // לשנות את הפאט
     }
