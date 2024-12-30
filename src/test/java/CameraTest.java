@@ -62,17 +62,17 @@ public class CameraTest {
             if (b) {
                 for (int j = 0; j < tempList.size(); j++) {
                     assertTrue(tempList.get(j).getDescreption().equals(event1.getDetectedObject().get(j).getDescreption()));
-                    if (tempList.get(j).getDescreption().equals("ERROR"))
+                    if (tempList.get(j).getID().equals("ERROR"))
                         assertTrue(camera1.getStatus() == STATUS.ERROR);
                 }
             }
         }
-        for (int i = 0; i < detectedObjectsList2.size(); i++) {
-            DetectedObjectsEvent event2 = cam2.getcamera().handleTick(1);
+        for (int i = 1; i <= detectedObjectsList2.size(); i++) {
+            DetectedObjectsEvent event2 = cam2.getcamera().handleTick(i);
             statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
             assertTrue(statisticalfolder1 - statisticalfolder2 == event2.getDetectedObject().size());
             statisticalfolder2 = statisticalfolder1;
-            List<DetectedObject> tempList = detectedObjectsList2.get(i).getDetectedObject();
+            List<DetectedObject> tempList = detectedObjectsList2.get(i-1).getDetectedObject();
             boolean b = (tempList.size() == event2.getDetectedObject().size());
             assertTrue(b);
             if (b) {
@@ -83,6 +83,7 @@ public class CameraTest {
                 }
             }
         }
+        System.out.print("finito");
     }
 
     public static void main(String[] args) {

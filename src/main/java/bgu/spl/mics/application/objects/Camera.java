@@ -19,13 +19,16 @@ public class Camera {
 
     private int id;
     private int frequency;
+    private String stringID;
     private List<StampedDetectedObjects> detectedObjectsList;
     private STATUS status;
 
-    public Camera(int id, int freq, String filepath) {
+    public Camera(int id, int freq, List<StampedDetectedObjects> detectedObjectsList) {
         this.id = id;
         this.frequency = freq;
         this.status = STATUS.UP;
+        this.stringID = "camera"+id;
+        this.detectedObjectsList = detectedObjectsList;
         // try {
         //     detectedObjectsList = cameraData(filepath,"camera"+id);
         // } catch (IOException e) {

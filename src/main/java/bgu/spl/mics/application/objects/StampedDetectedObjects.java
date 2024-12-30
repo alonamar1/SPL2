@@ -34,7 +34,7 @@ public class StampedDetectedObjects {
      */
     public boolean checkError() {
         for (DetectedObject detectedObject : DetectedObject) {
-            if (detectedObject.getID() == "ERROR") {
+            if (detectedObject.getID().equals("ERROR")) {
                 return true;
             }
         }
