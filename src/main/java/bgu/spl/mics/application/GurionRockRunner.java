@@ -36,20 +36,8 @@ public class GurionRockRunner {
      * @param args Command-line arguments. The first argument is expected to be the path to the configuration file.
      */
     public static void main(String[] args) {
-        String configPath = "C:\\Users\\alona\\SPL2\\example_input_2\\configuration_file.json";
-        try {
-            MainConfiguration config = ReadConfiguration.readConfiguration(configPath);
-            List<CameraConfiguration> cameraConfigs = config.getCameras().getCamerasConfigurations();
-            List<CameraService> camerasList = new LinkedList<>();
-            for (CameraConfiguration cameraConfig : cameraConfigs) {
-                camerasList.add(new CameraService(new Camera()));
-                System.out.println("Camera ID: " + cameraConfig.getId());
-                System.out.println("Frequency: " + cameraConfig.getFrequency());
-                System.out.println("Camera Key: " + cameraConfig.getCameraKey());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        
+        
     }
 }
     
