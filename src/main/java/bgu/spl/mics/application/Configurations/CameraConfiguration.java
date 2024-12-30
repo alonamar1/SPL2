@@ -1,4 +1,4 @@
-package bgu.spl.mics.application;
+package bgu.spl.mics.application.Configurations;
 
 import java.util.LinkedList;
 import java.util.List;

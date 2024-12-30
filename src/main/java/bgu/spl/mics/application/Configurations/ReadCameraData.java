@@ -1,18 +1,17 @@
-package bgu.spl.mics.application;
+package bgu.spl.mics.application.Configurations;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import bgu.spl.mics.application.objects.StampedDetectedObjects;
-import bgu.spl.mics.application.CameraDataPair;
-
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import bgu.spl.mics.application.Configurations.CameraDataPair;
 import bgu.spl.mics.application.objects.DetectedObject;
 import bgu.spl.mics.application.objects.StampedCloudPoints;
 

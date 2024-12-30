@@ -1,12 +1,11 @@
-package bgu.spl.mics.application;
+package bgu.spl.mics.application.Configurations;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import bgu.spl.mics.application.MainConfiguration;
 import bgu.spl.mics.application.objects.Camera;
-import bgu.spl.mics.application.CameraConfiguration;
-import bgu.spl.mics.application.ReadCameraData;
+import bgu.spl.mics.application.Configurations.MainConfiguration;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

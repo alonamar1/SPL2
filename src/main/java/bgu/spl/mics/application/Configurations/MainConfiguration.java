@@ -1,4 +1,4 @@
-package bgu.spl.mics.application;
+package bgu.spl.mics.application.Configurations;
 
 public class MainConfiguration {
     private CameraConfiguration cameras;
