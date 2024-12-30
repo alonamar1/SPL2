@@ -44,9 +44,8 @@ public class LiDarService extends MicroService {
     }
 
     /**
-     * Initializes the LiDarService. Registers the service to handle
-     * DetectObjectsEvents and TickBroadcasts, and sets up the necessary
-     * callbacks for processing data.
+     * //TODO: write what happend here
+     * @param detObj
      */
     public void prepareToSend(DetectedObjectsEvent detObj) {
         TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime()); // create a new
@@ -79,6 +78,11 @@ public class LiDarService extends MicroService {
                 }
     }
 
+    /**
+     * Initializes the LiDarService. Registers the service to handle
+     * DetectObjectsEvents and TickBroadcasts, and sets up the necessary
+     * callbacks for processing data.
+     */
     @Override
     protected void initialize() {
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
@@ -106,9 +110,13 @@ public class LiDarService extends MicroService {
             // TODO: Handle the case where other service was terminated.
             // if the terminated service is TimeService, terminate the LiDarService.
             if (terminated.getSenderId().equals("TimeService")) {
-                sendBroadcast(new TerminatedBroadcast("LiDar"));
+                sendBroadcast(new TerminatedBroadcast("LiDarWorker"));
                 this.liDarTracker.setStatus(STATUS.DOWN);
                 terminate();
+            }
+            // if camera is finished
+            if (terminated.getSenderId().equals("Camera")) {
+
             }
         });
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {

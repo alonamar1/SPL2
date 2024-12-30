@@ -36,34 +36,35 @@ public class PoseService extends MicroService {
     protected void initialize() {
         // TickBroadcast
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            PoseEvent poseEvent = new PoseEvent(this.gpsimu.getCurrentPose(tick.getTick())); // Create a new PoseEvent with the current pose
-            Future<Boolean> f = sendEvent(poseEvent); // Send the PoseEvent
-            Boolean result = null;
-            if (f != null) {
-                try {
-                    result = f.get(100, java.util.concurrent.TimeUnit.MILLISECONDS); // Wait for the result of the PoseEvent
-                } catch (Exception e) {
-                    e.printStackTrace(); // Handle the case where the future was interrupted
+            if (this.gpsimu.getCurrentStatus() != STATUS.DOWN) {
+                // Create a new PoseEvent with the current pose
+                PoseEvent poseEvent = new PoseEvent(this.gpsimu.getCurrentPose(tick.getTick()));
+                Future<Boolean> f = sendEvent(poseEvent); // Send the PoseEvent
+                Boolean result = null;
+                if (f != null) {
+                    try {
+                        // Wait for the result of the PoseEvent
+                        result = f.get(100, java.util.concurrent.TimeUnit.MILLISECONDS);
+                    } catch (Exception e) {
+                        // Handle the case where the future was interrupted
+                        e.printStackTrace();
+                    }
                 }
             }
-            // Do We need to check if the result is null????????
-            if (result == null || !result) { // If the PoseEvent was not completed successfully
-                //sendBroadcast(new CrashedBroadcast("PoseService")); // Broadcast a Crashed message
-                terminate(); // Terminate the service
+            if (this.gpsimu.getCurrentStatus() == STATUS.DOWN){
+                sendBroadcast(new TerminatedBroadcast("PoseService"));
             }
         });
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            // TODO: Handle the case where other service was terminated.
-
             // if the terminated service is TimeService, terminate the PoseService.
             if (terminated.getSenderId().equals("TimeService")) {
                 sendBroadcast(new TerminatedBroadcast("PoseService"));
+                this.gpsimu.setCurrentStatus(STATUS.DOWN);
                 terminate();
             }
         });
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
             // TODO: Handle the case where other service was Crashed.
-            sendBroadcast(new TerminatedBroadcast("PoseService"));
             terminate();
         });
     }

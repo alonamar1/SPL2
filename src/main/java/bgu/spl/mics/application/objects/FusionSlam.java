@@ -18,7 +18,6 @@ public class FusionSlam {
     private List<LandMark> landmarks;
     private List<Pose> poses;
     private List<TrackedObjectEvent> trackedObjectsReciv; // List of TrackedObjects received from the LiDAR workers.
-    //private List<ReadyToProcessPair<Pose, TrackedObjectEvent>> readyToProcessPairs;
 
     private FusionSlam() {
         this.landmarks = new LinkedList<>();

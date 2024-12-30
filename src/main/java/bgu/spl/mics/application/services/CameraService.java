@@ -37,42 +37,47 @@ public class CameraService extends MicroService {
      * sending
      * DetectObjectsEvents.
      */
-    public Camera getcamera()
-    {
+    public Camera getcamera() {
         return camera;
     }
 
     @Override
     protected void initialize() {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            if (tick.getTick() - camera.getFrequency() >= 1) {
-            DetectedObjectsEvent detectedList = camera.handleTick(tick.getTick()-camera.getFrequency());
-            // If the camera is down, broadcast a Crashed message and terminate the service.
-            if (camera.getStatus() == STATUS.DOWN) {
-                sendBroadcast(new CrashedBroadcast("Camera"));
-                terminate();
-            }
-            // If the camera is not down, send the detected objects to the LiDAR workers.
-            else if (detectedList != null) {
-                Future<Boolean> future;
-                future = (Future<Boolean>) sendEvent(detectedList);
-                try {
-                    Boolean result = future.get(100, java.util.concurrent.TimeUnit.MILLISECONDS); // TODO: Change the time to a constant.
-                    if (result == false) {
-                        // TODO: Handle the case where the event was not completed successfully.
+            if (camera.getStatus() != STATUS.DOWN) {
+                if (tick.getTick() - camera.getFrequency() >= 1) {
+                    DetectedObjectsEvent detectedList = camera.handleTick(tick.getTick() - camera.getFrequency());
+                    // If the camera is down, broadcast a Crashed message and terminate the service.
+                    if (camera.getStatus() == STATUS.ERROR) {
+                        sendBroadcast(new CrashedBroadcast("Camera"));
+                        terminate();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                    sendBroadcast(new CrashedBroadcast("Camera"));
+                    // If the camera is not in ERROR state, send the detected objects to the LiDAR workers.
+                    else if (detectedList != null) {
+                        Future<Boolean> future;
+                        future = (Future<Boolean>) sendEvent(detectedList);
+                        try {
+                            // TODO: Change the time to a constant.
+                            Boolean result = future.get(100, java.util.concurrent.TimeUnit.MILLISECONDS);
+                            if (result == false) {
+                                // TODO: Handle the case where the event was not completed successfully.
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
+                            sendBroadcast(new CrashedBroadcast("Camera"));
+                        }
+                    }
                 }
             }
-        }
+            else {
+                
+            }
         });
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            // TODO: Handle the case where other service was terminated.
             // if the terminated service is TimeService, terminate the CameraService.
             if (terminated.getSenderId().equals("TimeService")) {
                 sendBroadcast(new TerminatedBroadcast("Camera"));
+                this.camera.setStatus(STATUS.DOWN);
                 terminate();
             }
         });

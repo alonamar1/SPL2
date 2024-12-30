@@ -22,6 +22,11 @@ import bgu.spl.mics.application.messages.PoseEvent;
 public class FusionSlamService extends MicroService {
 
     private FusionSlam fusionSlam; // The FusionSLAM object responsible for managing the global map.
+    private boolean running;
+    private int cameraAmount;
+    private int LidarWorkerAmount;
+    private boolean poseServiceOn;
+    private boolean timeServiceOn;
 
     /**
      * Constructor for FusionSlamService.
@@ -29,9 +34,14 @@ public class FusionSlamService extends MicroService {
      * @param fusionSlam The FusionSLAM object responsible for managing the global
      *                   map.
      */
-    public FusionSlamService(FusionSlam fusionSlam) {
+    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount) {
         super("FusionSlamService");
         this.fusionSlam = fusionSlam;
+        this.running = true;
+        this.LidarWorkerAmount = LidarWorkerAmount;
+        this.cameraAmount = cameraAmount;
+        this.poseServiceOn = true;
+        this.timeServiceOn = true;
     }
 
     /**
@@ -44,43 +54,53 @@ public class FusionSlamService extends MicroService {
     protected void initialize() {
         // TickEvent - TrackedObjectEvent
         subscribeEvent(TrackedObjectEvent.class, (TrackedObjectEvent TrackedObjectEvent) -> {
-            ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.checkReadyToProcess(TrackedObjectEvent); // Check if the tracked object is ready to be processed.
+            ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam
+                    .checkReadyToProcess(TrackedObjectEvent); // Check if the tracked object is ready to be processed.
             if (toProcess != null) {
                 // Process the pair of pose and every tracked object.
                 this.fusionSlam.ProcessReadyToProcessPair(toProcess);
             } else {
-                this.fusionSlam.getTrackedObjectsReciv().add(TrackedObjectEvent); // Add the new tracked object event to the list.
+                this.fusionSlam.getTrackedObjectsReciv().add(TrackedObjectEvent); // Add the new tracked object event to
+                                                                                  // the list.
             }
         });
 
         // TickEvent - PoseEvent
         subscribeEvent(PoseEvent.class, (PoseEvent PoseEvent) -> {
-            List<ReadyToProcessPair<Pose, TrackedObjectEvent>> toProcess = this.fusionSlam.checkReadyToProcess(PoseEvent.getPose()); // Check if the pose is ready to be processed.
+            List<ReadyToProcessPair<Pose, TrackedObjectEvent>> toProcess = this.fusionSlam
+                    .checkReadyToProcess(PoseEvent.getPose()); // Check if the pose is ready to be processed.
             if (!toProcess.isEmpty()) {
-                for (ReadyToProcessPair<Pose, TrackedObjectEvent> pair : toProcess){
+                for (ReadyToProcessPair<Pose, TrackedObjectEvent> pair : toProcess) {
                     this.fusionSlam.ProcessReadyToProcessPair(pair);
                 }
-            }
-            else {
+            } else {
                 this.fusionSlam.getPoses().add(PoseEvent.getPose()); // Add the new pose to the list.
             }
         });
 
         // TickBroadcast
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
-            // TODO: האם צריך לעשות את זה כל זמן שיש
-            // מה לעשות ?
-            /*while (!this.fusionSlam.isReadyToProcessPairsEmpty()) {
-                // ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.getReadyToProcessPairs().remove(0);
-                // Process the pair of pose and every tracked object.
-                // this.fusionSlam.ProcessReadyToProcessPair(toProcess);
-            }*/
+            // TODO: בודק מתי צריך לסיים את כל התוכנית
+            // if need to finish
+            this.checkIfRunning(); // צריך לבדוק גם פה ??
+            if (!this.running) {
+                // TODO: make a output File
+                // sendBroadcast(new TerminatedBroadcast("FusionSlam"));
+            }
         });
 
         // TerminatedBroadCast
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
-            // TODO: Handle the case where other service was terminated.
-            // terminate();
+            if (terminated.getSenderId() == "Camera") {
+                this.cameraAmount--;
+            } else if (terminated.getSenderId() == "LiDarWorker") {
+                this.LidarWorkerAmount--;
+            } else if (terminated.getSenderId() == "PoseService") {
+                this.poseServiceOn = false;
+            } else if (terminated.getSenderId() == "TimeService") {
+                this.timeServiceOn = false;
+            }
+            this.checkIfRunning();
         });
 
         // CrashedBroadCast
@@ -88,5 +108,17 @@ public class FusionSlamService extends MicroService {
             // TODO: Handle the case where other service crashed.
             terminate();
         });
+    }
+
+    /**
+     * Check if the fusionSlam need to finish the program
+     */
+    private void checkIfRunning() {
+        // All the sensor finishs, finish simulation
+        if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn)
+            this.running = false;
+        // TimeService stops, the program need to terminated
+        else if (!this.timeServiceOn)
+            this.running = false;
     }
 }
