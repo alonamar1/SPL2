@@ -21,7 +21,11 @@ import bgu.spl.mics.application.objects.StampedCloudPoints;
  */
 public class ReadCameraData {
 
-    public static List<CameraDataPair> cameraDataJsonToList(String filePath) {
+    public ReadCameraData()
+    {
+    }
+
+    public List<CameraDataPair> cameraDataJsonToList(String filePath) {
         List<CameraDataPair> cameras = new LinkedList<>();
         try (InputStream is = new FileInputStream(filePath)) {
             // Create a JSONTokener to parse the JSON file
@@ -69,7 +73,7 @@ public class ReadCameraData {
         return cameras;
     }
 
-    public static List<StampedDetectedObjects> readCameraData(List<CameraDataPair> allData, String name)
+    public List<StampedDetectedObjects> readCameraData(List<CameraDataPair> allData, String name)
     {
         for (CameraDataPair c : allData)
         {
