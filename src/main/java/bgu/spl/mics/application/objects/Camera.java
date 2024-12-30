@@ -107,9 +107,9 @@ public class Camera {
         }
         return null;
     }
-    public boolean checkIfFinish(int currentTick) {
+    public boolean checkIfFinish(int nexttTick) {
         // Assuming the list is sorted by time
-        if (this.detectedObjectsList.get(this.detectedObjectsList.size() - 1).getTime() < currentTick) {
+        if (this.detectedObjectsList.get(this.detectedObjectsList.size() - 1).getTime() < nexttTick) {
             return true;
         }
         return false;
