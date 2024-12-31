@@ -72,7 +72,10 @@ public class MessageBusImpl implements MessageBus {
         if (subscribers != null) {
             for (MicroService m : subscribers) {
                 try {
-                    messageQueues.get(m).put(b);
+                    BlockingQueue<Message> temp = messageQueues.get(m);
+                    if (temp != null) {
+                        temp.put(b);
+                    }
                 } catch (InterruptedException e) {
                     System.out.println("Send Brodcast Interrupt: " + Thread.currentThread().getName());
                     Thread.currentThread().interrupt();
