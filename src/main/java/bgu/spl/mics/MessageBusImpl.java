@@ -121,8 +121,8 @@ public class MessageBusImpl implements MessageBus {
         if (bq != null) {
             while (!bq.isEmpty()) {
                 Message msg = bq.poll(); //לחשוב האם צריך פול או טייק
-                eventFutures.get(msg).resolve(null); // return to every future resolved with null
-                eventFutures.remove(msg); // remove events from the list future event האם צריך את זה???
+                //eventFutures.get(msg).resolve(null); // return to every future resolved with null
+                //eventFutures.remove(msg); // remove events from the list future event האם צריך את זה???
             }
         }
         synchronized (eventSubscribers) {

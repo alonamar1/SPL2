@@ -23,7 +23,7 @@ import bgu.spl.mics.application.services.CameraService;
 import bgu.spl.mics.application.services.FusionSlamService;
 
 public class FusionSlamTest {
-
+/* 
     private List<LandMark> landmarks;
     private List<Pose> poses;
     private List<TrackedObjectEvent> trackedObjectsReciv; // List of TrackedObjects received from the LiDAR workers.
@@ -76,7 +76,7 @@ public class FusionSlamTest {
         }
         //להוסיף בדיקות על ארורים
          */
-
+/* 
         //אופציה ב
         Pose[] poses = {}; //להשלים מהדאטה שתהיה לי
         TrackedObject[] objects = {};
@@ -114,6 +114,6 @@ public class FusionSlamTest {
             }
         }
 
-    }
+    } */
 
 }

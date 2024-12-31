@@ -43,7 +43,7 @@ public class GPSIMU {
         if (prevPoses.size() == currentTick){
             this.currentStatus = STATUS.DOWN;
         }
-        return prevPoses.get(prevPoses.size()-1);
+        return prevPoses.get(currentTick-1);
     }
 
     public void setCurrentTick(int tick){

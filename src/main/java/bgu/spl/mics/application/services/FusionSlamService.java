@@ -90,10 +90,10 @@ public class FusionSlamService extends MicroService {
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
             // TODO: בודק מתי צריך לסיים את כל התוכנית
             // if need to finish
-            this.checkIfRunning(); // צריך לבדוק גם פה ??
-            if (!this.fusionSlam.getRunning()) {
-                // sendBroadcast(new TerminatedBroadcast("FusionSlam"));
-            }
+            //this.checkIfRunning(); // צריך לבדוק גם פה ??
+            // if (!this.fusionSlam.getRunning()) {
+            //     // sendBroadcast(new TerminatedBroadcast("FusionSlam"));
+            // }
         });
 
         // TerminatedBroadCast

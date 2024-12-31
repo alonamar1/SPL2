@@ -66,7 +66,7 @@ public class GurionRockRunner {
         int LiDarWorkerAmount = configFile.getLidar().getlidarConfigurations().size();
         LiDarDataBase liDarDataBase = LiDarDataBase.getInstance("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input_2\\lidar_data.json");
         // make sure wait for initializing
-        CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 3); 
+        CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 2); 
 
         // initializing to Pose Service
         // TODO: create a list of poses and give it to him
@@ -112,7 +112,7 @@ public class GurionRockRunner {
             threadsLiDarsService.add(new Thread(liDarSer, "LidarWorker" + liDarSer.getName()));
         }
         // start Threads
-        for (Thread th : threadsCamerasService) {
+        for (Thread th : threadsLiDarsService) {
             th.start();
         }
 

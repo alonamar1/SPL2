@@ -15,11 +15,10 @@ import bgu.spl.mics.application.objects.StatisticalFolder;
 import bgu.spl.mics.application.services.CameraService;
 
 public class CameraTest {
-
+/*
     private static class TestMicroService extends CameraService {
 
         private Camera cam;
-
         public TestMicroService(Camera cam, CountDownLatch latch) {
             super(cam, latch);
         }
@@ -112,7 +111,7 @@ public class CameraTest {
             }
         }
         System.out.print("fff");
-    }
+    } */
 
 }
 

@@ -71,6 +71,8 @@ public class LiDarService extends MicroService {
                 terminate();
             }
         }
+        // Send Event
+        sendEvent(event);
         // Save State
         SaveStateFolder.getInstance().updateLidarWorker(event);
         // increment the number of tracked objects in the statistical folder
@@ -119,7 +121,7 @@ public class LiDarService extends MicroService {
                 this.currentTick = tick.getTick();
                 // by going from the last link to the first, we make sure that removing funcion
                 // doesn't change the order of the next indexes.
-                for (int i = waitingDetectedObjectsEvents.size(); i > 0; i--) {
+                for (int i = waitingDetectedObjectsEvents.size() - 1; i >= 0; i--) {
                     if (tick.getTick() >= waitingDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
                         prepareAndToSend(waitingDetectedObjectsEvents.get(i));
                         waitingDetectedObjectsEvents.remove(i);

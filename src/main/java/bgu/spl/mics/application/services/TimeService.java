@@ -35,7 +35,8 @@ public class TimeService extends MicroService {
      */
     @Override
     protected void initialize() {
-        while (Duration > 0) { // Continue broadcasting ticks until the duration is reached.
+        boolean needTofinish = false;
+        while (Duration > 0 && !needTofinish ) { // Continue broadcasting ticks until the duration is reached.
             try {
                 sendBroadcast(new TickBroadcast(this.currentTick)); // Broadcast the current tick.
                 Duration--;
@@ -44,8 +45,10 @@ public class TimeService extends MicroService {
                 Thread.sleep(TickTime*1000); // Wait for the specified tick time, in milliseconds.
                 // check if the fusion slam still working
                 if (!FusionSlam.getInstance().getRunning()) {
+                    needTofinish = true;
                     sendBroadcast(new TerminatedBroadcast("TimeService")); // Broadcast a terminated message.
                     terminate(); // Terminate the service after the specified duration.
+
                 }
             } catch (InterruptedException e) { // TODO: Handle the case where the thread was interrupted.
                 System.out.println("TimeService was interrupted.");

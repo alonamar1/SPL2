@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.services;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
-
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
@@ -11,6 +9,7 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.STATUS;
 import bgu.spl.mics.application.objects.SaveStateFolder;
+import bgu.spl.mics.Future;
 
 /**
  * CameraService is responsible for processing data from the camera and
@@ -56,6 +55,7 @@ public class CameraService extends MicroService {
                         String reason = detectedList.getDetectedObject().remove(0).getDescreption();
                         sendBroadcast(new CrashedBroadcast("Camera" + this.camera.getId(), reason));
                         terminate();
+                        Thread.currentThread().interrupt(); // TODO: Need it ???
                     }
                     // If the camera is not in ERROR state, send the detected objects to the LiDAR
                     // workers.
@@ -65,10 +65,10 @@ public class CameraService extends MicroService {
                         SaveStateFolder.getInstance().updateCameraObjects(detectedList); // save state
                         try {
                             // TODO: Change the time to a constant.
-                            Boolean result = future.get(100, java.util.concurrent.TimeUnit.MILLISECONDS);
-                            if (result == false) {
-                                // TODO: Handle the case where the event was not completed successfully.
-                            }
+                            // boolean result = future.get();
+                            // if (result == false) {
+                            //     // TODO: Handle the case where the event was not completed successfully.
+                            // }
                         } catch (Exception e) {
                             e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
                             // sendBroadcast(new CrashedBroadcast("Camera"));
