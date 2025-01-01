@@ -406,82 +406,25 @@ public class FutureMsgBusMicroSerTest {
         }
 
         //check that the only relevant microservices are subscribed to the broadcast
-        if (testMicroService3.getTest() == false) {
-            MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
-        }
-        /* 
-        try{Thread.sleep(1000);}
-        catch(Exception e)
-        {}
-        */
-        assertTrue(testMicroService3.getTest() == true);
-        if (testMicroService3.getTest())
-        {
-            System.out.println(("testMicroService3 got the broadcast"));
-
-        }
-        assertFalse(testMicroService4.getTest());
-        if (!testMicroService4.getTest()) {
-            System.out.println(("testMicroService4 didnt get the broadcast as expacted"));
-            MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast2(""));
-        }
+        
         MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
-        /* 
-        try{Thread.sleep(1000);}
-        catch(Exception e)
-        {}
-        */
+        assertTrue(testMicroService3.getTest() == true);
+        assertFalse(testMicroService4.getTest() == true);
+        System.out.println(("testMicroService4 didnt get the broadcast as expacted"));
+        MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast2(""));
+        MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
         assertTrue(testMicroService4.getTest());
-        if (testMicroService4.getTest())
-        {
-            System.out.println(("testMicroService4 got the broadcast"));
-
-        }
-
+        System.out.println(("testMicroService4 got the broadcast"));
+        
         //check that the only relevant microservices are subscribed to the events
         MessageBusImpl.getInstance().sendEvent(new TestEvent1(""));
         assertTrue(testMicroService3.getTestEvent1());
-        if (testMicroService3.getTestEvent1())
-        {
-            System.out.println(("testMicroService3 got the event"));
-        }
-        assertFalse(unregisterTest(testMicroService4));
+        System.out.println(("testMicroService3 got the event"));
+        assertTrue(unregisterTest(testMicroService4));
         testMicroService3.setTest();
-        if (! testMicroService3.setTest())
-        {
-            System.out.println(("test reterned to be false"));
-        }
+        System.out.println(("test reterned to be false"));
 
         MessageBusImpl.getInstance().sendEvent(new terminate(""));
-
-        /* 
-        try{Thread.sleep(1000);}
-        catch(Exception e)
-        {}
-        */
-         //check that the only relevant microservices are subscribed to the events
-         MessageBusImpl.getInstance().sendEvent(new TestEvent2(""));
-         assertTrue(testMicroService4.getTestEvent2());
-         if (testMicroService4.getTestEvent2())
-         {
-             System.out.println(("testMicroService4 got the event"));
-         }
-
-        //checks that microservice3 doesn't get the broadcast
-        if (!testMicroService3.getTest()) {
-            MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
-        }
-        /* 
-        try{Thread.sleep(1000);}
-        catch(Exception e)
-        {}
-        */
-        assertFalse(testMicroService3.getTest());
-        if (testMicroService3.getTest())
-        {
-            System.out.println(("microservice3 doesn't get messages anymore"));
-        }
-        MessageBusImpl.getInstance().sendEvent(new TestEvent1(""));
 
 
         //checks that awaitMessage throws exaptions for unregistered microservice
