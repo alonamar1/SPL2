@@ -41,10 +41,10 @@ public class GurionRockRunner {
             configFile = ReadConfiguration.readConfiguration(args[0]);
             //configFile = ReadConfiguration.readConfiguration("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example input\\configuration_file.json");
         } catch (Exception e) {
-            System.out.println("Can't Read config file!! :(");
+            System.out.println("Can't Find the  config file!! :(");
         }
         if (configFile == null) {
-            throw new IllegalAccessError("We All Hate Rotem Sakura");
+            throw new IllegalAccessError("Can't Read config file!! :(");
         }
 
         // General SETUP:
