@@ -406,10 +406,13 @@ public class FutureMsgBusMicroSerTest {
         }
 
         //check that the only relevant microservices are subscribed to the broadcast
-        if (!testMicroService3.getTest()) {
+        if (testMicroService3.getTest() == false) {
             MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
         }
-        assertTrue(testMicroService3.getTest());
+        try{Thread.sleep(1000);}
+        catch(Exception e)
+        {}
+        assertTrue(testMicroService3.getTest() == true);
         if (testMicroService3.getTest())
         {
             System.out.println(("testMicroService3 got the broadcast"));
@@ -421,6 +424,9 @@ public class FutureMsgBusMicroSerTest {
             MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast2(""));
         }
         MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
+        try{Thread.sleep(1000);}
+        catch(Exception e)
+        {}
         assertTrue(testMicroService4.getTest());
         if (testMicroService4.getTest())
         {
@@ -444,6 +450,9 @@ public class FutureMsgBusMicroSerTest {
 
         MessageBusImpl.getInstance().sendEvent(new terminate(""));
 
+        try{Thread.sleep(1000);}
+        catch(Exception e)
+        {}
          //check that the only relevant microservices are subscribed to the events
          MessageBusImpl.getInstance().sendEvent(new TestEvent2(""));
          assertTrue(testMicroService4.getTestEvent2());
@@ -456,6 +465,9 @@ public class FutureMsgBusMicroSerTest {
         if (!testMicroService3.getTest()) {
             MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
         }
+        try{Thread.sleep(1000);}
+        catch(Exception e)
+        {}
         assertFalse(testMicroService3.getTest());
         if (testMicroService3.getTest())
         {
