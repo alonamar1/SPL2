@@ -53,7 +53,7 @@ public class GurionRockRunner {
         try {
             // configFile = ReadConfiguration.readConfiguration(args[0]);
             configFile = ReadConfiguration.readConfiguration(
-                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example input\\configuration_file.json");
+                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input_2\\configuration_file.json");
         } catch (Exception e) {
             System.out.println("Can't Read config file!! :(");
         }

@@ -31,25 +31,29 @@ public class LandMark {
     }
 
     /**
-     * Updates the coordinates of a landmark. from a given list of cloud points.
+     * Updates the coordinates of a landmark from a given list of cloud points.
      * 
      * @param prevlandmark
      * @param newLandmarkCloudPoints
      */
     public static void updateCoordiLandmark(LandMark prevlandmark, List<CloudPoint> newLandmarkCloudPoints) {
-        int countPoints = 0;
-        // update the coordinates of the landmark
-        for (CloudPoint cloudPoint : prevlandmark.getCoordinates()) {
-            cloudPoint.setX((newLandmarkCloudPoints.get(countPoints).getX() + cloudPoint.getX()) / 2);
-            cloudPoint.setY((newLandmarkCloudPoints.get(countPoints).getY() + cloudPoint.getY()) / 2);
-            countPoints++;
+        int minSize = Math.min(prevlandmark.getCoordinates().size(), newLandmarkCloudPoints.size());
+        // Update the coordinates of the landmark
+        for (int i = 0; i < minSize; i++) {
+            CloudPoint prevPoint = prevlandmark.getCoordinates().get(i);
+            CloudPoint newPoint = newLandmarkCloudPoints.get(i);
+            prevPoint.setX((prevPoint.getX() + newPoint.getX()) / 2);
+            prevPoint.setY((prevPoint.getY() + newPoint.getY()) / 2);
         }
-        // add the new points to the landmark, if there are any
-        if (countPoints != newLandmarkCloudPoints.size()) {
-            for (int j = countPoints; j < newLandmarkCloudPoints.size(); j++) {
-                prevlandmark.getCoordinates().add(newLandmarkCloudPoints.get(j));
+        // Add the remaining points from the longer list to the landmark
+        if (newLandmarkCloudPoints.size() > minSize) {
+            for (int i = minSize; i < newLandmarkCloudPoints.size(); i++) {
+                prevlandmark.getCoordinates().add(newLandmarkCloudPoints.get(i));
+            }
+        } else if (prevlandmark.getCoordinates().size() > minSize) {
+            for (int i = minSize; i < prevlandmark.getCoordinates().size(); i++) {
+                newLandmarkCloudPoints.add(prevlandmark.getCoordinates().get(i));
             }
         }
     }
-
 }
