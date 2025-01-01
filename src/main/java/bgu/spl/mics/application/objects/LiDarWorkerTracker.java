@@ -49,7 +49,7 @@ public class LiDarWorkerTracker {
                     return null;
                 }
                 // if the ID of the cloud points is the same as the ID of the detected object
-                else if (cp.getID().equals(detectedObject.getID())) {
+                else if ((cp.getID().equals(detectedObject.getID()))&&(cp.getTime()==timeSeeingObject)) {
                     List<CloudPoint> cloudPoints = new LinkedList<>(); // create an empty list of cloud points
                     for (int i = 0; i < cp.getCloudPoints().size(); i++) {
                         // create a cloud point object for each cloud point, without the z coordinate
@@ -64,6 +64,33 @@ public class LiDarWorkerTracker {
             }
         }
         return null;
+    }
+
+    public TrackedObjectEvent prepareToSend(DetectedObjectsEvent detObj) {
+        // create a new TrackedObjectEvent
+        TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(this.getID()), detObj.getTime());
+        for (int j = 0; j < detObj.getDetectedObject().size(); j++) {
+            TrackedObject trackedObject = this.getTrackedObject(
+                    detObj.getDetectedObject().get(j),
+                    detObj.getTime());
+            // if the tracked object is not null, add it to the event
+            if (trackedObject != null) {
+                event.addTrackedObject(trackedObject);
+            } else if (this.getStatus() == STATUS.ERROR) {
+                // if the status of the LiDarTracker is ERROR, terminate the LiDarService
+                TrackedObjectEvent errorEvent = new TrackedObjectEvent(((Integer)id).toString(), detObj.getTime());
+                errorEvent.addTrackedObject(new TrackedObject(((Integer)id).toString(), detObj.getTime(), "ERROR", null));
+                return errorEvent;
+            }
+        }
+        // Save State
+        SaveStateFolder.getInstance().updateLidarWorker(event);
+        // increment the number of tracked objects in the statistical folder
+        StatisticalFolder.getInstance().incrementNumTrackedObjects(event.getTrackedObject().size());
+        // complete the DetectedObjectsEvent
+        MessageBusImpl.getInstance().complete(detObj, true);
+        // Send Event
+        return event;
     }
 
     public void setStatus(STATUS status) {

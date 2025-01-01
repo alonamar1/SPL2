@@ -54,6 +54,7 @@ public class LiDarService extends MicroService {
      * 
      * @param detObj
      */
+    /* 
     public void prepareAndToSend(DetectedObjectsEvent detObj) {
         // create a new TrackedObjectEvent
         TrackedObjectEvent event = new TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime());
@@ -109,7 +110,16 @@ public class LiDarService extends MicroService {
         subscribeEvent(DetectedObjectsEvent.class, (DetectedObjectsEvent detectedObjectsEvent) -> {
             if (this.liDarTracker.getStatus() == STATUS.UP) {
                 if (currentTick >= detectedObjectsEvent.getTime() + liDarTracker.getFrequency()) {
-                    prepareAndToSend(detectedObjectsEvent);
+                    TrackedObjectEvent event = this.liDarTracker.prepareToSend(detectedObjectsEvent);
+                    if (event.getTrackedObject().get(0).getDescription().equals("ERROR"))
+                    {
+                        sendBroadcast(new CrashedBroadcast("LiDar",
+                        "Sensor LidarWorker " + this.liDarTracker.getID() + " disconnected"));
+                        terminate();
+                    }
+                    else {
+                        sendEvent(event);
+                    }
                 } else {
                     waitingDetectedObjectsEvents.add(detectedObjectsEvent);
                 }
@@ -123,7 +133,17 @@ public class LiDarService extends MicroService {
                 // doesn't change the order of the next indexes.
                 for (int i = waitingDetectedObjectsEvents.size() - 1; i >= 0; i--) {
                     if (tick.getTick() >= waitingDetectedObjectsEvents.get(i).getTime() + liDarTracker.getFrequency()) {
-                        prepareAndToSend(waitingDetectedObjectsEvents.get(i));
+                        
+                        TrackedObjectEvent event = this.liDarTracker.prepareToSend(waitingDetectedObjectsEvents.get(i));
+                        if (event.getTrackedObject().get(0).getDescription().equals("ERROR"))
+                        {
+                            sendBroadcast(new CrashedBroadcast("LiDar",
+                            "Sensor LidarWorker " + this.liDarTracker.getID() + " disconnected"));
+                            terminate();
+                        }
+                        else {
+                            sendEvent(event);
+                        }
                         waitingDetectedObjectsEvents.remove(i);
                     }
                     this.checkIfFinish();
