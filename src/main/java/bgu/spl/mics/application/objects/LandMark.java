@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.objects;
+
 import java.util.List;
 
 /**
@@ -15,15 +16,15 @@ public class LandMark {
         this.id = id;
         this.description = description;
         this.coordinates = coordinates;
-    }   
+    }
 
     public String getId() {
         return id;
-    }   
+    }
 
     public String getDescription() {
         return description;
-    }   
+    }
 
     public List<CloudPoint> getCoordinates() {
         return coordinates;
@@ -31,15 +32,16 @@ public class LandMark {
 
     /**
      * Updates the coordinates of a landmark. from a given list of cloud points.
+     * 
      * @param prevlandmark
      * @param newLandmarkCloudPoints
      */
     public static void updateCoordiLandmark(LandMark prevlandmark, List<CloudPoint> newLandmarkCloudPoints) {
-        int countPoints = 1; // 1 because the first point is already updated
+        int countPoints = 0;
         // update the coordinates of the landmark
         for (CloudPoint cloudPoint : prevlandmark.getCoordinates()) {
-            cloudPoint.setX((newLandmarkCloudPoints.get(countPoints - 1).getX() + cloudPoint.getX()) / 2);
-            cloudPoint.setY((newLandmarkCloudPoints.get(countPoints - 1).getY() + cloudPoint.getY()) / 2);
+            cloudPoint.setX((newLandmarkCloudPoints.get(countPoints).getX() + cloudPoint.getX()) / 2);
+            cloudPoint.setY((newLandmarkCloudPoints.get(countPoints).getY() + cloudPoint.getY()) / 2);
             countPoints++;
         }
         // add the new points to the landmark, if there are any
@@ -48,6 +50,6 @@ public class LandMark {
                 prevlandmark.getCoordinates().add(newLandmarkCloudPoints.get(j));
             }
         }
-    }   
-    
+    }
+
 }

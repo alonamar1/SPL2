@@ -114,12 +114,16 @@ public class FusionSlam {
      */
     public List<CloudPoint> convertToGlobalCoordinateSys(List<CloudPoint> cloudPoints, Pose pose) {
         List<CloudPoint> globalCloudPoints = new LinkedList<>();
+        // Convert the coordinates of the cloud points to the global coordinate system.
         for (CloudPoint cloudPoint : cloudPoints) {
-            double radiansYaw = pose.getYaw() * (Math.PI / 180);
-            float x = (float) (cloudPoint.getX() * Math.cos(radiansYaw) - cloudPoint.getY() * Math.sin(radiansYaw)
+            // Convert the yaw to radians.
+            double radiansYaw = Math.toRadians(pose.getYaw());
+            // Convert the coordinates to the global coordinate system.
+            double x = (cloudPoint.getX() * Math.cos(radiansYaw) - cloudPoint.getY() * Math.sin(radiansYaw)
                     + pose.getX());
-            float y = (float) (cloudPoint.getX() * Math.sin(radiansYaw) + cloudPoint.getY() * Math.cos(radiansYaw)
+            double y = (cloudPoint.getX() * Math.sin(radiansYaw) + cloudPoint.getY() * Math.cos(radiansYaw)
                     + pose.getY());
+            // Add the cloud point to the list of global cloud points.
             globalCloudPoints.add(new CloudPoint(x, y));
         }
         return globalCloudPoints;
@@ -130,6 +134,7 @@ public class FusionSlam {
      * @param trackedObjectEvent
      */
     public ReadyToProcessPair<Pose, TrackedObjectEvent> checkReadyToProcess(TrackedObjectEvent trackedObjectEvent) {
+        // check if there is a Pose with the same time as the TrackedObjectEvent.
         for (Pose pose : this.poses) {
             if (pose.getTime() == trackedObjectEvent.getTime()) {
                 return new ReadyToProcessPair<>(pose, trackedObjectEvent);
@@ -144,6 +149,7 @@ public class FusionSlam {
      */
     public List<ReadyToProcessPair<Pose, TrackedObjectEvent>> checkReadyToProcess(Pose pose) {
         List<ReadyToProcessPair<Pose, TrackedObjectEvent>> listPairs = new LinkedList<>();
+        // check if there is a TrackedObjectEvent with the same time as the pose.
         for (TrackedObjectEvent trackedObjectEvent : this.trackedObjectsReciv) {
             if (pose.getTime() == trackedObjectEvent.getTime()) {
                 listPairs.add(new ReadyToProcessPair<>(pose, trackedObjectEvent));

@@ -2,7 +2,6 @@ package bgu.spl.mics.application.services;
 
 import java.util.concurrent.CountDownLatch;
 
-import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.PoseEvent;

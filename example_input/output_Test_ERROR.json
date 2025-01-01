@@ -1,22 +1,68 @@
 {
-  "error": "Camera Disconnected",
+  "error": "GLaDOS has repurposed the robot to conduct endless cake-fetching tests. Success is a lie.",
   "faultySensor": "Camera1",
   "lastCamerasFrame": [
     {
       "cameraId": 1,
       "detectedObject": [
         {
+          "ID": "furniture_1",
+          "descreption": "A White Wooden Closet"
+        },
+        {
+          "ID": "furniture_2",
+          "descreption": "A Drawer unit"
+        },
+        {
+          "ID": "furniture_3",
+          "descreption": "Bed"
+        }
+      ],
+      "time": 7
+    },
+    {
+      "cameraId": 2,
+      "detectedObject": [
+        {
+          "ID": "Door_2",
+          "descreption": "Door"
+        },
+        {
+          "ID": "Wall_5",
+          "descreption": "Wall"
+        },
+        {
           "ID": "Wall_3",
           "descreption": "Wall"
         }
       ],
-      "time": 12
+      "time": 7
     }
   ],
   "lastLiDarWorkerTrackersFrame": [
     {
+      "id": "2",
+      "trackedObject": [],
+      "time": 7
+    },
+    {
       "id": "1",
       "trackedObject": [
+        {
+          "id": "Wall_1",
+          "time": 2,
+          "description": "Wall",
+          "coordinates": [
+            {
+              "x": 0.1176,
+              "y": 3.6969
+            },
+            {
+              "x": 0.11362,
+              "y": 3.6039
+            }
+          ]
+        },
         {
           "id": "Wall_3",
           "time": 4,
@@ -31,9 +77,24 @@
               "y": -0.17392
             }
           ]
+        },
+        {
+          "id": "Chair_Base_1",
+          "time": 4,
+          "description": "Chair Base",
+          "coordinates": [
+            {
+              "x": 1.9834,
+              "y": -1.0048
+            },
+            {
+              "x": 1.7235,
+              "y": -0.71784
+            }
+          ]
         }
       ],
-      "time": 12
+      "time": 5
     }
   ],
   "poses": [
@@ -47,37 +108,37 @@
       "time": 2,
       "x": -3.2076,
       "y": 0.0755,
-      "yaw": -87.48
+      "yaw": -87.49
     },
     {
       "time": 3,
       "x": -5.7074,
       "y": 0.1484,
-      "yaw": -92.68
+      "yaw": -92.65
     },
     {
       "time": 4,
       "x": -4.953,
       "y": 1.3106,
-      "yaw": 144.06
+      "yaw": 144.04
     },
     {
       "time": 5,
       "x": -4.817,
       "y": 2.8094,
-      "yaw": 132.57
+      "yaw": 132.58
     },
     {
       "time": 6,
       "x": -3.16,
       "y": 3.1058,
-      "yaw": -28.08
+      "yaw": -11.34
     },
     {
       "time": 7,
       "x": -2.366,
       "y": 0.9327,
-      "yaw": -28.08
+      "yaw": -28.07
     },
     {
       "time": 8,
@@ -90,69 +151,25 @@
       "x": -0.436,
       "y": 2.8818,
       "yaw": 38.85
-    },
-    {
-      "time": 10,
-      "x": 0.0,
-      "y": 3.6,
-      "yaw": 57.3
-    },
-    {
-      "time": 11,
-      "x": 0.5,
-      "y": 4.4,
-      "yaw": 68.76
-    },
-    {
-      "time": 12,
-      "x": 1.2,
-      "y": 5.1,
-      "yaw": 85.95
-    },
-    {
-      "time": 13,
-      "x": 2.0,
-      "y": 5.8,
-      "yaw": 103.09
-    },
-    {
-      "time": 14,
-      "x": 3.0,
-      "y": 6.3,
-      "yaw": 120.35
     }
   ],
   "statistics": {
-    "systemRuntime": 14,
-    "numDetectedObjects": 9,
-    "numTrackedObjects": 9,
-    "numLandmarks": 7,
+    "systemRuntime": 9,
+    "numDetectedObjects": 34,
+    "numTrackedObjects": 8,
+    "numLandmarks": 3,
     "landMarks": [
       {
         "id": "Wall_1",
         "description": "Wall",
         "coordinates": [
           {
-            "x": -1.2782767415046692,
-            "y": 2.9083676487207413
+            "x": -4.191607341170311,
+            "y": 0.1922786682844162
           },
           {
-            "x": -1.2867640852928162,
-            "y": 2.8815153427422047
-          }
-        ]
-      },
-      {
-        "id": "Wall_3",
-        "description": "Wall",
-        "coordinates": [
-          {
-            "x": -2.6992737650871277,
-            "y": 5.7587326765060425
-          },
-          {
-            "x": -2.870761811733246,
-            "y": 5.696689009666443
+            "x": -4.202471606433392,
+            "y": 0.2243208847939968
           }
         ]
       },
@@ -161,68 +178,26 @@
         "description": "Chair Base",
         "coordinates": [
           {
-            "x": -5.969069004058838,
-            "y": 3.288250684738159
+            "x": -5.693758487701416,
+            "y": 4.119157791137695
           },
           {
-            "x": -5.9270734786987305,
-            "y": 2.9033734798431396
+            "x": -5.690550327301025,
+            "y": 3.733944058418274
           }
         ]
       },
       {
-        "id": "Wall_4",
+        "id": "Wall_3",
         "description": "Wall",
         "coordinates": [
           {
-            "x": -6.967482089996338,
-            "y": 1.3581874370574951
+            "x": -6.596306800842285,
+            "y": 5.30988073348999
           },
           {
-            "x": -3.310783624649048,
-            "y": -0.9851685762405396
-          }
-        ]
-      },
-      {
-        "id": "Circular_Base_1",
-        "description": "Circular Base",
-        "coordinates": [
-          {
-            "x": -3.0700931549072266,
-            "y": 1.722561001777649
-          },
-          {
-            "x": -3.2658066749572754,
-            "y": 1.8664172887802124
-          }
-        ]
-      },
-      {
-        "id": "Door",
-        "description": "Door",
-        "coordinates": [
-          {
-            "x": -2.913332462310791,
-            "y": -1.1554635763168335
-          },
-          {
-            "x": -2.742785930633545,
-            "y": -1.4731329679489136
-          }
-        ]
-      },
-      {
-        "id": "Wall_5",
-        "description": "Wall",
-        "coordinates": [
-          {
-            "x": -4.05349063873291,
-            "y": -0.2708524167537689
-          },
-          {
-            "x": -4.118643760681152,
-            "y": -0.2944623827934265
+            "x": -6.761894702911377,
+            "y": 5.182981967926025
           }
         ]
       }
