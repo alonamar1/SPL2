@@ -40,11 +40,11 @@ public class SaveStateFolder {
         this.lastLiDarWorkerTracksEvent = new AtomicReference<>(new LinkedList<>());
     }
 
-    public List<Pose> getPrevPoses(){
+    public List<Pose> getPrevPoses() {
         return this.prevPoses.get();
     }
 
-    public List<TrackedObjectEvent> getLastLiDarEvent(){
+    public List<TrackedObjectEvent> getLastLiDarEvent() {
         return this.lastLiDarWorkerTracksEvent.get();
     }
 
@@ -54,6 +54,7 @@ public class SaveStateFolder {
 
     /**
      * Update the list of poses and locations of the robot.
+     * 
      * @param pose
      */
     public void updatePose(Pose pose) {
@@ -63,15 +64,18 @@ public class SaveStateFolder {
             locaList = this.prevPoses.get();
             newList = new LinkedList<>(locaList);
             newList.add(pose);
-        } while(!this.prevPoses.compareAndSet(locaList, newList));
+        } while (!this.prevPoses.compareAndSet(locaList, newList));
     }
 
     /**
-     * Updates the list of tracked object events for the LiDAR worker with the given event.
-     * If an event with the same ID already exists in the list, it is replaced with the new event.
+     * Updates the list of tracked object events for the LiDAR worker with the given
+     * event.
+     * If an event with the same ID already exists in the list, it is replaced with
+     * the new event.
      * Otherwise, the new event is added to the list.
      *
-     * This method uses a compare-and-set loop to ensure thread safety when updating the list.
+     * This method uses a compare-and-set loop to ensure thread safety when updating
+     * the list.
      *
      * @param event the TrackedObjectEvent to be added or updated in the list
      */
@@ -88,8 +92,9 @@ public class SaveStateFolder {
                 if (trackedEvent.getId().equals(event.getId())) {
                     newList.add(event);
                     hasSameId = true;
+                } else {
+                    newList.add(trackedEvent);
                 }
-                newList.add(trackedEvent);
             }
             if (!hasSameId) {
                 newList.add(event);
@@ -99,7 +104,8 @@ public class SaveStateFolder {
 
     /**
      * Updates the list of detected objects events with a new event from a camera.
-     * If an event from the same camera ID already exists in the list, it will be replaced with the new event.
+     * If an event from the same camera ID already exists in the list, it will be
+     * replaced with the new event.
      * Otherwise, the new event will be added to the list.
      *
      * @param event the new DetectedObjectsEvent to be added or updated in the list
@@ -117,8 +123,9 @@ public class SaveStateFolder {
                 if (detectedEvent.getCameraId() == event.getCameraId()) {
                     newList.add(event);
                     hasSameId = true;
+                } else {
+                    newList.add(detectedEvent);
                 }
-                newList.add(detectedEvent);
             }
             if (!hasSameId) {
                 newList.add(event);

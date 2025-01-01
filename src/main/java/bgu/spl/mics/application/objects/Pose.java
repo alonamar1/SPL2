@@ -6,10 +6,10 @@ package bgu.spl.mics.application.objects;
  */
 public class Pose {
     // TODO: Define fields and methods.
+    private int time;
     private float x;
     private float y;
     private float yaw;
-    private int time;
 
     public Pose(float x, float y, float yaw, int time){
         this.x = x;

@@ -117,7 +117,7 @@ public class FusionSlamService extends MicroService {
         // CrashedBroadCast
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
             this.fusionSlam.setRunning(false);
-            this.MakeOutputFileERRORState(crashed.getSenderId(), crashed.getreasonForCrash());
+            this.MakeOutputFileERRORState(crashed.getreasonForCrash(), crashed.getSenderId());
             terminate();
         });
 
@@ -230,8 +230,10 @@ public class FusionSlamService extends MicroService {
         }
     }
 
+
+    // -----------------------Inner Classes-----------------------
     /**
-     * This class is used to make the output file in a regular state.
+     * This class is used to make the output file in regular state.
      */
     private class OutputData {
         private int systemRuntime;

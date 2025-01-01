@@ -76,7 +76,7 @@ public class FusionSlam {
             if (Prevlandmark == null) {
                 LandMark newLandmark = new LandMark(trackedObject.getId(), trackedObject.getDescription(),
                         newLandmarkCloudPoints);
-                this.getLandmarks().add(newLandmark);
+                this.landmarks.add(newLandmark);
                 // Increment the number of landmarks detected.
                 StatisticalFolder.getInstance().incrementNumLandmarks();
             } else {
@@ -84,7 +84,12 @@ public class FusionSlam {
                 LandMark.updateCoordiLandmark(Prevlandmark, newLandmarkCloudPoints);
             }
         }
-        return landmarks.get(landmarks.size()-1);
+        if (this.landmarks.size() > 0) {
+            return this.landmarks.get(landmarks.size() - 1);
+        }
+        else {
+            return null;
+        }
     }
 
     /**

@@ -53,7 +53,7 @@ public class GurionRockRunner {
         try {
             // configFile = ReadConfiguration.readConfiguration(args[0]);
             configFile = ReadConfiguration.readConfiguration(
-                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example input\\configuration_file.json");
+                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input_with_error\\configuration_file.json");
         } catch (Exception e) {
             System.out.println("Can't Read config file!! :(");
         }
@@ -64,7 +64,6 @@ public class GurionRockRunner {
         // General SETUP:
         int cameraAmount = configFile.getCamera().getCamerasConfigurations().size();
         int LiDarWorkerAmount = configFile.getLidar().getlidarConfigurations().size();
-        LiDarDataBase liDarDataBase = LiDarDataBase.getInstance("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example input\\lidar_data.json");
         // make sure wait for initializing
         CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 2); 
 
@@ -74,7 +73,7 @@ public class GurionRockRunner {
         dateposinition.loadData(configFile.getPosepath());
 
         GPSIMU gpsimu = new GPSIMU(dateposinition.getPoses());
-        PoseService poseService = new PoseService(gpsimu, lanch);
+        PoseService poseService = new PoseService(gpsimu, cameraAmount, LiDarWorkerAmount, lanch);
         Thread poseThread = new Thread(poseService, "PoseService");
         poseThread.start();
 

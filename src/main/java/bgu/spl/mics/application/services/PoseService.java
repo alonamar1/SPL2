@@ -19,16 +19,20 @@ public class PoseService extends MicroService {
 
     private GPSIMU gpsimu;
     private final CountDownLatch lanch;
+    private int cameraAmount;
+    private int LiDarWorkerAmount;
 
     /**
      * Constructor for PoseService.
      *
      * @param gpsimu The GPSIMU object that provides the robot's pose data.
      */
-    public PoseService(GPSIMU gpsimu, CountDownLatch lanch) {
+    public PoseService(GPSIMU gpsimu,int cameraAmount, int LiDarAmount ,CountDownLatch lanch) {
         super("PoseService");
         this.gpsimu = gpsimu;
         this.lanch = lanch;
+        this.cameraAmount = cameraAmount;
+        this.LiDarWorkerAmount = LiDarAmount;
     }
 
     /**
@@ -44,10 +48,18 @@ public class PoseService extends MicroService {
                 // Create a new PoseEvent with the current pose
                 PoseEvent poseEvent = new PoseEvent(this.gpsimu.getCurrentPose(tick.getTick()));
                 sendEvent(poseEvent); // Send the PoseEvent
-                SaveStateFolder.getInstance().updatePose(poseEvent.getPose()); // save status
+                // Save the current pose in the SaveStateFolder
+                SaveStateFolder.getInstance().updatePose(poseEvent.getPose());
             }
-            if (this.gpsimu.getCurrentStatus() == STATUS.DOWN){
+            // If the PoseService is the last service running, terminate the PoseService.
+            if (this.cameraAmount == 0 && this.LiDarWorkerAmount == 0) {
                 sendBroadcast(new TerminatedBroadcast("PoseService"));
+                this.gpsimu.setCurrentStatus(STATUS.DOWN);
+                terminate();
+            }
+            else if (this.gpsimu.getCurrentStatus() == STATUS.DOWN){
+                sendBroadcast(new TerminatedBroadcast("PoseService"));
+                terminate();
             }
         });
         subscribeBroadcast(TerminatedBroadcast.class, (TerminatedBroadcast terminated) -> {
@@ -57,11 +69,19 @@ public class PoseService extends MicroService {
                 this.gpsimu.setCurrentStatus(STATUS.DOWN);
                 terminate();
             }
+            // if the terminated service is CameraService, decrease the cameraAmount.
+            else if (terminated.getSenderId().equals("CameraService")) {
+                cameraAmount--;
+            }
+            // if the terminated service is LiDarService, decrease the LiDarWorkerAmount.
+            else if (terminated.getSenderId().equals("LiDarService")) {
+                LiDarWorkerAmount--;
+            }
         });
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
-            // TODO: Handle the case where other service was Crashed.
             terminate();
         });
+        // CountDownLatch
         lanch.countDown();
     }
 }
