@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.Configurations;
 
 import bgu.spl.mics.application.objects.Pose;
-import bgu.spl.mics.application.objects.StampedCloudPoints;
 
 import java.io.FileReader;
 import java.io.IOException;

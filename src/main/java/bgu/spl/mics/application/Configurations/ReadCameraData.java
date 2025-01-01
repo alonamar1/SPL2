@@ -11,9 +11,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import bgu.spl.mics.application.Configurations.CameraDataPair;
 import bgu.spl.mics.application.objects.DetectedObject;
-import bgu.spl.mics.application.objects.StampedCloudPoints;
 
 /**
  * This class reads camera data from a JSON file and prints the detected objects for each camera and time frame.

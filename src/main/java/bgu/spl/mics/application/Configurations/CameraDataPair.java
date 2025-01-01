@@ -3,9 +3,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import bgu.spl.mics.application.objects.StampedDetectedObjects;
-import bgu.spl.mics.application.objects.DetectedObject;
-import bgu.spl.mics.application.objects.StampedCloudPoints;
-import java.util.LinkedList;
 
 public class CameraDataPair 
 {

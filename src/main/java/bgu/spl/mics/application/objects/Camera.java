@@ -1,14 +1,6 @@
 package bgu.spl.mics.application.objects;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 
@@ -20,7 +12,6 @@ public class Camera {
 
     private int id;
     private int frequency;
-    private String stringID;
     private List<StampedDetectedObjects> detectedObjectsList;
     private STATUS status;
 
@@ -28,7 +19,6 @@ public class Camera {
         this.id = id;
         this.frequency = freq;
         this.status = STATUS.UP;
-        this.stringID = "camera"+id;
         this.detectedObjectsList = detectedObjectsList;
     }
 

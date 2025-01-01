@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bgu.spl.mics.application.objects.Camera;
-import bgu.spl.mics.application.Configurations.MainConfiguration;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,15 +43,18 @@ public class ReadConfiguration {
         LidarConfigurations lidarConfig = new LidarConfigurations();
         JSONArray lidarArray = lidarObject.getJSONArray("LidarConfigurations");
         List<LiDarWorkerTracker> lidarConfigurations = new ArrayList<>();
-        for (int i = 0; i < lidarArray.length(); i++) {
-            JSONObject lidarWorkerObject = lidarArray.getJSONObject(i);
-            LiDarWorkerTracker lidarWorkerConfig = new LiDarWorkerTracker(lidarWorkerObject.getInt("id"), lidarWorkerObject.getInt("frequency"),
-            new LinkedList<>());
-            lidarConfigurations.add(lidarWorkerConfig);
-        }
         lidarConfig.setLidarDatasPath(lidarObject.getString("lidars_data_path"));
         lidarConfig.setLidarConfigurations(lidarConfigurations);
         mainConfig.setLidars(lidarConfig);
+        for (int i = 0; i < lidarArray.length(); i++) {
+            JSONObject lidarWorkerObject = lidarArray.getJSONObject(i);
+            LiDarWorkerTracker lidarWorkerConfig = new LiDarWorkerTracker(lidarWorkerObject.getInt("id"), lidarWorkerObject.getInt("frequency"),
+            new LinkedList<>(), lidarConfig.getLidarDatasPath());
+            lidarConfigurations.add(lidarWorkerConfig);
+        }
+        // lidarConfig.setLidarDatasPath(lidarObject.getString("lidars_data_path"));
+        // lidarConfig.setLidarConfigurations(lidarConfigurations);
+        // mainConfig.setLidars(lidarConfig);
 
         mainConfig.setPosepath(jsonObject.getString("poseJsonFile"));
         mainConfig.setTime(jsonObject.getInt("TickTime"));

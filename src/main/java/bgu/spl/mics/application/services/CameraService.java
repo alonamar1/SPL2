@@ -9,7 +9,6 @@ import bgu.spl.mics.application.messages.TickBroadcast;
 import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.STATUS;
 import bgu.spl.mics.application.objects.SaveStateFolder;
-import bgu.spl.mics.Future;
 
 /**
  * CameraService is responsible for processing data from the camera and
@@ -60,19 +59,8 @@ public class CameraService extends MicroService {
                     // If the camera is not in ERROR state, send the detected objects to the LiDAR
                     // workers.
                     else if (detectedList != null) {
-                        Future<Boolean> future;
-                        future = (Future<Boolean>) sendEvent(detectedList);
+                        sendEvent(detectedList);
                         SaveStateFolder.getInstance().updateCameraObjects(detectedList); // save state
-                        try {
-                            // TODO: Change the time to a constant.
-                            // boolean result = future.get();
-                            // if (result == false) {
-                            //     // TODO: Handle the case where the event was not completed successfully.
-                            // }
-                        } catch (Exception e) {
-                            e.printStackTrace(); // TODO: Handle the case where the future was interrupted.
-                            // sendBroadcast(new CrashedBroadcast("Camera"));
-                        }
                     }
                 }
                 // if in the next tick there is not objects to detect end

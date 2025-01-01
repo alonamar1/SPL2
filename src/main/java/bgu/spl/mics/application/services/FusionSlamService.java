@@ -275,7 +275,7 @@ public class FusionSlamService extends MicroService {
     }
 
     // -----------------------Tests------------------------------
-
+/* 
     public void testMakeOutputFile() {
         // Simulate some data
         StatisticalFolder stats = StatisticalFolder.getInstance();
@@ -346,5 +346,5 @@ public class FusionSlamService extends MicroService {
         //FusionSlamService service = new FusionSlamService(fusionSlam, 2, 2);
         // service.testMakeOutputFile();
         //service.testMakeOutputFileERRORState();
-    }
+    } */
 }

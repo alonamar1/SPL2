@@ -1,30 +1,16 @@
 package bgu.spl.mics.application;
 
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.google.gson.Gson;
 
 import bgu.spl.mics.application.Configurations.MainConfiguration;
 import bgu.spl.mics.application.Configurations.PoseData;
 import bgu.spl.mics.application.Configurations.ReadConfiguration;
 import bgu.spl.mics.application.objects.Camera;
-import bgu.spl.mics.application.objects.DetectedObject;
 import bgu.spl.mics.application.objects.FusionSlam;
 import bgu.spl.mics.application.objects.GPSIMU;
-import bgu.spl.mics.application.objects.LiDarDataBase;
 import bgu.spl.mics.application.objects.LiDarWorkerTracker;
-import bgu.spl.mics.application.objects.ReadyToProcessPair;
-import bgu.spl.mics.application.objects.StampedDetectedObjects;
 import bgu.spl.mics.application.services.CameraService;
 import bgu.spl.mics.application.services.FusionSlamService;
 import bgu.spl.mics.application.services.LiDarService;
@@ -51,9 +37,9 @@ public class GurionRockRunner {
     public static void main(String[] args) {
         MainConfiguration configFile = null;
         try {
-            // configFile = ReadConfiguration.readConfiguration(args[0]);
-            configFile = ReadConfiguration.readConfiguration(
-                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input_2\\configuration_file.json");
+            System.out.println("The args are: " + args[0]);
+            configFile = ReadConfiguration.readConfiguration(args[0]);
+            //configFile = ReadConfiguration.readConfiguration("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example input\\configuration_file.json");
         } catch (Exception e) {
             System.out.println("Can't Read config file!! :(");
         }

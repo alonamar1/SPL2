@@ -2,10 +2,8 @@ package bgu.spl.mics.application.objects;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import bgu.spl.mics.MessageBusImpl;
-import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.messages.TrackedObjectEvent;
 
@@ -24,12 +22,12 @@ public class LiDarWorkerTracker {
     private List<TrackedObject> trackedObjects;
     LiDarDataBase dataBase; // the LiDarDataBase object
 
-    public LiDarWorkerTracker(int id, int frequency, List<TrackedObject> trackedObjects) {
+    public LiDarWorkerTracker(int id, int frequency, List<TrackedObject> trackedObjects, String path) {
         this.id = id;
         this.frequency = frequency;
         this.status = STATUS.UP;
         this.trackedObjects = trackedObjects;
-        this.dataBase = LiDarDataBase.getInstance("path"); // לשנות את הפאט
+        this.dataBase = LiDarDataBase.getInstance(path);
     }
 
     /**

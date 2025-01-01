@@ -1,9 +1,7 @@
 package bgu.spl.mics.application.Configurations;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.LiDarWorkerTracker;
 
 
