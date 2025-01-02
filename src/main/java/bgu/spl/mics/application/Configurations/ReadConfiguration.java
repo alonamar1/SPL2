@@ -22,6 +22,9 @@ public class ReadConfiguration {
 
         MainConfiguration mainConfig = new MainConfiguration();
 
+        // Extract the directory from the configuration file path
+        String configDir = filepath.substring(0, filepath.lastIndexOf("\\"));
+
         // Parse Cameras
         JSONObject camerasObject = jsonObject.getJSONObject("Cameras");
         CameraConfiguration camerasConfig = new CameraConfiguration();
@@ -30,33 +33,43 @@ public class ReadConfiguration {
         List<Camera> cameraConfigurations = new ArrayList<>();
         for (int i = 0; i < camerasArray.length(); i++) {
             JSONObject cameraObject = camerasArray.getJSONObject(i);
-            Camera cameraConfig =  new Camera(cameraObject.getInt("id"), cameraObject.getInt("frequency"),
-            r.readCameraData(r.cameraDataJsonToList(camerasObject.getString("camera_datas_path")), cameraObject.getString("camera_key"))  );
+            String cameraDataPath = camerasObject.getString("camera_datas_path");
+            if (cameraDataPath.startsWith(".")) {
+                cameraDataPath = configDir + cameraDataPath.substring(1);
+            }
+            Camera cameraConfig = new Camera(cameraObject.getInt("id"), cameraObject.getInt("frequency"),
+                    r.readCameraData(r.cameraDataJsonToList(cameraDataPath), cameraObject.getString("camera_key")));
             cameraConfigurations.add(cameraConfig);
         }
         camerasConfig.setCamerasConfigurations(cameraConfigurations);
         camerasConfig.setCameraDatasPath(camerasObject.getString("camera_datas_path"));
         mainConfig.setCameras(camerasConfig);
 
-        // Parse LiDarWorkers 
+        // Parse LiDarWorkers
         JSONObject lidarObject = jsonObject.getJSONObject("LiDarWorkers");
         LidarConfigurations lidarConfig = new LidarConfigurations();
         JSONArray lidarArray = lidarObject.getJSONArray("LidarConfigurations");
         List<LiDarWorkerTracker> lidarConfigurations = new ArrayList<>();
-        lidarConfig.setLidarDatasPath(lidarObject.getString("lidars_data_path"));
+        String lidarDataPath = lidarObject.getString("lidars_data_path");
+        if (lidarDataPath.startsWith(".")) {
+            lidarDataPath = configDir + lidarDataPath.substring(1);
+        }
+        lidarConfig.setLidarDatasPath(lidarDataPath);
         lidarConfig.setLidarConfigurations(lidarConfigurations);
         mainConfig.setLidars(lidarConfig);
         for (int i = 0; i < lidarArray.length(); i++) {
             JSONObject lidarWorkerObject = lidarArray.getJSONObject(i);
-            LiDarWorkerTracker lidarWorkerConfig = new LiDarWorkerTracker(lidarWorkerObject.getInt("id"), lidarWorkerObject.getInt("frequency"),
-            new LinkedList<>(), lidarConfig.getLidarDatasPath());
+            LiDarWorkerTracker lidarWorkerConfig = new LiDarWorkerTracker(lidarWorkerObject.getInt("id"),
+                    lidarWorkerObject.getInt("frequency"), new LinkedList<>(), lidarConfig.getLidarDatasPath());
             lidarConfigurations.add(lidarWorkerConfig);
         }
-        // lidarConfig.setLidarDatasPath(lidarObject.getString("lidars_data_path"));
-        // lidarConfig.setLidarConfigurations(lidarConfigurations);
-        // mainConfig.setLidars(lidarConfig);
 
-        mainConfig.setPosepath(jsonObject.getString("poseJsonFile"));
+        // Parse Pose data path
+        String poseDataPath = jsonObject.getString("poseJsonFile");
+        if (poseDataPath.startsWith(".")) {
+            poseDataPath = configDir + poseDataPath.substring(1);
+        }
+        mainConfig.setPosepath(poseDataPath);
         mainConfig.setTime(jsonObject.getInt("TickTime"));
         mainConfig.setDuration(jsonObject.getInt("Duration"));
 

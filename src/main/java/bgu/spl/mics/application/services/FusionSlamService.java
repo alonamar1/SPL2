@@ -33,6 +33,7 @@ public class FusionSlamService extends MicroService {
     private int LidarWorkerAmount; // represent the number of active lidar worker
     private boolean poseServiceOn;
     private boolean timeServiceOn;
+    private String configDir;
 
     private final CountDownLatch lanch;
 
@@ -42,7 +43,7 @@ public class FusionSlamService extends MicroService {
      * @param fusionSlam The FusionSLAM object responsible for managing the global
      *                   map.
      */
-    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount, CountDownLatch lanch) {
+    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount, String configDir, CountDownLatch lanch) {
         super("FusionSlamService");
         this.fusionSlam = fusionSlam;
         this.LidarWorkerAmount = LidarWorkerAmount;
@@ -50,6 +51,7 @@ public class FusionSlamService extends MicroService {
         this.poseServiceOn = true;
         this.timeServiceOn = true;
         this.lanch = lanch;
+        this.configDir = configDir;
     }
 
     /**
@@ -157,7 +159,7 @@ public class FusionSlamService extends MicroService {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
             // Define the directory for saving the output file
-            File directory = new File("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input");
+            File directory = new File(configDir);
 
             // Create the directory if it doesn't exist
             if (!directory.exists()) {
@@ -165,8 +167,7 @@ public class FusionSlamService extends MicroService {
             }
 
             // Define the output file path and write the JSON data to the file
-            try (FileWriter writer = new FileWriter(
-                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input\\output_file_Test.json")) {
+            try (FileWriter writer = new FileWriter(configDir + "/output_file_Test_US.json")) {
                 gson.toJson(outputData, writer);
             }
         } catch (IOException e) {
@@ -210,9 +211,8 @@ public class FusionSlamService extends MicroService {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         try {
-            // TODO: change to protable dir
             // Define the directory for saving the output file
-            File directory = new File("C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input");
+            File directory = new File(configDir);
 
             // Create the directory if it doesn't exist
             if (!directory.exists()) {
@@ -220,12 +220,10 @@ public class FusionSlamService extends MicroService {
             }
 
             // Define the output file path and write the JSON data to the file
-            try (FileWriter writer = new FileWriter(
-                    "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\example_input\\output_Test_ERROR.json")) {
+            try (FileWriter writer = new FileWriter(configDir + "/output_Test_ERROR_US.json")) {
                 gson.toJson(output, writer);
             }
         } catch (IOException e) {
-            // Print stack trace if an I/O error occurs
             e.printStackTrace();
         }
     }

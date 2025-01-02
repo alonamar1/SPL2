@@ -7,7 +7,8 @@ import bgu.spl.mics.application.objects.FusionSlam;
 import bgu.spl.mics.application.objects.StatisticalFolder;
 
 /**
- * TimeService acts as the global timer for the system, broadcasting TickBroadcast messages
+ * TimeService acts as the global timer for the system, broadcasting
+ * TickBroadcast messages
  * at regular intervals and controlling the simulation's duration.
  */
 public class TimeService extends MicroService {
@@ -19,8 +20,8 @@ public class TimeService extends MicroService {
     /**
      * Constructor for TimeService.
      *
-     * @param TickTime  The duration of each tick in milliseconds.
-     * @param Duration  The total number of ticks before the service terminates.
+     * @param TickTime The duration of each tick in milliseconds.
+     * @param Duration The total number of ticks before the service terminates.
      */
     public TimeService(int TickTime, int Duration) {
         super("TimeService");
@@ -31,18 +32,15 @@ public class TimeService extends MicroService {
 
     /**
      * Initializes the TimeService.
-     * Starts broadcasting TickBroadcast messages and terminates after the specified duration.
+     * Starts broadcasting TickBroadcast messages and terminates after the specified
+     * duration.
      */
     @Override
     protected void initialize() {
         boolean needTofinish = false;
-        while (Duration > 0 && !needTofinish ) { // Continue broadcasting ticks until the duration is reached.
+        while (Duration > 0 && !needTofinish) { // Continue broadcasting ticks until the duration is reached.
             try {
-                sendBroadcast(new TickBroadcast(this.currentTick)); // Broadcast the current tick.
-                Duration--;
-                this.currentTick++;
-                StatisticalFolder.getInstance().incrementRuntime(); // Increment the runtime in the statistical folder.
-                Thread.sleep(TickTime*1000); // Wait for the specified tick time, in milliseconds.
+                // TODO: why it is take onw tick more to finish in exmple number 2
                 // check if the fusion slam still working
                 if (!FusionSlam.getInstance().getRunning()) {
                     needTofinish = true;
@@ -50,7 +48,15 @@ public class TimeService extends MicroService {
                     terminate(); // Terminate the service after the specified duration.
 
                 }
-            } catch (InterruptedException e) { // TODO: Handle the case where the thread was interrupted.
+                // Broadcast the current tick.
+                sendBroadcast(new TickBroadcast(this.currentTick));
+                Duration--;
+                this.currentTick++;
+                // Increment the runtime in the statistical folder.
+                StatisticalFolder.getInstance().incrementRuntime();
+                // Wait for the specified tick time, in milliseconds.
+                Thread.sleep(TickTime * 1000);
+            } catch (InterruptedException e) {
                 System.out.println("TimeService was interrupted.");
                 e.printStackTrace();
             }

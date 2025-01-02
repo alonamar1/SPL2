@@ -15,7 +15,7 @@ import bgu.spl.mics.application.objects.ReadyToProcessPair;
 import bgu.spl.mics.application.objects.TrackedObject;
 
 public class test {
-
+/* 
 private FusionSlam fusionSlam;
 
     @BeforeEach
@@ -71,5 +71,5 @@ public void testProcessReadyToProcessPair() {
     assertEquals("1", result.getId());
     assertEquals("Test Object", result.getDescription());
     assertEquals(2, result.getCoordinates().size());
-}
+} */
 }

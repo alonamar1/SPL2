@@ -21,7 +21,6 @@ public class ReadCameraData {
     public ReadCameraData()
     {
     }
-
     public List<CameraDataPair> cameraDataJsonToList(String filePath) {
         List<CameraDataPair> cameras = new LinkedList<>();
         try (InputStream is = new FileInputStream(filePath)) {

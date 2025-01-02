@@ -21,7 +21,8 @@ public interface MessageBus {
      * @pre type != null
      * @pre m != null
      * @post m is now subscribed to receive Event of type {@code type}
-     * @post if no micro-service has subscribed to {@code type} events, a new list is created.
+     * @post if no micro-service has subscribed to {@code type} events, a new list
+     *       is created.
      */
     <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m);
 
@@ -34,7 +35,8 @@ public interface MessageBus {
      * @pre type != null
      * @pre m != null
      * @post m is now subscribed to receive Broadcasts of type {@code type}
-     * @post if no micro-service has subscribed to {@code type} broadcasts, a new list is created.
+     * @post if no micro-service has subscribed to {@code type} broadcasts, a new
+     *       list is created.
      */
     void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m);
 
