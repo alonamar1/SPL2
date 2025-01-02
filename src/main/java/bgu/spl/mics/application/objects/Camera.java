@@ -83,7 +83,7 @@ public class Camera {
     }
     public boolean checkIfFinish(int nexttTick) {
         // Assuming the list is sorted by time
-        if (this.detectedObjectsList.get(this.detectedObjectsList.size() - 1).getTime() < nexttTick) {
+        if (this.detectedObjectsList.get(this.detectedObjectsList.size() - 1).getTime() + this.frequency < nexttTick) {
             return true;
         }
         return false;
