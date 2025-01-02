@@ -8,7 +8,6 @@ import java.util.List;
  * time of tracking, and coordinates in the environment.
  */
 public class TrackedObject {
-    // TODO: Define fields and methods.
 
     private String id;
     private int time;

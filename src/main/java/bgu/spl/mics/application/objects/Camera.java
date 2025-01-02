@@ -70,7 +70,7 @@ public class Camera {
             // check if an error was detected in the detected objects
             DetectedObject errorObject = stampedDetectedObjects.checkError();
             if (errorObject != null) {
-                this.status = STATUS.ERROR; // TODO: Handle the case where an error was detected.
+                this.status = STATUS.ERROR;
                 List<DetectedObject> errorlist = new LinkedList<DetectedObject>();
                 errorlist.add(errorObject);
                 return new DetectedObjectsEvent(id, errorlist, tick);

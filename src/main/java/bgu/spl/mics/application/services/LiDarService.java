@@ -130,7 +130,6 @@ public class LiDarService extends MicroService {
             }
         });
         subscribeBroadcast(CrashedBroadcast.class, (CrashedBroadcast crashed) -> {
-            // TODO: Handle the case where other service was Crashed.
             terminate();
         });
 

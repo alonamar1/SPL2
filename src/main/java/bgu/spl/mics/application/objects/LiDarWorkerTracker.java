@@ -15,7 +15,6 @@ import bgu.spl.mics.application.messages.TrackedObjectEvent;
  */
 public class LiDarWorkerTracker {
 
-    // TODO: Define fields and methods.
     private int id;
     private int frequency;
     private STATUS status;

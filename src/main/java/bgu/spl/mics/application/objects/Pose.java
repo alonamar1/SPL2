@@ -5,7 +5,6 @@ package bgu.spl.mics.application.objects;
  * Includes x, y coordinates and the yaw angle relative to a global coordinate system.
  */
 public class Pose {
-    // TODO: Define fields and methods.
     private int time;
     private float x;
     private float y;

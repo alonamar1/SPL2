@@ -41,6 +41,10 @@ public class FusionSlam {
         this.running = state;
     }
 
+    public void setLandmarks(List<LandMark> landmarks) {
+        this.landmarks = landmarks;
+    }
+
     public boolean getRunning() {
         return this.running;
     }
@@ -57,43 +61,51 @@ public class FusionSlam {
         return trackedObjectsReciv;
     }
 
-        /**
+    /**
      * Processes a ReadyToProcessPair of Pose and TrackedObjectEvent.
+     * 
+     * @pre pose and trackedObjectEvent are not null
+     * @post result is not null and contains the correct id, description, and
+     *       coordinates
+     * @inv landmarks list size is incremented by 1 if a new landmark is added
      * @param toProcess
      */
-    public LandMark ProcessReadyToProcessPair(ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess) {
-        // Remove the pose from the list.
-        // this.fusionSlam.getPoses().remove(toProcess.getKey());
+    public List<LandMark> ProcessReadyToProcessPair(ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess) {
+        List<LandMark> newLandmarks = new LinkedList<>();
         // Remove the tracked object from the list.
         this.getTrackedObjectsReciv().remove(toProcess.getValue());
         // Process the pair of pose and every tracked object.
         for (TrackedObject trackedObject : toProcess.getValue().getTrackedObject()) {
-            // Check if the tracked object is already a landmark.
-            LandMark Prevlandmark = this.isDetectedLandmark(trackedObject.getId());
-            // Convert the cloud pointes of the tracked object to global coordinates.
-            List<CloudPoint> newLandmarkCloudPoints = this.convertToGlobalCoordinateSys(trackedObject.getCoordinates(), toProcess.getKey());
-            // If the tracked object is a new landmark.
-            if (Prevlandmark == null) {
-                LandMark newLandmark = new LandMark(trackedObject.getId(), trackedObject.getDescription(),
-                        newLandmarkCloudPoints);
-                this.landmarks.add(newLandmark);
-                // Increment the number of landmarks detected.
-                StatisticalFolder.getInstance().incrementNumLandmarks();
-            } else {
-                // Update the coordinates of the existing landmark.
-                LandMark.updateCoordiLandmark(Prevlandmark, newLandmarkCloudPoints);
+            if (trackedObject.getCoordinates().size() > 0) {
+                // Check if the tracked object is already a landmark.
+                LandMark Prevlandmark = this.isDetectedLandmark(trackedObject.getId());
+                // Convert the cloud pointes of the tracked object to global coordinates.
+                List<CloudPoint> newLandmarkCloudPoints = this
+                        .convertToGlobalCoordinateSys(trackedObject.getCoordinates(), toProcess.getKey());
+                // If the tracked object is a new landmark.
+                if (Prevlandmark == null) {
+                    LandMark newLandmark = new LandMark(trackedObject.getId(), trackedObject.getDescription(),
+                            newLandmarkCloudPoints);
+                    this.landmarks.add(newLandmark);
+                    newLandmarks.add(newLandmark);
+                    // Increment the number of landmarks detected.
+                    StatisticalFolder.getInstance().incrementNumLandmarks();
+                } else {
+                    // Update the coordinates of the existing landmark.
+                    LandMark.updateCoordiLandmark(Prevlandmark, newLandmarkCloudPoints);
+                }
             }
         }
         if (this.landmarks.size() > 0) {
-            return this.landmarks.get(landmarks.size() - 1);
-        }
-        else {
+            return newLandmarks;
+        } else {
             return null;
         }
     }
 
     /**
      * checks if a LandMark is detected.
+     * 
      * @param id
      * @return
      */
@@ -108,6 +120,7 @@ public class FusionSlam {
 
     /**
      * Converts a list of CloudPoints to the global coordinate system.
+     * 
      * @param cloudPoints
      * @param pose
      * @return
@@ -131,6 +144,7 @@ public class FusionSlam {
 
     /**
      * Checks if a TrackedObjectEvent is ready to be processed.
+     * 
      * @param trackedObjectEvent
      */
     public ReadyToProcessPair<Pose, TrackedObjectEvent> checkReadyToProcess(TrackedObjectEvent trackedObjectEvent) {
@@ -145,6 +159,7 @@ public class FusionSlam {
 
     /**
      * Checks if a Pose is ready to be processed.
+     * 
      * @param pose
      */
     public List<ReadyToProcessPair<Pose, TrackedObjectEvent>> checkReadyToProcess(Pose pose) {

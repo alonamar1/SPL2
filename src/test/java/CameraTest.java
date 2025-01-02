@@ -3,15 +3,10 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import bgu.spl.mics.application.Configurations.CameraDataPair;
-import bgu.spl.mics.application.Configurations.ReadCameraData;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
 import bgu.spl.mics.application.objects.Camera;
 import bgu.spl.mics.application.objects.DetectedObject;
-import bgu.spl.mics.application.objects.STATUS;
 import bgu.spl.mics.application.objects.StampedDetectedObjects;
 import bgu.spl.mics.application.objects.StatisticalFolder;
 import bgu.spl.mics.application.services.CameraService;

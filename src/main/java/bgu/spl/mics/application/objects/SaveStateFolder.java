@@ -26,7 +26,6 @@ public class SaveStateFolder {
 
     }
 
-    // TODO: Implement the class
     private AtomicReference<List<Pose>> prevPoses;
     private AtomicReference<List<TrackedObjectEvent>> lastLiDarWorkerTracksEvent;
     private AtomicReference<List<DetectedObjectsEvent>> lastCamerasDetectEvent;

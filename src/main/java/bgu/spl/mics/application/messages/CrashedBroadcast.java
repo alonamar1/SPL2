@@ -9,7 +9,6 @@ public class CrashedBroadcast implements Broadcast {
     private String senderId;
     private String reasonForCrash; // The reason For Crash to be sent in the broadcast.
 
-    // TODO: לשנות את זה בכל המחלקו הרלוונטיות ולהתאים את התקלות לפי זה
     public CrashedBroadcast(String senderId, String reasonForCrash) {
         this.senderId = senderId;
         this.reasonForCrash = reasonForCrash;

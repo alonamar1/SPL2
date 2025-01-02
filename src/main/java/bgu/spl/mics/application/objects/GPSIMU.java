@@ -8,7 +8,6 @@ import java.util.List;
  * Provides information about the robot's position and movement.
  */
 public class GPSIMU {
-    // TODO: Define fields and methods.
     private int currentTick;
     private STATUS currentStatus;
     private List<Pose> prevPoses;
@@ -24,12 +23,13 @@ public class GPSIMU {
         this.currentStatus = STATUS.UP;
         this.prevPoses = poses;
     }
-    //TODO: Add a ERROR status to the STATUS enum
+
     public GPSIMU(){
         this.currentTick = 0;
         this.currentStatus = STATUS.UP;
         this.prevPoses = new ArrayList<>();
     }
+    
     /**
      * Return the current pose of the robot in time tick.
      * @param currentTick

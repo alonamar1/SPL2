@@ -27,7 +27,8 @@ public abstract class MicroService implements Runnable {
     private final String name;
     
     //TODO: check if the map should be concurrent
-    private Map<Class<? extends Message>, Callback<? extends Message>> messagecallbacks; // Map of callbacks
+    // Map of callbacks for each message type
+    private Map<Class<? extends Message>, Callback<? extends Message>> messagecallbacks;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -152,7 +153,7 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * The entry point of the micro-service. TODO: you must complete this code
+     * The entry point of the micro-service. 
      * otherwise you will end up in an infinite loop.
      */
     @Override

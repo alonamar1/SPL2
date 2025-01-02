@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.services;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
