@@ -43,7 +43,7 @@ public class LiDarService extends MicroService {
         this.lanch = lanch;
     }
 
-     /**
+    /**
      * Check if need to terminate the LiDar Worker
      */
     public void checkIfFinish() {
@@ -73,7 +73,7 @@ public class LiDarService extends MicroService {
                 if (currentTick >= detectedObjectsEvent.getTime() + liDarTracker.getFrequency()) {
                     TrackedObjectEvent event = this.liDarTracker.prepareToSend(detectedObjectsEvent);
                     if (event.getTrackedObject().get(0).getDescription().equals("ERROR")) {
-                        sendBroadcast(new CrashedBroadcast("LiDar",
+                        sendBroadcast(new CrashedBroadcast("LiDarWorker" + liDarTracker.getID(),
                                 "Sensor LidarWorker " + this.liDarTracker.getID() + " disconnected"));
                         terminate();
                     } else {
@@ -95,7 +95,7 @@ public class LiDarService extends MicroService {
                         TrackedObjectEvent event = this.liDarTracker.prepareToSend(waitingDetectedObjectsEvents.get(i));
                         if (event.getTrackedObject().size() > 0) {
                             if (event.getTrackedObject().get(0).getDescription().equals("ERROR")) {
-                                sendBroadcast(new CrashedBroadcast("LiDar",
+                                sendBroadcast(new CrashedBroadcast("LiDarWorker" + liDarTracker.getID(),
                                         "Sensor LidarWorker " + this.liDarTracker.getID() + " disconnected"));
                                 terminate();
                             } else {

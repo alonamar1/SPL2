@@ -69,11 +69,11 @@ public class PoseService extends MicroService {
                 terminate();
             }
             // if the terminated service is CameraService, decrease the cameraAmount.
-            else if (terminated.getSenderId().equals("CameraService")) {
+            else if (terminated.getSenderId().equals("Camera")) {
                 cameraAmount--;
             }
             // if the terminated service is LiDarService, decrease the LiDarWorkerAmount.
-            else if (terminated.getSenderId().equals("LiDarService")) {
+            else if (terminated.getSenderId().equals("LiDarWorker")) {
                 LiDarWorkerAmount--;
             }
         });

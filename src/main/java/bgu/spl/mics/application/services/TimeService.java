@@ -40,13 +40,12 @@ public class TimeService extends MicroService {
         boolean needTofinish = false;
         while (Duration > 0 && !needTofinish) { // Continue broadcasting ticks until the duration is reached.
             try {
-                // TODO: why it is take onw tick more to finish in exmple number 2
+                // TODO: why it is take one tick more to finish in exmple number 2
                 // check if the fusion slam still working
                 if (!FusionSlam.getInstance().getRunning()) {
                     needTofinish = true;
                     sendBroadcast(new TerminatedBroadcast("TimeService")); // Broadcast a terminated message.
                     terminate(); // Terminate the service after the specified duration.
-
                 }
                 // Broadcast the current tick.
                 sendBroadcast(new TickBroadcast(this.currentTick));

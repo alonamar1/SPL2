@@ -42,7 +42,7 @@ public class GurionRockRunner {
             path = args[0];
         } catch (Exception e) {
             System.out.println("No ARGUMENTS were given!!, USING DEFAULT CONFIGURATION FILE");
-            path = "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\tests\\example6determi\\example6determi\\configuration_file.json";
+            path = "example_input_with_error\\configuration_file.json";
         }
         // Read the configuration file
         try {
@@ -63,7 +63,6 @@ public class GurionRockRunner {
         CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 2); 
 
         // initializing to Pose Service
-        // TODO: create a list of poses and give it to him
         PoseData dateposinition = new PoseData();
         dateposinition.loadData(configFile.getPosepath());
 
