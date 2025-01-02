@@ -6,9 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
+ * The {@link MessageBusImpl class is the implementation of the MessageBus
+ * interface.
  * Write your implementation here!
- * Only one public method (in addition to getters which can be public solely for unit testing) may be added to this class
+ * Only one public method (in addition to getters which can be public solely for
+ * unit testing) may be added to this class
  * All other methods and members you add the class must be private.
  */
 public class MessageBusImpl implements MessageBus {
@@ -17,6 +19,7 @@ public class MessageBusImpl implements MessageBus {
     private static class SingletonHolder {
         private static final MessageBusImpl INSTANCE = new MessageBusImpl();
     }
+
     // Mapping of MicroServices to their message queues
     private final Map<MicroService, BlockingQueue<Message>> messageQueues;
     // Event subscriptions
@@ -116,16 +119,16 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public void unregister(MicroService m) { // לבדוק האם צריך sync
+    public void unregister(MicroService m) {
         BlockingQueue<Message> bq;
         synchronized (messageQueues) {
             bq = messageQueues.remove(m);
         }
         if (bq != null) {
             while (!bq.isEmpty()) {
-                Message msg = bq.poll(); //לחשוב האם צריך פול או טייק
+                Message msg = bq.poll();
                 if (msg instanceof Event) {
-                    eventFutures.remove(msg); // remove events from the list future event האם צריך את זה???
+                    eventFutures.remove(msg); // TODO: do we need to remove events from the list future events
                 }
             }
         }
@@ -135,29 +138,29 @@ public class MessageBusImpl implements MessageBus {
         synchronized (broadcastSubscribers) {
             broadcastSubscribers.values().forEach(queue -> queue.remove(m));
         }
-        }
+    }
 
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
         if (messageQueues.get(m) == null) {
             throw new IllegalStateException("MicroService was never registered");
         }
-        return messageQueues.get(m).take(); // since blockingQueue is a thread safe class, we don't need "wait()" method.
+        // since blockingQueue is a thread safe class, we don't need "wait()" and
+        // "notify()" methods
+        return messageQueues.get(m).take();
+
     }
 
-//------------------Getters for testing------------------
-    public Map<MicroService, BlockingQueue<Message>> getMessageQueues()
-    {
+    // ------------------Getters for testing------------------
+    public Map<MicroService, BlockingQueue<Message>> getMessageQueues() {
         return this.messageQueues;
     }
 
-    public Map<Class<? extends Broadcast>, LinkedBlockingQueue<MicroService>> getBroadcastSubscribers()
-    {
+    public Map<Class<? extends Broadcast>, LinkedBlockingQueue<MicroService>> getBroadcastSubscribers() {
         return this.broadcastSubscribers;
     }
 
-    public Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> getEventSubscribers()
-    {
+    public Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> getEventSubscribers() {
         return this.eventSubscribers;
     }
 }
