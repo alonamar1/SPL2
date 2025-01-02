@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.objects;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,6 +14,11 @@ public class StampedDetectedObjects {
     public StampedDetectedObjects(int time, List<DetectedObject> DetectedObject){
         this.time = time;
         this.DetectedObject = DetectedObject;
+    }
+
+    public StampedDetectedObjects(int time){
+        this.time = time;
+        this.DetectedObject = new LinkedList<>();
     }
 
     public int getTime() {

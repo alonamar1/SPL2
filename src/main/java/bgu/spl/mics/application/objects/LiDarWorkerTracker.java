@@ -76,8 +76,8 @@ public class LiDarWorkerTracker {
                 event.addTrackedObject(trackedObject);
             } else if (this.getStatus() == STATUS.ERROR) {
                 // if the status of the LiDarTracker is ERROR, terminate the LiDarService
-                TrackedObjectEvent errorEvent = new TrackedObjectEvent(((Integer)id).toString(), detObj.getTime());
-                errorEvent.addTrackedObject(new TrackedObject(((Integer)id).toString(), detObj.getTime(), "ERROR", null));
+                TrackedObjectEvent errorEvent = new TrackedObjectEvent(String.valueOf(this.getID()), detObj.getTime());
+                errorEvent.addTrackedObject(new TrackedObject(String.valueOf(this.getID()), detObj.getTime(), "ERROR", null));
                 return errorEvent;
             }
         }
