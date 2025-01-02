@@ -43,43 +43,8 @@ public class LiDarService extends MicroService {
         this.lanch = lanch;
     }
 
-    /**
-     * //TODO: write what happend here
-     * 
-     * @param detObj
-     */
-    /*
-     * public void prepareAndToSend(DetectedObjectsEvent detObj) {
-     * // create a new TrackedObjectEvent
-     * TrackedObjectEvent event = new
-     * TrackedObjectEvent(String.valueOf(liDarTracker.getID()), detObj.getTime());
-     * for (int j = 0; j < detObj.getDetectedObject().size(); j++) {
-     * TrackedObject trackedObject = liDarTracker.getTrackedObject(
-     * detObj.getDetectedObject().get(j),
-     * detObj.getTime());
-     * // if the tracked object is not null, add it to the event
-     * if (trackedObject != null) {
-     * event.addTrackedObject(trackedObject);
-     * } else if (liDarTracker.getStatus() == STATUS.ERROR) {
-     * // if the status of the LiDarTracker is ERROR, terminate the LiDarService
-     * sendBroadcast(new CrashedBroadcast("LiDar",
-     * "Sensor LidarWorker " + this.liDarTracker.getID() + " disconnected"));
-     * terminate();
-     * }
-     * }
-     * // Send Event
-     * sendEvent(event);
-     * // Save State
-     * SaveStateFolder.getInstance().updateLidarWorker(event);
-     * // increment the number of tracked objects in the statistical folder
-     * StatisticalFolder.getInstance().incrementNumTrackedObjects(event.
-     * getTrackedObject().size());
-     * // complete the DetectedObjectsEvent
-     * MessageBusImpl.getInstance().complete(detObj, true);
-     * }
-     * 
-     * /**
-     * Check if need to termenate the LiDar Worker
+     /**
+     * Check if need to terminate the LiDar Worker
      */
     public void checkIfFinish() {
         // Assuming the list is sorted by time

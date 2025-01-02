@@ -42,7 +42,7 @@ public class GurionRockRunner {
             path = args[0];
         } catch (Exception e) {
             System.out.println("No ARGUMENTS were given!!, USING DEFAULT CONFIGURATION FILE");
-            path = "example input\\configuration_file.json";
+            path = "C:\\Users\\meire\\Documents\\Third Semster\\SPL2\\Skeleton\\tests\\example6determi\\example6determi\\configuration_file.json";
         }
         // Read the configuration file
         try {
