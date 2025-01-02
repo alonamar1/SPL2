@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.messages;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -6,20 +7,20 @@ import bgu.spl.mics.Event;
 import bgu.spl.mics.application.objects.TrackedObject;
 
 public class TrackedObjectEvent implements Event<Boolean> {
-    
-    private String id;
+
+    private String LiDarWorkerTrackerid;
     private List<TrackedObject> trackedObject;
     private int time;
 
-    public TrackedObjectEvent(String id, int time){
-        this.id = id;
+    public TrackedObjectEvent(String id, int time) {
+        this.LiDarWorkerTrackerid = id;
         this.trackedObject = new LinkedList<TrackedObject>();
         this.time = time;
     }
-    
-    public TrackedObjectEvent(List<TrackedObject> trackedObject){
+
+    public TrackedObjectEvent(List<TrackedObject> trackedObject) {
         this.trackedObject = trackedObject;
-    }    
+    }
 
     public List<TrackedObject> getTrackedObject() {
         return trackedObject;
@@ -32,8 +33,8 @@ public class TrackedObjectEvent implements Event<Boolean> {
     public int getTime() {
         return time;
     }
-    
+
     public String getId() {
-        return id;
+        return this.LiDarWorkerTrackerid;
     }
 }
