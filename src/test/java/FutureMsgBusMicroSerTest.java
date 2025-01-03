@@ -5,6 +5,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -18,40 +19,61 @@ import bgu.spl.mics.testData;
 import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.Event;
 import bgu.spl.mics.Message;
+import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
+import sun.security.jca.GetInstance;
 
 public class FutureMsgBusMicroSerTest {
 
-    @Test
-    public void generalTest1() {
+    private TestMicroService1 testMicroService1_1;
+    private TestMicroService1 testMicroService1_2;
+    private TestMicroService2 testMicroService2_1;
+    private TestMicroService2 testMicroService2_2;
+    private LinkedList<MicroService> microServices;
+    private LinkedList<Class> events;
+    private LinkedList<Class> broadcasts;
+    private Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventSubscribers;
+    private Map<Class<? extends Broadcast>, LinkedBlockingQueue<MicroService>> broadcastSubscribers;
+    private CountDownLatch latch;
+    private Map<MicroService, BlockingQueue<Message>> messageQueues;
+    private MessageBusImpl messageBus;
+    private Thread thread1;
+    private Thread thread2;
+    private Thread thread3;
+    private Thread thread4;
 
-        System.out.println(("generalTest1 has started"));
-        CountDownLatch lanch = new CountDownLatch(4); // 4 microservices
+    @BeforeEach
+    public void before() {
 
+        messageBus = MessageBusImpl.getInstance();
+        latch = new CountDownLatch(4); // 4 microservices
+        messageQueues = MessageBusImpl.getInstance().getMessageQueues();
+        eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
+        broadcastSubscribers = MessageBusImpl.getInstance().getBroadcastSubscribers();
         //initialize microservices when "testMicroServiceX_Y" means X is the number of the microservice type and Y is the number of the microservice
-        TestMicroService1 testMicroService1_1 = new TestMicroService1("TestMicroService1_1", lanch);
-        TestMicroService1 testMicroService1_2 = new TestMicroService1("TestMicroService1_2", lanch);
-        TestMicroService2 testMicroService2_1 = new TestMicroService2("TestMicroService2_1", lanch);
-        TestMicroService2 testMicroService2_2 = new TestMicroService2("TestMicroService2_2", lanch);
-        LinkedList<MicroService> microServices = new LinkedList<>(); //list of microservices
+        testMicroService1_1 = new TestMicroService1("TestMicroService1_1", latch);
+        testMicroService1_2 = new TestMicroService1("TestMicroService1_2", latch);
+        testMicroService2_1 = new TestMicroService2("TestMicroService2_1", latch);
+        testMicroService2_2 = new TestMicroService2("TestMicroService2_2", latch);
+        microServices = new LinkedList<>(); //list of microservices
         microServices.add(testMicroService1_1);
         microServices.add(testMicroService1_2);
         microServices.add(testMicroService2_1);
         microServices.add(testMicroService2_2);
-        LinkedList<Class> events = new LinkedList<>(); //list of events
+        events = new LinkedList<>(); //list of events
         events.add(TestEvent1.class);
         events.add(TestEvent2.class);
         events.add(terminate.class);
-        LinkedList<Class> broadcasts = new LinkedList<>(); //list of events
+        broadcasts = new LinkedList<>(); //list of events
         broadcasts.add(TestBroadcast1.class);
         broadcasts.add(TestBroadcast2.class); //list of broadcasts
 
         //initialize threads
-        Thread thread1 = new Thread(testMicroService1_1);
-        Thread thread2 = new Thread(testMicroService1_2);
-        Thread thread3 = new Thread(testMicroService2_1);
-        Thread thread4 = new Thread(testMicroService2_2);
+        thread1 = new Thread(testMicroService1_1);
+        thread2 = new Thread(testMicroService1_2);
+        thread3 = new Thread(testMicroService2_1);
+        thread4 = new Thread(testMicroService2_2);
 
         //start threads and run the microservices
         thread1.start();
@@ -61,20 +83,154 @@ public class FutureMsgBusMicroSerTest {
 
         //waits for all the microservices to initialize
         try {
-            lanch.await();
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void close() {
+
+        for (MicroService m : microServices){
+            if (m instanceof TestMicroService1)
+            {
+                ((TestMicroService1)m).teminate();
+            }
+            else 
+            ((TestMicroService2)m).teminate();
+        }
+        try{
+            thread1.join();
+            thread2.join();
+            thread3.join();
+            thread4.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        //calls the fields from messageBusImpl to check everything is working
-        Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
-        Map<Class<? extends Broadcast>, LinkedBlockingQueue<MicroService>> broadcastSubscribers = MessageBusImpl.getInstance().getBroadcastSubscribers();
+    }
+
+    //checks if a microservice is registered and prints the results
+    public boolean isRegistered(MicroService m) {
+        boolean test = false;
+        if (messageQueues.get(m) != null) {
+            System.out.println(m.getName() + " registered");
+            test = true;
+        } else {
+            System.out.println(m.getName() + " not found");
+        }
+        return test;
+    }
+
+    //checks if a microservice is unregistered and prints the results
+    public boolean unregisterTest(MicroService m) {
+        if (MessageBusImpl.getInstance().getMessageQueues().get(m) != null) {
+            System.out.println("contains key " + m.getName());
+            if (!MessageBusImpl.getInstance().getMessageQueues().get(m).isEmpty()) {
+                System.out.println(m.getName() + " is not empty");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Test
+    //test register and unregister together
+    public void registeredANDUnregisteredGeneralTest() {
+
+        System.out.println(("registeredGeneralTest has started"));
 
         //checks if the microservices are registered and prints the results
         for (int i = 0; i < microServices.size(); i++) {
-            isRegistered(microServices.get(i));
+            assertTrue(isRegistered(microServices.get(i)));
         }
-        System.out.println();
+
+        //try to register a registered microservice
+        messageBus.register(testMicroService1_1);
+        assertTrue(isRegistered(testMicroService1_1));
+        assertEquals(messageQueues.size(), 4);
+
+        //checks that unregister is working
+        assertFalse(unregisterTest(testMicroService1_1));
+        messageBus.unregister(testMicroService1_1);
+        assertTrue(unregisterTest(testMicroService1_1));
+        assertEquals(messageQueues.size(), 3);
+        
+        //try to unregister an unregistered microservice
+        messageBus.unregister(testMicroService1_1);
+        assertTrue(unregisterTest(testMicroService1_1));
+        assertEquals(messageQueues.size(), 3);
+
+
+        //try to resiger an unregistered microservice
+        messageBus.register(testMicroService1_1);
+        assertTrue(isRegistered(testMicroService1_1));
+        assertEquals(messageQueues.size(), 4);
+
+
+        MicroService[] tempArray = new MicroService[300];
+        //try to register a large number of microservices
+        for (int i = 0; i < 300; i++) {
+            if (i<=99){//register unsubscribed to Events microservice
+                tempArray[i] = new TestMicroService3(((Integer)i).toString(), latch);
+                messageBus.register(tempArray[i]); }
+            
+            if (i>99 && i<=199){
+                //register subscribed microservice
+                tempArray[i] = new TestMicroService2(((Integer)i).toString(), latch);
+                messageBus.register(tempArray[i]); }
+
+            if (i>199) { //register unsubscribed to Broadcasts microservice
+                    tempArray[i] = new TestMicroService4(((Integer)i).toString(), latch);
+                    messageBus.register(tempArray[i]);}
+
+        }
+        assertTrue(messageQueues.size() == 304);
+
+        for (int i = 0; i < microServices.size(); i++) {
+            messageBus.unregister(microServices.get(i));
+        }
+
+        //checks if the microservices are unregistered and prints the results
+        //NOTICE: if the microservice is unregisterd, sendevent works as well
+        //NOTICE: we unregister microservices that are already set for threads
+        for (int i = 0; i < microServices.size(); i++) {
+            assertTrue(unregisterTest(microServices.get(i)));
+        }
+        assertTrue(messageQueues.size() == 300);
+
+        for(int i=0; i<300; i++)
+        {
+            messageBus.unregister(tempArray[i]);
+        }
+        assertTrue(messageQueues.size() == 0);
+
+        for (MicroService m : microServices){
+            if (m instanceof TestMicroService1)
+            {
+                ((TestMicroService1)m).teminate();
+            }
+            else 
+            ((TestMicroService2)m).teminate();
+        }
+
+        System.out.println(("registeredGeneralTest has finished"));
+
+
+    }
+
+    @Test
+    public void sendEventANDBroadcastTest()
+    {
+        System.out.println(("sendEventANDBroadcastTest has started"));
+
+    }
+
+  
+    @Test
+    public void subsribeEventGeneralTest() {
+
+        System.out.println(("subsribeEventGeneralTest has started"));
 
         //checks if the events are subscribed and prints the results
         for (int i = 0; i < events.size(); i++) {
@@ -84,6 +240,8 @@ public class FutureMsgBusMicroSerTest {
             assertEquals(eventSubscribers.get(events.get(i)).size(), microServices.size()); // check if all the events are subscribed
         }
 
+        //testMicroService1_1.checkSendEvents();
+        //assertEquals(5, testMicroService1_1.getCount());
         //checks if the broadcasts are subscribed and prints the results
         for (int i = 0; i < broadcasts.size(); i++) {
             System.out.println("broadcast number " + (i + 1) + " subscribers:");
@@ -94,10 +252,13 @@ public class FutureMsgBusMicroSerTest {
 
         //checks if there is a double subsription 
         testMicroService2_1.doubleSubsribeEvent();
-        assertFalse(testMicroService2_1.getCheckedIfDoubleSubsribe());
+        assertFalse(testMicroService2_1.getCheckedIfDoubleSubsribeToEvent());
+
+        testMicroService2_2.doubleSubsribeBroadcast();
+        assertFalse(testMicroService2_2.getCheckedIfDoubleSubsribeToBroadcast());
 
         //checks an event without subscribers
-        //testNoSubscribers();        
+        testNoSubscribers();
 
         //sends broadcast to all the microservices
         MessageBusImpl.getInstance().sendBroadcast(new TestBroadcast1(""));
@@ -105,16 +266,6 @@ public class FutureMsgBusMicroSerTest {
         //sends event to all the microservices
         for (int i = 0; i < microServices.size(); i++) {
             MessageBusImpl.getInstance().sendEvent(new terminate("terminate" + (i + 1)));
-        }
-
-        //waits for all the microservices to terminate
-        try {
-            thread1.join();
-            thread2.join();
-            thread3.join();
-            thread4.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         //checks if the microservices are unregistered and prints the results
@@ -204,21 +355,7 @@ public class FutureMsgBusMicroSerTest {
         System.out.println(("test has finished"));
 
     }
-*/
-    @Test
-    //checks if a microservice is registered and prints the results
-    public void isRegistered(MicroService m) {
-        boolean test = false;
-        Map<MicroService, BlockingQueue<Message>> messageQueues = MessageBusImpl.getInstance().getMessageQueues();
-        if (messageQueues.get(m) != null) {
-            System.out.println(m.getName() + " registered");
-            test = true;
-        } else {
-            System.out.println(m.getName() + " not found");
-        }
-        assertTrue(test);
-    }
-
+     */
     @Test
     public static boolean isRoundRobin(MicroService[] m) {
         CountDownLatch lanch = new CountDownLatch(4); // 4 microservices
@@ -297,22 +434,12 @@ public class FutureMsgBusMicroSerTest {
 
     }
 
-    //checks if a microservice is unregistered and prints the results
-    public boolean unregisterTest(MicroService m) {
-        if (MessageBusImpl.getInstance().getMessageQueues().get(m) != null) {
-            System.out.println("contains key " + m.getName());
-            if (!MessageBusImpl.getInstance().getMessageQueues().get(m).isEmpty()) {
-                System.out.println(m.getName() + " is not empty");
-            }
-            return false;
-        }
-        return true;
-    }
+    
 
     @Test
     public void testNoSubscribers() {
         Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventSubscribers = MessageBusImpl.getInstance().getEventSubscribers();
-        assertNull(eventSubscribers.get(TestEvent3.class));
+        assertNull(eventSubscribers.get(TestEvent4.class));
         if (eventSubscribers.get(TestEvent4.class) == null) {
             System.out.println("no subscribers");
         }
@@ -432,11 +559,15 @@ public class FutureMsgBusMicroSerTest {
     private static class TestMicroService1 extends MicroService {
 
         private final CountDownLatch latch;
+        private int count;
 
         public TestMicroService1(String name, CountDownLatch latch) {
             super(name);
             this.latch = latch;
+            count = 0;
         }
+        public void teminate(){super.terminate();}
+
 
         @Override
         protected void initialize() {
@@ -466,21 +597,37 @@ public class FutureMsgBusMicroSerTest {
     private static class TestMicroService2 extends MicroService {
 
         private final CountDownLatch lanch;
-        boolean checkedIfDoubleSubsribe;
+        private boolean checkedIfDoubleSubsribeToEvent;
+        private boolean checkedIfDoubleSubsribeToBroadcast;
 
         public TestMicroService2(String name, CountDownLatch lanch) {
             super(name);
             this.lanch = lanch;
-            checkedIfDoubleSubsribe = false;
+            checkedIfDoubleSubsribeToEvent = false;
+            checkedIfDoubleSubsribeToBroadcast = false;
         }
 
         public void doubleSubsribeEvent() {
             subscribeEvent(TestEvent3.class, (event) -> {
-                checkedIfDoubleSubsribe = true;
+                checkedIfDoubleSubsribeToEvent = true;
             });
         }
 
-        public boolean getCheckedIfDoubleSubsribe() { return checkedIfDoubleSubsribe;}
+        public void doubleSubsribeBroadcast() {
+            subscribeBroadcast(TestBroadcast2.class, (Broadcast) -> {
+                checkedIfDoubleSubsribeToBroadcast = true;
+            });
+        }
+
+        public boolean getCheckedIfDoubleSubsribeToEvent() {
+            return checkedIfDoubleSubsribeToEvent;
+        }
+
+        public boolean getCheckedIfDoubleSubsribeToBroadcast() {
+            return checkedIfDoubleSubsribeToBroadcast;
+        }
+
+        public void teminate(){super.terminate();}
 
         @Override
         protected void initialize() {
@@ -497,7 +644,8 @@ public class FutureMsgBusMicroSerTest {
                 System.out.println(getName() + " handled Broadcast 1: " + broadcast.getMessage());
             });
 
-            subscribeEvent(TestEvent3.class, (event) -> {});
+            subscribeEvent(TestEvent3.class, (event) -> {
+            });
 
             subscribeBroadcast(TestBroadcast2.class, (broadcast) -> {
                 System.out.println(getName() + " handled Broadcast 2: " + broadcast.getMessage());
@@ -536,33 +684,19 @@ public class FutureMsgBusMicroSerTest {
             test = false;
             return test;
         }
+        public void teminate(){super.terminate();}
+
 
         @Override
         protected void initialize() {
-
-            subscribeEvent(TestEvent1.class, (event) -> {
-                complete(event, getName() + " handled Event 1: " + event.getMessage());
-                testEvent1 = true;
-
-            });
-
-            subscribeEvent(TestEvent2.class, (event) -> {
-                complete(event, getName() + " handled Event 2: " + event.getMessage());
-            });
-
             subscribeBroadcast(TestBroadcast1.class, (broadcast) -> {
                 System.out.println(getName() + " handled Broadcast 1: " + broadcast.getMessage());
-                test = true;
             });
 
-            subscribeEvent(TestEvent3.class, (event) -> {
-                System.out.println(getName() + " handled Event 3: " + event.getMessage());
+            subscribeBroadcast(TestBroadcast2.class, (broadcast) -> {
+                System.out.println(getName() + " handled Broadcast 2: " + broadcast.getMessage());
             });
 
-            subscribeEvent(terminate.class, (event) -> {
-                System.out.println(getName() + " handled terminate: " + event.getMessage());
-                terminate();
-            });
             lanch.countDown();
         }
     }
@@ -579,6 +713,7 @@ public class FutureMsgBusMicroSerTest {
             test = false;
             testEvent2 = false;
         }
+        public void teminate(){super.terminate();}
 
         public boolean getTest() {
             return test;
@@ -595,20 +730,13 @@ public class FutureMsgBusMicroSerTest {
 
         @Override
         protected void initialize() {
-            subscribeEvent(TestEvent1.class, (event) -> {
+           subscribeEvent(TestEvent1.class, (event) -> {
                 complete(event, getName() + " handled Event 1: " + event.getMessage());
-                terminate();
             });
+
             subscribeEvent(TestEvent2.class, (event) -> {
                 complete(event, getName() + " handled Event 2: " + event.getMessage());
-                testEvent2 = true;
             });
-
-            subscribeBroadcast(TestBroadcast2.class, (broadcast) -> {
-                System.out.println(getName() + " handled Broadcast 2: " + broadcast.getMessage());
-                test = true;
-            });
-
             lanch.countDown();
         }
     }
