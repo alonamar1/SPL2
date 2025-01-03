@@ -13,7 +13,7 @@ import bgu.spl.mics.application.services.CameraService;
 
 public class CameraTest {
 
-
+    //create the relevant data for the first test
     public List<StampedDetectedObjects> camera1Test()
     { 
     List<StampedDetectedObjects> camera1 = new LinkedList<>();
@@ -56,22 +56,12 @@ public class CameraTest {
             camera1.get(i-1).addDetectedObject(new DetectedObject(id4 + "2", id4));
             camera1.get(i-1).addDetectedObject(new DetectedObject(id6 + "1", id6));}
     }
-    /* 
-    for (int i=0; i<10; i++)
-    {
-        System.out.println(camera1.get(i).getTime());
-        for (DetectedObject d: camera1.get(i).getDetectedObject())
-        {
-            System.out.println(d.getID());
-            System.out.println(d.getDescreption());
-        }
-        System.out.println();
-        */
 
-        return camera1;
+    return camera1;
 
     }
 
+    //create the relevant data for the second test
     public List<StampedDetectedObjects> camera2Test()
     { 
     List<StampedDetectedObjects> camera2 = new LinkedList<>();
@@ -130,20 +120,7 @@ public class CameraTest {
 
 
     }
-    
-    /* 
-    for (int i=0; i<12; i++)
-    {
-        System.out.println(camera2.get(i).getTime());
-        for (DetectedObject d: camera2.get(i).getDetectedObject())
-        {
-            System.out.println(d.getID());
-            System.out.println(d.getDescreption());
-        }
-        System.out.println();
-
-    }
-        */
+ 
     return camera2;
 }
 
@@ -153,24 +130,25 @@ public class CameraTest {
 
         CountDownLatch latch = new CountDownLatch(0); 
         System.out.println("test has started");
-        //create a new object to call the relavant methods
-        //creating cameras for the test
+        //creating camera for the test
         Camera camera = new Camera(1, 1, camera1Test());
         //initialize ints for tests
         int statisticalfolder1 = 0, statisticalfolder2 = 0;
+        //save the data from camera1Test()
         List<StampedDetectedObjects> detectedObjectsList1 = camera.getDetectedObjectsList();
-        
         CameraService cam1 = new CameraService(camera, latch);
 
         for (int i = 1; i <= detectedObjectsList1.size(); i++) {
             //create event for the relevant tick
             DetectedObjectsEvent event1 = cam1.getcamera().handleTick(i);
-            statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
             //save the list from the relevan tick from the data base
             List<DetectedObject> tempList = detectedObjectsList1.get(i-1).getDetectedObject();
+            //save the current data from the statistical folder
+            statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
+            //handletick() might return null
             if (event1 != null)
             {
-                //checks there is indeed an error
+                //checks if there is indeed an error if indicated
                 if (event1.getDetectedObject().get(0).getID().equals("ERROR"))
                     {
                         boolean findError = false;
@@ -196,11 +174,9 @@ public class CameraTest {
             }
             //the only case event1 is null is when templist is empty
             else{
-                assertTrue(tempList.isEmpty());
-
+                assertTrue(detectedObjectsList1.get(i-1)==null);
             }
         }
-        System.out.println("yes");
     }
 
     @Test
@@ -208,26 +184,29 @@ public class CameraTest {
 
         CountDownLatch latch = new CountDownLatch(0); 
         System.out.println("test has started");
-        //create a new object to call the relavant methods
-        //creating cameras for the test
+        //creating camera for the test
         Camera camera = new Camera(1, 1, camera2Test());
         //initialize ints for tests
         int statisticalfolder1 = 0, statisticalfolder2 = 0;
-        List<StampedDetectedObjects> detectedObjectsList1 = camera.getDetectedObjectsList();
-        CameraService cam1 = new CameraService(camera, latch);
-        for (int i = 1; i <= detectedObjectsList1.size(); i++) {
+        //save the data from camera1Test()
+        List<StampedDetectedObjects> detectedObjectsList2 = camera.getDetectedObjectsList();
+        CameraService cam2 = new CameraService(camera, latch);
+
+        for (int i = 1; i <= detectedObjectsList2.size(); i++) {
             //create event for the relevant tick
-            DetectedObjectsEvent event1 = cam1.getcamera().handleTick(i);
-            statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
+            DetectedObjectsEvent event2 = cam2.getcamera().handleTick(i);
             //save the list from the relevan tick from the data base
-            List<DetectedObject> tempList = detectedObjectsList1.get(i-1).getDetectedObject();
-            if (event1 != null)
+            List<DetectedObject> tempList = detectedObjectsList2.get(i-1).getDetectedObject();
+            //save the current data from the statistical folder
+            statisticalfolder1 = StatisticalFolder.getInstance().getNumDetectedObjects();
+            //handletick() might return null
+            if (event2 != null)
             {
-                //checks there is indeed an error
-                if (event1.getDetectedObject().get(0).getID().equals("ERROR"))
+                //checks if there is indeed an error if indicated
+                if (event2.getDetectedObject().get(0).getID().equals("ERROR"))
                     {
                         boolean findError = false;
-                        for (DetectedObject d : event1.getDetectedObject())
+                        for (DetectedObject d : event2.getDetectedObject())
                         {
                             if (d.getID().equals("ERROR"))
                                 findError = true;
@@ -237,23 +216,21 @@ public class CameraTest {
                     }
                 else{
                     //checks that the StatisticalFolder updated the relevant count
-                    assertTrue(statisticalfolder1 - statisticalfolder2 == event1.getDetectedObject().size());
+                    assertTrue(statisticalfolder1 - statisticalfolder2 == event2.getDetectedObject().size());
                     statisticalfolder2 = statisticalfolder1; 
                     //checks first the sizes are equal 
-                    assertTrue(tempList.size() == event1.getDetectedObject().size());
+                    assertTrue(tempList.size() == event2.getDetectedObject().size());
                     for (int j = 0; j < tempList.size(); j++) {
                         //checks the strings are matched
-                        assertTrue(tempList.get(j).getDescreption().equals(event1.getDetectedObject().get(j).getDescreption()));
+                        assertTrue(tempList.get(j).getDescreption().equals(event2.getDetectedObject().get(j).getDescreption()));
                     }
                 } 
             }
             //the only case event1 is null is when templist is empty
             else{
-                assertTrue(tempList.isEmpty());
-
+                assertTrue(detectedObjectsList2.get(i-1)==null);
             }
         }
-        System.out.println("yes");
     }
     }
 

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="FutureMsgBusMicroSerTest" time="0.075" tests="1" errors="0" skipped="0" failures="1">
+  <properties>
+    <property name="java.specification.version" value="17"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1255"/>
+    <property name="java.class.path" value="C:\Users\alona\SPL2\target\test-classes;C:\Users\alona\SPL2\target\classes;C:\Users\alona\.m2\repository\com\google\code\gson\gson\2.11.0\gson-2.11.0.jar;C:\Users\alona\.m2\repository\com\google\errorprone\error_prone_annotations\2.27.0\error_prone_annotations-2.27.0.jar;C:\Users\alona\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.11.4\junit-jupiter-api-5.11.4.jar;C:\Users\alona\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\alona\.m2\repository\org\junit\platform\junit-platform-commons\1.11.4\junit-platform-commons-1.11.4.jar;C:\Users\alona\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\alona\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.11.4\junit-jupiter-engine-5.11.4.jar;C:\Users\alona\.m2\repository\org\junit\platform\junit-platform-engine\1.11.4\junit-platform-engine-1.11.4.jar;C:\Users\alona\.m2\repository\org\json\json\20210307\json-20210307.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Jerusalem"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="user.country" value="IL"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-17\bin"/>
+    <property name="sun.java.command" value="C:\Users\alona\AppData\Local\Temp\surefire2147066859261194321\surefirebooter-20250103180824774_3.jar C:\Users\alona\AppData\Local\Temp\surefire2147066859261194321 2025-01-03T18-08-24_522-jvmRun1 surefire-20250103180824774_1tmp surefire_0-20250103180824774_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="FutureMsgBusMicroSerTest#generalTest1"/>
+    <property name="surefire.test.class.path" value="C:\Users\alona\SPL2\target\test-classes;C:\Users\alona\SPL2\target\classes;C:\Users\alona\.m2\repository\com\google\code\gson\gson\2.11.0\gson-2.11.0.jar;C:\Users\alona\.m2\repository\com\google\errorprone\error_prone_annotations\2.27.0\error_prone_annotations-2.27.0.jar;C:\Users\alona\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.11.4\junit-jupiter-api-5.11.4.jar;C:\Users\alona\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\alona\.m2\repository\org\junit\platform\junit-platform-commons\1.11.4\junit-platform-commons-1.11.4.jar;C:\Users\alona\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\alona\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.11.4\junit-jupiter-engine-5.11.4.jar;C:\Users\alona\.m2\repository\org\junit\platform\junit-platform-engine\1.11.4\junit-platform-engine-1.11.4.jar;C:\Users\alona\.m2\repository\org\json\json\20210307\json-20210307.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\alona"/>
+    <property name="user.language" value="he"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2023-10-17"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-17"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\alona\SPL2"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\alona\AppData\Local\Temp\surefire2147066859261194321\surefirebooter-20250103180824774_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="17.0.9+11-LTS-201"/>
+    <property name="user.name" value="alona"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="Cp1255"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="maven.ext.class.path" value="C:\Users\alona\.vscode\extensions\oracle.oracle-java-23.0.1\nbcode\java\maven-nblib\netbeans-eventspy.jar"/>
+    <property name="localRepository" value="C:\Users\alona\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\alona\AppData\Local\Temp\"/>
+    <property name="java.version" value="17.0.9"/>
+    <property name="user.dir" value="C:\Users\alona\SPL2"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1255"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-17\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Program Files\Common Files\Oracle\Java\javapath;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\windows\System32\OpenSSH\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Users\alona\AppData\Local\Microsoft\WindowsApps;C:\Users\alona\AppData\Local\Programs\Microsoft VS Code\bin;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="17.0.9+11-LTS-201"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="61.0"/>
+  </properties>
+  <testcase name="generalTest1" classname="FutureMsgBusMicroSerTest" time="0.044">
+    <failure message="expected: &lt;null&gt; but was: &lt;[FutureMsgBusMicroSerTest$TestMicroService2@5bc2a3fc, FutureMsgBusMicroSerTest$TestMicroService2@584b3fc9]&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <null> but was: <[FutureMsgBusMicroSerTest$TestMicroService2@5bc2a3fc, FutureMsgBusMicroSerTest$TestMicroService2@584b3fc9]>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertNull.failNotNull(AssertNull.java:50)
+	at org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:35)
+	at org.junit.jupiter.api.AssertNull.assertNull(AssertNull.java:30)
+	at org.junit.jupiter.api.Assertions.assertNull(Assertions.java:279)
+	at FutureMsgBusMicroSerTest.testNoSubscribers(FutureMsgBusMicroSerTest.java:315)
+	at FutureMsgBusMicroSerTest.generalTest1(FutureMsgBusMicroSerTest.java:100)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+]]></failure>
+    <system-out><![CDATA[generalTest1 has started
+TestMicroService1_1 registered
+TestMicroService1_2 registered
+TestMicroService2_1 registered
+TestMicroService2_2 registered
+
+event number 1 subscribers:
+TestMicroService2_2subscribed to FutureMsgBusMicroSerTest$TestEvent1
+TestMicroService2_1subscribed to FutureMsgBusMicroSerTest$TestEvent1
+TestMicroService1_1subscribed to FutureMsgBusMicroSerTest$TestEvent1
+TestMicroService1_2subscribed to FutureMsgBusMicroSerTest$TestEvent1
+
+event number 2 subscribers:
+TestMicroService2_2subscribed to FutureMsgBusMicroSerTest$TestEvent2
+TestMicroService2_1subscribed to FutureMsgBusMicroSerTest$TestEvent2
+TestMicroService1_1subscribed to FutureMsgBusMicroSerTest$TestEvent2
+TestMicroService1_2subscribed to FutureMsgBusMicroSerTest$TestEvent2
+
+event number 3 subscribers:
+TestMicroService1_1subscribed to FutureMsgBusMicroSerTest$terminate
+TestMicroService1_2subscribed to FutureMsgBusMicroSerTest$terminate
+TestMicroService2_2subscribed to FutureMsgBusMicroSerTest$terminate
+TestMicroService2_1subscribed to FutureMsgBusMicroSerTest$terminate
+
+broadcast number 1 subscribers:
+TestMicroService2_2subscribed to FutureMsgBusMicroSerTest$TestBroadcast1
+TestMicroService2_1subscribed to FutureMsgBusMicroSerTest$TestBroadcast1
+TestMicroService1_1subscribed to FutureMsgBusMicroSerTest$TestBroadcast1
+TestMicroService1_2subscribed to FutureMsgBusMicroSerTest$TestBroadcast1
+
+broadcast number 2 subscribers:
+TestMicroService1_2subscribed to FutureMsgBusMicroSerTest$TestBroadcast2
+TestMicroService1_1subscribed to FutureMsgBusMicroSerTest$TestBroadcast2
+TestMicroService2_2subscribed to FutureMsgBusMicroSerTest$TestBroadcast2
+TestMicroService2_1subscribed to FutureMsgBusMicroSerTest$TestBroadcast2
+
+]]></system-out>
+  </testcase>
+</testsuite>

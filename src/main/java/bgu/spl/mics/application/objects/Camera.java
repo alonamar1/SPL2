@@ -60,7 +60,12 @@ public class Camera {
 
     /**
      * Handles a tick event.
-     *
+     * @pre tick is a positive number
+     * @post detectedObjectEvent is DetectedObjectsEvent contains the id, time and
+     * list of detected object relevant for the mathced stampedDetectedObject
+     * or list of ERROR
+     * @inv a DetectedObjectsEvent contains the relevant data from detectedObjectsList
+     * in a specific time
      * @param tick
      * @return DetectedObjectsEvent object, detected objects event.
      */
