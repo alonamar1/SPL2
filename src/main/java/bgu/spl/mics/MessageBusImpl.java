@@ -133,7 +133,7 @@ public class MessageBusImpl implements MessageBus {
             return null;
         }
         synchronized (queueFromEvent) {
-            MicroService m = queueFromEvent.poll(); // לבדוק האם צריך פול או טייק
+            MicroService m = queueFromEvent.poll();
             if (m != null) {
                 try {
                     messageQueues.get(m).put(e); // Add the event to the MicroService queue

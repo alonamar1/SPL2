@@ -1,6 +1,7 @@
-package bgu.spl.mics;
+
 
 import java.util.concurrent.CountDownLatch;
+
 import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.Event;
 import bgu.spl.mics.MicroService;
