@@ -73,19 +73,19 @@ public class FutureMsgBusMicroSerTest {
         // Make Them subscribe to the Events in the right order.
         thread1.start();
         try {
-            Thread.sleep(10);
+            Thread.sleep(15);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         thread2.start();
         try {
-            Thread.sleep(10);
+            Thread.sleep(15);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         thread3.start();
         try {
-            Thread.sleep(10);
+            Thread.sleep(15);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -462,6 +462,8 @@ public class FutureMsgBusMicroSerTest {
         }
 
         // Check if the extra events were distributed correctly
+        // after 6 rounds (because the 24 events were already distributed) it is need to
+        // be the first and second microservice turn
         assertEquals(7, ((TestMicroService1) testMicroService1_1).getEventCount());
         assertEquals(7, ((TestMicroService1) testMicroService1_2).getEventCount());
 
