@@ -18,12 +18,12 @@ public interface MessageBus {
      * @param <T>  The type of the result expected by the completed event.
      * @param type The type to subscribe to,
      * @param m    The subscribing micro-service.
-     * @pre type != null
-     * @pre m != null
-     * @post m is now subscribed to receive Event of type {@code type}
-     * @post if no micro-service has subscribed to {@code type} events, a new list
-     *       is created.
+     *@pre type and m are not null
+    * @post microservice m is subscribed to type
+    * @inv if type already has microservice or m is already subscribe
+        the method do nothing
      */
+   
     <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m);
 
     /**
@@ -32,11 +32,9 @@ public interface MessageBus {
      * 
      * @param type The type to subscribe to.
      * @param m    The subscribing micro-service.
-     * @pre type != null
-     * @pre m != null
-     * @post m is now subscribed to receive Broadcasts of type {@code type}
-     * @post if no micro-service has subscribed to {@code type} broadcasts, a new
-     *       list is created.
+    * @pre e is not null
+    * @post future resolved with result if really complete
+    * @inv result is the needed retult to future
      */
     void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m);
 
@@ -72,7 +70,10 @@ public interface MessageBus {
      *       broadcast is not added to any queue.
      * @post The message is added to the queues of the micro-services in a
      *       round-robin fashion.
+     * @inv all the microservices that subsribed to the broadcast are in subsribers queue
+        the method do nothing
      */
+    
     void sendBroadcast(Broadcast b);
 
     /**
@@ -99,6 +100,8 @@ public interface MessageBus {
      *       method returns null.
      * @post If there is a micro-service subscribed to {@code e.getClass()} then the
      *       method returns a non-null {@link Future<T>} object.
+     * @inv the microservices that subscribed to the event get the event by round-robin loop
+
      */
     <T> Future<T> sendEvent(Event<T> e);
 
@@ -112,9 +115,12 @@ public interface MessageBus {
      * @post isRegistered(m)
      * @post getQueue(m) != null
      * @post getQueue(m).size() == 0
+     * @inv every microservice is registered only once
      */
     void register(MicroService m);
 
+
+    
     /**
      * Removes the message queue allocated to {@code m} via the call to
      * {@link #register(bgu.spl.mics.MicroService)} and cleans all references
@@ -128,6 +134,8 @@ public interface MessageBus {
      * @post !isRegistered(m)
      * @post All the message queues allocated to {@code m} also deleted.
      * @post All references related to {@code m} are deleted from the message-bus.
+    * @inv all the messages are only in the queue
+
      */
     void unregister(MicroService m);
 
@@ -148,11 +156,13 @@ public interface MessageBus {
      *                               to became available.'
      * @throws IllegalStateException if {@code m} was never registered.
      * 
-     * @pre {@code m} is a registered micro-service.
+     * @pre m is a registered micro-service.
      * @pre The message-bus is running.
      * @post The message is no longer in the queue.
      * @post If no messages are available, the method waits until a message becomes
      *       available.
+     * @inv awaitmessage is threadsafe
+
      */
     Message awaitMessage(MicroService m) throws InterruptedException;
 

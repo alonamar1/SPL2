@@ -40,14 +40,7 @@ public class MessageBusImpl implements MessageBus {
         return SingletonHolder.INSTANCE;
     }
 
-    /* 
-    * @pre type and m are not null
-    * @post microservice m is subscribed to type
-    * @inv if type already has microservice or m is already subscribe
-        the method do nothing
-    * @param type
-    * @param m
-    */
+    
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         // add new event if needed, and than add m to the matched event
@@ -57,14 +50,6 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-    /* 
-    * @pre type and m are not null
-    * @post microservice m is subscribed to type
-    * @inv if type already has microservice or m is already subscribe
-        the method do nothing
-    * @param type
-    * @param m
-    */
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
         // add new Broadcast if needed, and than add m to the matched Broadcast
@@ -74,13 +59,7 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-    /* 
-    * @pre e is not null
-    * @post future resolved with result if really complete
-    * @inv result is the needed retult to future
-    * @param e
-    * @param result
-    */
+    
     @Override
     public <T> void complete(Event<T> e, T result) {
         // Resolve the future associated with the event
@@ -92,13 +71,6 @@ public class MessageBusImpl implements MessageBus {
     }
 
 
-    /* 
-    * @pre b is not null
-    * @post all the microservices that subscribed to the broadcast got the broadcast
-    * @inv all the microservices that subsribed to the broadcast are in subsribers queue
-        the method do nothing
-    * @param b
-    */
     @Override
     public void sendBroadcast(Broadcast b) {
         // Send the broadcast message to all subscribed MicroServices
@@ -118,13 +90,7 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-    /* 
-    * @pre e is not null
-    * @post one of the microservices that subscribed to the event got it
-    * @inv the microservices that subscribed to the event get the event by round-robin loop
-    * @param b
-    * @return result
-    */
+   
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
 
@@ -151,25 +117,11 @@ public class MessageBusImpl implements MessageBus {
         return null;
     }
 
-    /* 
-    * @pre m is not null
-    * @post m is registered to messageQueues
-    * @inv every microservice is registered only once
-    * @param m
-    */
-
     @Override
     public void register(MicroService m) {
         messageQueues.putIfAbsent(m, new LinkedBlockingQueue<>());
     }
 
-
-    /* 
-    * @pre m is not null
-    * @post m is unregistered and all the messages it has deleted
-    * @inv all the messages are only in the queue
-    * @param m
-    */
     @Override
     public void unregister(MicroService m) {
         BlockingQueue<Message> bq;
@@ -192,13 +144,7 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-    /* 
-    * @pre m is not null
-    * @post m got the messege from the queue
-    * @inv awaitmessage is threadsafe
-    * @param m
-    * @ mmessageQueues.get(m).take() (the first message in the queue)
-    */
+    
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
         if (messageQueues.get(m) == null) {
