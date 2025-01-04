@@ -160,7 +160,7 @@ public class FusionSlamService extends MicroService {
             }
 
             // Define the output file path and write the JSON data to the file
-            try (FileWriter writer = new FileWriter(configDir + "/output_file_Test_US.json")) {
+            try (FileWriter writer = new FileWriter(configDir + "/output_file.json")) {
                 gson.toJson(outputData, writer);
             }
         } catch (IOException e) {
@@ -213,7 +213,7 @@ public class FusionSlamService extends MicroService {
             }
 
             // Define the output file path and write the JSON data to the file
-            try (FileWriter writer = new FileWriter(configDir + "/output_Test_ERROR_US.json")) {
+            try (FileWriter writer = new FileWriter(configDir + "/output_file.json")) {
                 gson.toJson(output, writer);
             }
         } catch (IOException e) {

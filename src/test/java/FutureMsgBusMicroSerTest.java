@@ -33,10 +33,6 @@ public class FutureMsgBusMicroSerTest {
     private CountDownLatch latch;
     private Map<MicroService, BlockingQueue<Message>> messageQueues;
     private MessageBusImpl messageBus;
-    private Thread thread1;
-    private Thread thread2;
-    private Thread thread3;
-    private Thread thread4;
 
     @BeforeEach
     public void before() {
@@ -366,11 +362,10 @@ public class FutureMsgBusMicroSerTest {
 
     @Test
     public void awaitMessageTest() {
-        //to check a specific microservice
+        // to check a specific microservice
         System.out.println("awaitMessageTest has started");
 
-        for (MicroService m : microServices)
-        {
+        for (MicroService m : microServices) {
             messageBus.unregister(m);
         }
 
@@ -394,7 +389,7 @@ public class FutureMsgBusMicroSerTest {
 
         // Wait for the message to be processed
         try {
-            Thread.sleep(1000); 
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -415,8 +410,8 @@ public class FutureMsgBusMicroSerTest {
         // Unregister the microservice
         messageBus.unregister(testMicroService);
 
-         // Check that awaitMessage throws an IllegalStateException
-         assertThrows(IllegalStateException.class, () -> {
+        // Check that awaitMessage throws an IllegalStateException
+        assertThrows(IllegalStateException.class, () -> {
             messageBus.awaitMessage(testMicroService);
         });
 
@@ -484,7 +479,7 @@ public class FutureMsgBusMicroSerTest {
         Map<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventSubscribers = MessageBusImpl.getInstance()
                 .getEventSubscribers();
         return eventSubscribers.get(TestEvent4.class);
-        
+
     }
 
     public static class TestEvent1 implements Event<String> {
@@ -812,7 +807,6 @@ public class FutureMsgBusMicroSerTest {
         public void teminate() {
             super.terminate();
         }
-
 
         @Override
         protected void initialize() {

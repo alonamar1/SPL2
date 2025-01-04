@@ -10,7 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Derived classes of MicroService should never directly touch the message-bus.
  * Instead, they have a set of internal protected wrapping methods (e.g.,
- * {@link #sendBroadcast(bgu.spl.mics.Broadcast)}, {@link #sendBroadcast(bgu.spl.mics.Broadcast)},
+ * {@link #sendBroadcast(bgu.spl.mics.Broadcast)},
+ * {@link #sendBroadcast(bgu.spl.mics.Broadcast)},
  * etc.) they can use. When subscribing to message-types, the derived class also
  * supplies a {@link Callback} that should be called when a message of the
  * subscribed type was taken from the micro-service message-queue (see
@@ -25,14 +26,14 @@ public abstract class MicroService implements Runnable {
 
     private boolean terminated = false;
     private final String name;
-    
-    //TODO: check if the map should be concurrent
+
+    // TODO: check if the map should be concurrent
     // Map of callbacks for each message type
     private Map<Class<? extends Message>, Callback<? extends Message>> messagecallbacks;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
-     * does not have to be unique)
+     *             does not have to be unique)
      */
     public MicroService(String name) {
         this.name = name;
@@ -51,12 +52,13 @@ public abstract class MicroService implements Runnable {
      * {@link Callback#call(java.lang.Object)} by calling
      * {@code callback.call(m)}.
      * <p>
-     * @param <E> The type of event to subscribe to.
-     * @param <T> The type of result expected for the subscribed event.
-     * @param type The {@link Class} representing the type of event to subscribe
-     * to.
+     * 
+     * @param <E>      The type of event to subscribe to.
+     * @param <T>      The type of result expected for the subscribed event.
+     * @param type     The {@link Class} representing the type of event to subscribe
+     *                 to.
      * @param callback The callback that should be called when messages of type
-     * {@code type} are taken from this micro-service message queue.
+     *                 {@code type} are taken from this micro-service message queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
 
@@ -76,11 +78,12 @@ public abstract class MicroService implements Runnable {
      * {@link Callback#call(java.lang.Object)} by calling
      * {@code callback.call(m)}.
      * <p>
-     * @param <B> The type of broadcast message to subscribe to
-     * @param type The {@link Class} representing the type of broadcast message
-     * to subscribe to.
+     * 
+     * @param <B>      The type of broadcast message to subscribe to
+     * @param type     The {@link Class} representing the type of broadcast message
+     *                 to subscribe to.
      * @param callback The callback that should be called when messages of type
-     * {@code type} are taken from this micro-service message queue.
+     *                 {@code type} are taken from this micro-service message queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
 
@@ -94,11 +97,12 @@ public abstract class MicroService implements Runnable {
      * method must be Non-Blocking since there may be events which do not
      * require any response and resolving.
      * <p>
+     * 
      * @param <T> The type of the expected result of the request {@code e}
-     * @param e The event to send
+     * @param e   The event to send
      * @return {@link Future<T>} object that may be resolved later by a
-     * different micro-service processing this event. null in case no
-     * micro-service has subscribed to {@code e.getClass()}.
+     *         different micro-service processing this event. null in case no
+     *         micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
 
@@ -109,6 +113,7 @@ public abstract class MicroService implements Runnable {
      * A Micro-Service calls this m\ethod in order to send the broadcast message
      * {@code b} using the message-bus to all the services subscribed to it.
      * <p>
+     * 
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
@@ -120,11 +125,12 @@ public abstract class MicroService implements Runnable {
      * Completes the received request {@code e} with the result {@code result}
      * using the message-bus.
      * <p>
-     * @param <T> The type of the expected result of the processed event
-     * {@code e}.
-     * @param e The event to complete.
+     * 
+     * @param <T>    The type of the expected result of the processed event
+     *               {@code e}.
+     * @param e      The event to complete.
      * @param result The result to resolve the relevant Future object.
-     * {@code e}.
+     *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
         MessageBusImpl.getInstance().complete(e, result); // Mark event as completed
@@ -146,36 +152,37 @@ public abstract class MicroService implements Runnable {
 
     /**
      * @return the name of the service - the service name is given to it in the
-     * construction time and is used mainly for debugging purposes.
+     *         construction time and is used mainly for debugging purposes.
      */
     public final String getName() {
         return name;
     }
 
     /**
-     * The entry point of the micro-service. 
+     * The entry point of the micro-service.
      * otherwise you will end up in an infinite loop.
      */
     @Override
     public final void run() {
-        
+
         MessageBusImpl.getInstance().register(this);
         initialize();
         while (!terminated && !Thread.currentThread().isInterrupted()) { // Run until termination
             try {
                 Message msg = MessageBusImpl.getInstance().awaitMessage(this); // Retrieve the next message
-                Callback<Message> callback =  (Callback<Message>) messagecallbacks.get(msg.getClass()); // Find the corresponding callback
+                Callback<Message> callback = (Callback<Message>) messagecallbacks.get(msg.getClass()); // Find the
+                                                                                                       // corresponding
+                                                                                                       // callback
                 if (callback != null) {
                     callback.call(msg); // Execute the callback
                 }
             } catch (InterruptedException e) {
-                System.out.println("microservice " + Thread.currentThread().getName()  + "InterruptedException");
+                System.out.println("microservice " + Thread.currentThread().getName() + "InterruptedException");
                 MessageBusImpl.getInstance().unregister(this);
                 terminate(); // Safely terminate the loop
                 Thread.currentThread().interrupt(); // Handle interruption
-            }
-            catch (IllegalStateException e) {
-                System.out.println("microservice " + Thread.currentThread().getName()  + "IllegalStateException");
+            } catch (IllegalStateException e) {
+                System.out.println("microservice " + Thread.currentThread().getName() + "IllegalStateException");
                 terminate(); // Safely terminate the loop
                 Thread.currentThread().interrupt(); // Handle interruption
             }

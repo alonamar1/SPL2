@@ -40,7 +40,6 @@ public class MessageBusImpl implements MessageBus {
         return SingletonHolder.INSTANCE;
     }
 
-    
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
         // add new event if needed, and than add m to the matched event
@@ -59,7 +58,6 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-    
     @Override
     public <T> void complete(Event<T> e, T result) {
         // Resolve the future associated with the event
@@ -69,7 +67,6 @@ public class MessageBusImpl implements MessageBus {
             future.resolve(result);
         }
     }
-
 
     @Override
     public void sendBroadcast(Broadcast b) {
@@ -90,7 +87,6 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-   
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
 
@@ -144,7 +140,6 @@ public class MessageBusImpl implements MessageBus {
         }
     }
 
-    
     @Override
     public Message awaitMessage(MicroService m) throws InterruptedException {
         if (messageQueues.get(m) == null) {
