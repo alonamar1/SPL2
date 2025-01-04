@@ -105,4 +105,9 @@ public class StatisticalFolder {
     public void incrementNumTrackedObjects(int amount) {
         numTrackedObjects.addAndGet(amount);
     }
+
+    public void setForTest()
+    {
+        this.numDetectedObjects = new AtomicInteger(0);
+    }
 }

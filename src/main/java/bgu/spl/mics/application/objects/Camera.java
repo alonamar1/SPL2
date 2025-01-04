@@ -42,6 +42,16 @@ public class Camera {
         return frequency;
     }
 
+    public StampedDetectedObjects getStampedInTime(int time)
+    {
+        for (StampedDetectedObjects s : detectedObjectsList)
+        {
+            if (s.getTime() ==  time)
+                return s;
+        }
+        return null;
+    }
+
     /**
      * Returns the detected objects at a specific time.
      *
