@@ -127,7 +127,6 @@ public class CameraTest {
 
     @Test
     public void Test1() {
-
         CountDownLatch latch = new CountDownLatch(0); 
         System.out.println("test has started");
         //creating camera for the test
