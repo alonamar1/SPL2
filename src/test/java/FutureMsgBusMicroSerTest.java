@@ -93,18 +93,12 @@ public class FutureMsgBusMicroSerTest {
         }
     }
 
+    @AfterEach
     private void close() {
 
-        for (MicroService m : microServices){
-            if (m instanceof TestMicroService1)
-            {
-                ((TestMicroService1)m).teminate();
-            }
-            else 
-            ((TestMicroService2)m).teminate();
-        }
-        
-
+        messageQueues.clear();
+        broadcastSubscribers.clear();
+        eventSubscribers.clear();
     }
 
     //checks if a microservice is registered and prints the results
@@ -256,6 +250,12 @@ public class FutureMsgBusMicroSerTest {
             }
         }
         
+
+
+        //sends event to all the microservices
+        for (int i = 0; i < microServices.size(); i++) {
+            MessageBusImpl.getInstance().sendEvent(new terminate("terminate" + (i + 1)));
+        }
         try {
             thread1.join();
             thread2.join();
@@ -264,14 +264,14 @@ public class FutureMsgBusMicroSerTest {
         } catch  (Exception e) {
                 System.out.println("");
         }
-
-        //sends event to all the microservices
-        for (int i = 0; i < microServices.size(); i++) {
-            MessageBusImpl.getInstance().sendEvent(new terminate("terminate" + (i + 1)));
-        }
         
 
-
+        try {
+            Thread.sleep(4000);
+        } catch  (Exception e) {
+                System.out.println("");
+        }
+        
         assertTrue(messageQueues.isEmpty());
         assertEquals(4, howManyGotB);
 

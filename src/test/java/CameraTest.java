@@ -80,7 +80,7 @@ public class CameraTest {
     camera2.add(new StampedDetectedObjects(1));
     camera2.get(0).addDetectedObject(new DetectedObject(id11 + "1", id11));
 
-    for (int i=2; i<=12; i++)
+    for (int i=0; i<=12; i++)
     {
         camera2.add(new StampedDetectedObjects(i));
         if (i%2==0) {camera2.get(i-1).addDetectedObject(new DetectedObject(id5 + "1", id5));}
@@ -176,6 +176,7 @@ public class CameraTest {
                 assertTrue(detectedObjectsList1.get(i-1)==null);
             }
         }
+        System.out.print("ingi");
     }
 
     @Test
@@ -183,6 +184,7 @@ public class CameraTest {
 
         CountDownLatch latch = new CountDownLatch(0); 
         System.out.println("test has started");
+        List<StampedDetectedObjects> s = camera2Test();
         //creating camera for the test
         Camera camera = new Camera(1, 1, camera2Test());
         //initialize ints for tests
@@ -230,6 +232,7 @@ public class CameraTest {
                 assertTrue(detectedObjectsList2.get(i-1)==null);
             }
         }
+        System.out.print(" ss");
     }
     }
 

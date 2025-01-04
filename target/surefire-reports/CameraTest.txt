@@ -1,0 +1,14 @@
+-------------------------------------------------------------------------------
+Test set: CameraTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.175 s <<< FAILURE! -- in CameraTest
+CameraTest.Test2 -- Time elapsed: 0.019 s <<< ERROR!
+java.lang.IndexOutOfBoundsException: Index: -1, Size: 2
+	at java.base/java.util.LinkedList.checkElementIndex(LinkedList.java:559)
+	at java.base/java.util.LinkedList.get(LinkedList.java:480)
+	at CameraTest.camera2Test(CameraTest.java:86)
+	at CameraTest.Test2(CameraTest.java:187)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
