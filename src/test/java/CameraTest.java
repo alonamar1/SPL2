@@ -94,7 +94,7 @@ public class CameraTest {
     String id11 = "dog";
 
 
-    for (int i=2; i<=12; i++)
+    for (int i=0; i<=12; i++)
     {
         camera2.add(new StampedDetectedObjects(i));
         if (i%2==0) {camera2.get(i-2).addDetectedObject(new DetectedObject(id5 + "1", id5));}
@@ -191,6 +191,7 @@ public class CameraTest {
 
         CountDownLatch latch = new CountDownLatch(0); 
         System.out.println("test has started");
+        List<StampedDetectedObjects> s = camera2Test();
         //creating camera for the test
         Camera camera = new Camera(1, 1, camera2Test());
         //initialize ints for tests
