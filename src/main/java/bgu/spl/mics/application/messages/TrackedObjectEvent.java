@@ -37,4 +37,12 @@ public class TrackedObjectEvent implements Event<Boolean> {
     public String getId() {
         return this.LiDarWorkerTrackerid;
     }
+
+    public String toString () {
+        String str = "Time: " + this.time + ", ";
+        for (TrackedObject obj : trackedObject) {
+            str += obj.getId() + " , ";
+        }
+        return str;
+    }
 }

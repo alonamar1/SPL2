@@ -37,13 +37,15 @@ public class GurionRockRunner {
     public static void main(String[] args) {
         MainConfiguration configFile = null;
         String path = null;
+        
         // Check if the user gave a path to the configuration file
-        try { 
+        try {
             path = args[0];
         } catch (Exception e) {
             System.out.println("No ARGUMENTS were given!!, USING DEFAULT CONFIGURATION FILE");
             path = "tests\\TestGuy&Guy\\configuration_file.json";
         }
+
         // Read the configuration file
         try {
             configFile = ReadConfiguration.readConfiguration(path);
@@ -54,13 +56,14 @@ public class GurionRockRunner {
             throw new IllegalAccessError("Can't Read config file!! :(");
         }
 
+        // Get the directory of the configuration file
         String configDir = path.substring(0, path.lastIndexOf("\\"));
 
         // General SETUP:
         int cameraAmount = configFile.getCamera().getCamerasConfigurations().size();
         int LiDarWorkerAmount = configFile.getLidar().getlidarConfigurations().size();
         // make sure wait for initializing
-        CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 2); 
+        CountDownLatch lanch = new CountDownLatch(cameraAmount + LiDarWorkerAmount + 2);
 
         // initializing to Pose Service
         PoseData dateposinition = new PoseData();
@@ -73,7 +76,8 @@ public class GurionRockRunner {
 
         // initializing to Fusion Slam Service
         FusionSlam fusionObject = FusionSlam.getInstance();
-        FusionSlamService fusionslam = new FusionSlamService(fusionObject, cameraAmount, LiDarWorkerAmount, configDir, lanch);
+        FusionSlamService fusionslam = new FusionSlamService(fusionObject, cameraAmount, LiDarWorkerAmount, configDir,
+                lanch);
         Thread fusionThread = new Thread(fusionslam, "FusionSlam");
         fusionThread.start();
 

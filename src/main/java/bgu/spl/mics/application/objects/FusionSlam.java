@@ -73,7 +73,7 @@ public class FusionSlam {
     public List<LandMark> ProcessReadyToProcessPair(ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess) {
         List<LandMark> newLandmarks = new LinkedList<>();
         // Remove the tracked object from the list.
-        this.getTrackedObjectsReciv().remove(toProcess.getValue());
+        this.trackedObjectsReciv.remove(toProcess.getValue());
         // Process the pair of pose and every tracked object.
         for (TrackedObject trackedObject : toProcess.getValue().getTrackedObject()) {
             if (trackedObject.getCoordinates().size() > 0) {

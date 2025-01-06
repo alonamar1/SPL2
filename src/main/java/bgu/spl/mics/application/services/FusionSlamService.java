@@ -42,7 +42,8 @@ public class FusionSlamService extends MicroService {
      * @param fusionSlam The FusionSLAM object responsible for managing the global
      *                   map.
      */
-    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount, String configDir, CountDownLatch lanch) {
+    public FusionSlamService(FusionSlam fusionSlam, int cameraAmount, int LidarWorkerAmount, String configDir,
+            CountDownLatch lanch) {
         super("FusionSlamService");
         this.fusionSlam = fusionSlam;
         this.LidarWorkerAmount = LidarWorkerAmount;
@@ -89,6 +90,13 @@ public class FusionSlamService extends MicroService {
 
         // TickBroadcast
         subscribeBroadcast(TickBroadcast.class, (TickBroadcast tick) -> {
+            // Check if the fusionSlam need to finish the program
+            this.checkIfRunning();
+            // if fusionSlam finish then make a file and terminate
+            if (!this.fusionSlam.getRunning()) {
+                this.MakeOutputFileRegularState();
+                terminate();
+            }
         });
 
         // TerminatedBroadCast
@@ -103,7 +111,23 @@ public class FusionSlamService extends MicroService {
                 this.timeServiceOn = false;
             }
             this.checkIfRunning();
+            // if fusionSlam finish then make a file and terminate
             if (!this.fusionSlam.getRunning()) {
+                this.MakeOutputFileRegularState();
+                terminate();
+            }
+            // if all the sensors finish and the fusionSlam still not process all the objects
+            if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn && !this.fusionSlam.getTrackedObjectsReciv().isEmpty()) {
+                // Process the remaining tracked objects.
+                for (TrackedObjectEvent trackedObjectEvent : this.fusionSlam.getTrackedObjectsReciv()) {
+                    ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.checkReadyToProcess(trackedObjectEvent);
+                    if (toProcess != null) {
+                        this.fusionSlam.ProcessReadyToProcessPair(toProcess);
+                    }
+                }
+                // System.out.println(this.fusionSlam.getTrackedObjectsReciv().toString());
+                // fusionSlam finish then make a file and terminate
+                this.fusionSlam.setRunning(false);
                 this.MakeOutputFileRegularState();
                 terminate();
             }
@@ -124,7 +148,8 @@ public class FusionSlamService extends MicroService {
      */
     public void checkIfRunning() {
         // All the sensor finishs, finish simulation
-        if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn)
+        if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn
+                && this.fusionSlam.getTrackedObjectsReciv().isEmpty())
             this.fusionSlam.setRunning(false);
         // TimeService stops, the program need to terminated
         else if (!this.timeServiceOn)
@@ -213,14 +238,13 @@ public class FusionSlamService extends MicroService {
             }
 
             // Define the output file path and write the JSON data to the file
-            try (FileWriter writer = new FileWriter(configDir + "/output_file.json")) {
+            try (FileWriter writer = new FileWriter(configDir + "/output_file_ERROR.json")) {
                 gson.toJson(output, writer);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     // -----------------------Inner Classes-----------------------
     /**
@@ -264,78 +288,4 @@ public class FusionSlamService extends MicroService {
             this.statistics = statistics;
         }
     }
-
-    // -----------------------Tests------------------------------
-/* 
-    public void testMakeOutputFile() {
-        // Simulate some data
-        StatisticalFolder stats = StatisticalFolder.getInstance();
-        stats.incrementRuntime();
-        stats.incrementNumDetectedObjects(5);
-        stats.incrementNumTrackedObjects(3);
-        stats.incrementNumLandmarks();
-
-        // Add some landmarks to fusionSlam
-        List<CloudPoint> coordinates = new LinkedList<>();
-        coordinates.add(new CloudPoint(1.0, 2.0));
-        coordinates.add(new CloudPoint(3.0, 4.0));
-        List<LandMark> landmarks = new LinkedList<>();
-        landmarks.add(new LandMark("Wall_1", "Wall", coordinates));
-        landmarks.add(new LandMark("Wall_4", "Hi my name is", coordinates));
-        this.fusionSlam.getLandmarks().addAll(landmarks);
-
-        // Call the method to create the output file
-        MakeOutputFileRegularState();
-    }
-
-    public void testMakeOutputFileERRORState() {
-        // Simulate some data
-        StatisticalFolder stats = StatisticalFolder.getInstance();
-        stats.incrementRuntime();
-        stats.incrementNumDetectedObjects(5);
-        stats.incrementNumTrackedObjects(3);
-        stats.incrementNumLandmarks();
-
-        // Add some landmarks to fusionSlam
-        List<CloudPoint> coordinates = new LinkedList<>();
-        coordinates.add(new CloudPoint(1.0, 2.0));
-        coordinates.add(new CloudPoint(3.0, 4.0));
-        List<LandMark> landmarks = new LinkedList<>();
-        landmarks.add(new LandMark("Wall_1", "Wall", coordinates));
-        this.fusionSlam.getLandmarks().addAll(landmarks);
-
-        // Simulate some poses
-        List<Pose> poses = new LinkedList<>();
-        float a = (float) 0.0755;
-        poses.add(new Pose((float) 1.1, (float) 0.2, (float) 3.1, 0));
-        poses.add(new Pose((float) 2, (float) -3.2076, (float) 0.0755, 2));
-        SaveStateFolder.getInstance().updatePose(new Pose((float) 1.1, (float) 0.2, (float) 3.1, 0));
-        SaveStateFolder.getInstance().updatePose(new Pose((float) 2, (float) -3.2076, (float) 0.0755, 2));
-
-        // Simulate some detected objects events
-        List<DetectedObject> detectedObjects = new LinkedList<>();
-        detectedObjects.add(new DetectedObject("Wall_3", "Wall"));
-        DetectedObjectsEvent detectedObjectsEvent = new DetectedObjectsEvent(1, detectedObjects, 12);
-        SaveStateFolder.getInstance().updateCameraObjects(detectedObjectsEvent);
-
-        // Simulate some tracked object events
-        List<CloudPoint> trackedCoordinates = new LinkedList<>();
-        trackedCoordinates.add(new CloudPoint(3.1, -0.4));
-        trackedCoordinates.add(new CloudPoint(3.2, -0.2));
-        TrackedObject trackedObject = new TrackedObject("Wall_3", 12, "Wall", trackedCoordinates);
-        List<TrackedObject> trackedObjects = new LinkedList<>();
-        TrackedObjectEvent trackedObjectEvent = new TrackedObjectEvent("LiDarWorkerTracker1", 12);
-        trackedObjectEvent.addTrackedObject(trackedObject);
-        SaveStateFolder.getInstance().updateLidarWorker(trackedObjectEvent);
-
-        // Call the method to create the error output file
-        MakeOutputFileERRORState("Camera disconnected", "Camera1");
-    }
-
-    public static void main(String[] args) {
-        FusionSlam fusionSlam = FusionSlam.getInstance();
-        //FusionSlamService service = new FusionSlamService(fusionSlam, 2, 2);
-        // service.testMakeOutputFile();
-        //service.testMakeOutputFileERRORState();
-    } */
 }

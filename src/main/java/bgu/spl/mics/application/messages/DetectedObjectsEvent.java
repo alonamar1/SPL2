@@ -1,12 +1,15 @@
 package bgu.spl.mics.application.messages;
+
 import java.util.List;
 
 import bgu.spl.mics.Event;
 import bgu.spl.mics.application.objects.DetectedObject;
+import bgu.spl.mics.application.objects.TrackedObject;
 
 /**
  * An event that is sent by the CameraService to the LiDarWorkerTracker.
- * The event contains a list of detected objects and the time of arrival to the LiDar.
+ * The event contains a list of detected objects and the time of arrival to the
+ * LiDar.
  */
 public class DetectedObjectsEvent implements Event<Boolean> {
 
@@ -26,11 +29,18 @@ public class DetectedObjectsEvent implements Event<Boolean> {
 
     public List<DetectedObject> getDetectedObject() {
         return this.detectedObject;
-    }   
+    }
 
     public int getTime() {
         return this.time;
     }
 
+    public String toString() {
+        String str = "Time: " + this.time + ", ";
+        for (DetectedObject obj : detectedObject) {
+            str += obj.getID() + " , ";
+        }
+        return str;
+    }
 
 }

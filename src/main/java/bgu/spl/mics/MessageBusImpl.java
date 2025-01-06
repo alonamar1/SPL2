@@ -89,12 +89,11 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> Future<T> sendEvent(Event<T> e) {
-
         LinkedBlockingQueue<MicroService> queueFromEvent = eventSubscribers.get(e.getClass());
-        if (queueFromEvent == null || queueFromEvent.isEmpty()) {
-            return null;
-        }
         synchronized (queueFromEvent) {
+            if (queueFromEvent == null || queueFromEvent.isEmpty()) {
+                return null;
+            }
             MicroService m = queueFromEvent.poll();
             if (m != null) {
                 try {
