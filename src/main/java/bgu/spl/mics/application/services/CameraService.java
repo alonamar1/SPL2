@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import java.util.concurrent.CountDownLatch;
+
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CrashedBroadcast;
 import bgu.spl.mics.application.messages.DetectedObjectsEvent;
@@ -54,7 +55,7 @@ public class CameraService extends MicroService {
                         String reason = detectedList.getDetectedObject().remove(0).getDescreption();
                         sendBroadcast(new CrashedBroadcast("Camera" + this.camera.getId(), reason));
                         terminate();
-                        Thread.currentThread().interrupt(); // TODO: Need it ???
+                        Thread.currentThread().interrupt(); 
                     }
                     // If the camera is not in ERROR state, send the detected objects to the LiDAR
                     // workers.

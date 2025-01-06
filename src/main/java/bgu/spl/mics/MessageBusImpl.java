@@ -127,7 +127,7 @@ public class MessageBusImpl implements MessageBus {
             while (!bq.isEmpty()) {
                 Message msg = bq.poll();
                 if (msg instanceof Event) {
-                    eventFutures.remove(msg); // TODO: do we need to remove events from the list future events
+                    eventFutures.remove(msg); 
                 }
             }
         }
