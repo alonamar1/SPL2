@@ -23,7 +23,7 @@ public class ReadConfiguration {
         MainConfiguration mainConfig = new MainConfiguration();
 
         // Extract the directory from the configuration file path
-        String configDir = filepath.substring(0, filepath.lastIndexOf("\\"));
+        String configDir = filepath.substring(0, filepath.lastIndexOf("/"));
 
         // Parse Cameras
         JSONObject camerasObject = jsonObject.getJSONObject("Cameras");

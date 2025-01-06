@@ -57,7 +57,7 @@ public class GurionRockRunner {
         }
 
         // Get the directory of the configuration file
-        String configDir = path.substring(0, path.lastIndexOf("\\"));
+        String configDir = path.substring(0, path.lastIndexOf("/"));
 
         // General SETUP:
         int cameraAmount = configFile.getCamera().getCamerasConfigurations().size();
