@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.Event;
 import bgu.spl.mics.Message;
@@ -108,8 +108,6 @@ public class FutureMsgBusMicroSerTest {
     // test register and unregister together
     public void registeredANDUnregisteredGeneralTest() {
 
-        System.out.println(("registeredGeneralTest has started"));
-
         // checks if the microservices are registered and prints the results
         for (int i = 0; i < microServices.size(); i++) {
             assertTrue(isRegistered(microServices.get(i)));
@@ -182,13 +180,10 @@ public class FutureMsgBusMicroSerTest {
                 ((TestMicroService2) m).teminate();
         }
 
-        System.out.println(("registeredGeneralTest has finished"));
-
     }
 
     @Test
     public void sendEventANDBroadcastTest() {
-        System.out.println("sendEventANDBroadcastTest has started");
 
         // Sending an event only to one microservice
         messageBus.sendEvent(new TestEvent2("One EVENT sent to one microservice"));
@@ -246,28 +241,21 @@ public class FutureMsgBusMicroSerTest {
         }
 
         assertTrue(messageQueues.isEmpty());
-        System.out.println("sendEventANDBroadcastTest has finished");
     }
 
     @Test
     public void subsribeEventGeneralTest() {
 
-        System.out.println(("subsribeEventGeneralTest has started"));
-
         // checks if the events are subscribed and prints the results
         for (int i = 0; i < events.size(); i++) {
-            System.out.println("event number " + (i + 1) + " subscribers:");
             assertTrue(subsribeEventTest(events.get(i)));
-            System.out.println();
             assertEquals(eventSubscribers.get(events.get(i)).size(), microServices.size()); // check if all the events
                                                                                             // are subscribed
         }
 
         // checks if the broadcasts are subscribed and prints the results
         for (int i = 0; i < broadcasts.size(); i++) {
-            System.out.println("broadcast number " + (i + 1) + " subscribers:");
             assertTrue(subsribeBroadcastTest(broadcasts.get(i)));
-            System.out.println();
             assertEquals(broadcastSubscribers.get(broadcasts.get(i)).size(), microServices.size()); // check if all the
                                                                                                     // broadcasts are
                                                                                                     // subscribed
@@ -308,13 +296,11 @@ public class FutureMsgBusMicroSerTest {
         assertEquals(24, broadcastSubscribers.get(TestBroadcast1.class).size());
         assertEquals(24, eventSubscribers.get(terminate.class).size());
 
-        System.out.println(("subsribeEventGeneralTest has finished"));
 
     }
 
     @Test
     public void isRoundRobinTest() {
-        System.out.println("isRoundRobinTest has started");
         MicroService[] microServices = { testMicroService1_1, testMicroService1_2, testMicroService2_1,
                 testMicroService2_2 };
 
@@ -356,14 +342,11 @@ public class FutureMsgBusMicroSerTest {
         // be the first and second microservice turn
         assertEquals(7, ((TestMicroService1) testMicroService1_1).getEventCount());
         assertEquals(7, ((TestMicroService1) testMicroService1_2).getEventCount());
-
-        System.out.println("isRoundRobinTest has finished");
     }
 
     @Test
     public void awaitMessageTest() {
         // to check a specific microservice
-        System.out.println("awaitMessageTest has started");
 
         for (MicroService m : microServices) {
             messageBus.unregister(m);
@@ -415,17 +398,14 @@ public class FutureMsgBusMicroSerTest {
             messageBus.awaitMessage(testMicroService);
         });
 
-        System.out.println("awaitMessageTest has finished");
     }
 
     // checks if a microservice is registered and prints the results
     public boolean isRegistered(MicroService m) {
         boolean test = false;
         if (messageQueues.get(m) != null) {
-            System.out.println(m.getName() + " registered");
             test = true;
         } else {
-            System.out.println(m.getName() + " not found");
         }
         return test;
     }
@@ -433,9 +413,7 @@ public class FutureMsgBusMicroSerTest {
     // checks if a microservice is unregistered and prints the results
     public boolean unregisterTest(MicroService m) {
         if (MessageBusImpl.getInstance().getMessageQueues().get(m) != null) {
-            System.out.println("contains key " + m.getName());
             if (!MessageBusImpl.getInstance().getMessageQueues().get(m).isEmpty()) {
-                System.out.println(m.getName() + " is not empty");
             }
             return false;
         }
@@ -449,11 +427,9 @@ public class FutureMsgBusMicroSerTest {
                 .getEventSubscribers();
         if (!eventSubscribers.get(e).isEmpty()) {
             for (MicroService microService : eventSubscribers.get(e)) {
-                System.out.println(microService.getName() + "subscribed to " + e.getName());
             }
             test = true;
         } else {
-            System.out.println("no subscribers");
         }
         return test;
     }
@@ -465,11 +441,9 @@ public class FutureMsgBusMicroSerTest {
                 .getInstance().getBroadcastSubscribers();
         if (!broadcastSubscribers.get(b).isEmpty()) {
             for (MicroService microService : broadcastSubscribers.get(b)) {
-                System.out.println(microService.getName() + "subscribed to " + b.getName());
             }
             test = true;
         } else {
-            System.out.println("no subscribers");
         }
 
         return test;
@@ -667,7 +641,6 @@ public class FutureMsgBusMicroSerTest {
     private static class TestMicroService2 extends MicroService {
 
         private final CountDownLatch lanch;
-        private final CountDownLatch sendLatch;
         private boolean checkedIfDoubleSubsribeToEvent;
         private boolean checkedIfDoubleSubsribeToBroadcast;
         private boolean test;
@@ -677,7 +650,6 @@ public class FutureMsgBusMicroSerTest {
         public TestMicroService2(String name, CountDownLatch lanch) {
             super(name);
             this.lanch = lanch;
-            sendLatch = new CountDownLatch(2);
             checkedIfDoubleSubsribeToEvent = false;
             checkedIfDoubleSubsribeToBroadcast = false;
             test = false;
@@ -685,13 +657,6 @@ public class FutureMsgBusMicroSerTest {
             eventCount = 0;
         }
 
-        public void getLatch() {
-            try {
-                sendLatch.await();
-            } catch (InterruptedException e) {
-                fail("Thread interruption occurred");
-            }
-        }
 
         public void doubleSubsribeEvent() {
             subscribeEvent(TestEvent3.class, (event) -> {
@@ -748,7 +713,6 @@ public class FutureMsgBusMicroSerTest {
             subscribeBroadcast(TestBroadcast1.class, (broadcast) -> {
                 System.out.println(getName() + " handled Broadcast 1: " + broadcast.getMessage());
                 testB = true;
-                sendLatch.countDown();
             });
 
             subscribeEvent(TestEvent3.class, (event) -> {
