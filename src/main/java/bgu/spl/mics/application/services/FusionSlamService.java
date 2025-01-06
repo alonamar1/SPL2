@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -116,11 +117,14 @@ public class FusionSlamService extends MicroService {
                 this.MakeOutputFileRegularState();
                 terminate();
             }
-            // if all the sensors finish and the fusionSlam still not process all the objects
-            if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn && !this.fusionSlam.getTrackedObjectsReciv().isEmpty()) {
+            // if all the sensors finish and the fusionSlam still not process all the
+            // objects
+            if (cameraAmount == 0 && LidarWorkerAmount == 0 && !this.poseServiceOn
+                    && !this.fusionSlam.getTrackedObjectsReciv().isEmpty()) {
                 // Process the remaining tracked objects.
                 for (TrackedObjectEvent trackedObjectEvent : this.fusionSlam.getTrackedObjectsReciv()) {
-                    ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam.checkReadyToProcess(trackedObjectEvent);
+                    ReadyToProcessPair<Pose, TrackedObjectEvent> toProcess = this.fusionSlam
+                            .checkReadyToProcess(trackedObjectEvent);
                     if (toProcess != null) {
                         this.fusionSlam.ProcessReadyToProcessPair(toProcess);
                     }
@@ -165,13 +169,19 @@ public class FusionSlamService extends MicroService {
         // Get an instance of the StatisticalFolder
         StatisticalFolder stats = StatisticalFolder.getInstance();
 
+        // Create a HashMap to store the landmarks
+        HashMap<String, LandMark> landmarks = new HashMap<>();
+        for (LandMark landMark : this.fusionSlam.getLandmarks()) {
+            landmarks.put(landMark.getId(), landMark);
+        }
+
         // Create an OutputData object to store statistical data
         OutputData outputData = new OutputData(
                 stats.getRuntime(),
                 stats.getNumDetectedObjects(),
                 stats.getNumTrackedObjects(),
                 stats.getNumLandmarks(),
-                this.fusionSlam.getLandmarks());
+                landmarks);
 
         // Initialize Gson for pretty-printing the JSON output
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -205,23 +215,44 @@ public class FusionSlamService extends MicroService {
         // Get an instance of the StatisticalFolder
         StatisticalFolder stats = StatisticalFolder.getInstance();
 
+        // Create a HashMap to store the landmarks
+        HashMap<String, LandMark> landmarks = new HashMap<>();
+        for (LandMark landMark : this.fusionSlam.getLandmarks()) {
+            landmarks.put(landMark.getId(), landMark);
+        }
+
+        // Get the statistical data from the system
         // Create an OutputData object
         OutputData statistics = new OutputData(
                 stats.getRuntime(),
                 stats.getNumDetectedObjects(),
                 stats.getNumTrackedObjects(),
                 stats.getNumLandmarks(),
-                this.fusionSlam.getLandmarks());
+                landmarks);
 
         // Get an instance of the SaveStateFolder
         SaveStateFolder saveStatus = SaveStateFolder.getInstance();
+
+        // Create a HashMap to store the last frames from each camera
+        HashMap<String, CameraLastFrame> cameraFrames = new HashMap<>();
+        for (DetectedObjectsEvent detectedObjectsEvent : saveStatus.getLastCameraObjects()) {
+            cameraFrames.put("Camera " + detectedObjectsEvent.getCameraId(),
+                    new CameraLastFrame(detectedObjectsEvent.getTime(), detectedObjectsEvent.getDetectedObject()));
+        }
+
+        // Create a HashMap to store the last frames from each LiDAR worker
+        HashMap<String, List<TrackedObject>> lidarFrames = new HashMap<>();
+        for (TrackedObjectEvent trackedObjectEvent : saveStatus.getLastLiDarEvent()) {
+            lidarFrames.put("LiDarTrackerWorker" + trackedObjectEvent.getId(), trackedObjectEvent.getTrackedObject());
+        }
+
         // Create an OutputDataErrorState object containing error details and
         // statistical data
         OutputDataErrorState output = new OutputDataErrorState(
                 error,
                 sensorName,
-                saveStatus.getLastCameraObjects(),
-                saveStatus.getLastLiDarEvent(),
+                cameraFrames,
+                lidarFrames,
                 saveStatus.getPrevPoses(),
                 statistics);
 
@@ -255,10 +286,10 @@ public class FusionSlamService extends MicroService {
         private int numDetectedObjects;
         private int numTrackedObjects;
         private int numLandmarks;
-        private List<LandMark> landMarks;
+        private HashMap<String, LandMark> landMarks;
 
         public OutputData(int systemRuntime, int numDetectedObjects, int numTrackedObjects, int numLandmarks,
-                List<LandMark> landMarks) {
+                HashMap<String, LandMark> landMarks) {
             this.systemRuntime = systemRuntime;
             this.numDetectedObjects = numDetectedObjects;
             this.numTrackedObjects = numTrackedObjects;
@@ -273,19 +304,30 @@ public class FusionSlamService extends MicroService {
     private class OutputDataErrorState {
         private String error;
         private String faultySensor;
-        private List<DetectedObjectsEvent> lastCamerasFrame;
-        private List<TrackedObjectEvent> lastLiDarWorkerTrackersFrame;
+        private HashMap<String, CameraLastFrame> lastCameraFrames;
+        private HashMap<String, List<TrackedObject>> lastLidarFrames;
         private List<Pose> poses;
         private OutputData statistics;
 
-        public OutputDataErrorState(String error, String faultySens, List<DetectedObjectsEvent> lastCamerasFrame,
-                List<TrackedObjectEvent> lastLiDarWorkerTrackersFrame, List<Pose> poses, OutputData statistics) {
+        public OutputDataErrorState(String error, String faultySensor,
+                HashMap<String, CameraLastFrame> lastCameraFrames,
+                HashMap<String, List<TrackedObject>> lastLidarFrames, List<Pose> poses, OutputData statistics) {
             this.error = error;
-            this.faultySensor = faultySens;
-            this.lastCamerasFrame = lastCamerasFrame;
-            this.lastLiDarWorkerTrackersFrame = lastLiDarWorkerTrackersFrame;
+            this.faultySensor = faultySensor;
+            this.lastCameraFrames = lastCameraFrames;
+            this.lastLidarFrames = lastLidarFrames;
             this.poses = poses;
             this.statistics = statistics;
+        }
+    }
+
+    private class CameraLastFrame {
+        private int time;
+        private List<DetectedObject> detectedObjects;
+
+        public CameraLastFrame(int time, List<DetectedObject> detectedObjects) {
+            this.time = time;
+            this.detectedObjects = detectedObjects;
         }
     }
 }

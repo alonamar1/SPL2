@@ -33,20 +33,6 @@
       ]
     },
     {
-      "id": "Chair_Base_1",
-      "description": "Chair base near table",
-      "coordinates": [
-        {
-          "x": 2.29839810001324,
-          "y": 7.400817435232531
-        },
-        {
-          "x": 2.412440546461461,
-          "y": 7.070864080569038
-        }
-      ]
-    },
-    {
       "id": "Wall_4",
       "description": "Far wall near exit",
       "coordinates": [
@@ -113,6 +99,20 @@
         {
           "x": 8.13035048979266,
           "y": 8.0862808688841
+        }
+      ]
+    },
+    {
+      "id": "Chair_Base_1",
+      "description": "Chair base near wall",
+      "coordinates": [
+        {
+          "x": 4.559543479779459,
+          "y": 8.715242671525083
+        },
+        {
+          "x": 4.657835315936581,
+          "y": 8.391522936992272
         }
       ]
     },
@@ -201,20 +201,6 @@
       ]
     },
     {
-      "id": "Wall_7",
-      "description": "Wall segment near side hall",
-      "coordinates": [
-        {
-          "x": 29.82350183668684,
-          "y": 17.51773036832021
-        },
-        {
-          "x": 29.71624025589424,
-          "y": 17.71393167638382
-        }
-      ]
-    },
-    {
       "id": "Table_2",
       "description": "Square table in back",
       "coordinates": [
@@ -225,6 +211,20 @@
         {
           "x": 29.302846245908427,
           "y": 20.80085658517377
+        }
+      ]
+    },
+    {
+      "id": "Wall_7",
+      "description": "Wall segment near side hall",
+      "coordinates": [
+        {
+          "x": 29.82350183668684,
+          "y": 17.51773036832021
+        },
+        {
+          "x": 29.71624025589424,
+          "y": 17.71393167638382
         }
       ]
     },
